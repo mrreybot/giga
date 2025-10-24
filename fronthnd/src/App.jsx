@@ -1,9 +1,13 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./Pages/LoginPage.jsx";
+
 function App() {
   return (
-    <div style={{ textAlign: "center", marginTop: "3rem" }}>
-      <h1>Task Manager 📝</h1>
-      <p>Hazırsın! Artık buraya kendi bileşenlerini ekleyebilirsin.</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
