@@ -1,67 +1,67 @@
-// src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authService from "../services/authService";
 import "../styles/Login.css";
 
-export default function Login() {
+const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      const data = await authService.login({ email, password });
-      // data.token beklentisi
-      localStorage.setItem("token", data.token);
-      // isteğe bağlı: kullanıcı bilgileri de kaydet
-      // localStorage.setItem("user", JSON.stringify(data.user));
-      setLoading(false);
-      // Login başarılı -> dashboard (henüz yoksa /home veya /)
+
+    // Şimdilik geçici login → backend bağlanınca değiştirilecek
+    if (email === "test@test.com" && password === "123456") {
       navigate("/dashboard");
-    } catch (err) {
-      setLoading(false);
-      setError(err?.response?.data?.message || err.message || "Giriş başarısız");
+    } else {
+      alert("Email veya şifre hatalı!");
     }
   };
 
   return (
-    <div className="login-wrapper">
+    <div className="login-container">
       <div className="login-card">
-        <h2>Giriş Yap</h2>
-        <form onSubmit={handleSubmit} className="login-form">
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
+        <h2>Welcome Back 👋</h2>
+        <p className="subtitle">Sign in to continue</p>
 
-          <label>
-            Şifre
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
+        <form onSubmit={handleLogin}>
+          <label>Email</label>
+          <input
+            type="email"
+            placeholder="example@mail.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-          {error && <div className="login-error">{error}</div>}
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-          <button type="submit" className="btn" disabled={loading}>
-            {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
-          </button>
+          <button type="submit" className="login-btn">Log In</button>
         </form>
+
+        <div className="login-footer">
+          <a href="#">Forgot Password?</a>
+          <p>
+            Don’t have an account?{" "}
+            <span className="register-link">Sign Up</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Sağ taraf görsel kısmı */}
+      <div className="login-side">
+        <h1>Task Manager</h1>
+        <p>Organize your work efficiently and boost productivity 📈</p>
       </div>
     </div>
   );
-}
+};
+
+export default LoginPage;

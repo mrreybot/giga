@@ -1,24 +1,14 @@
 // src/services/authService.js
-import axios from "axios";
 
-const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000/api",
-});
-
-// optional: interceptors ile token ekleme (protected istekler için)
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+const login = async (email, password) => {
+  // Şimdilik backend yoksa her zaman success döndürelim
+  if (email === "test@test.com" && password === "123456") {
+    return { token: "fake-token" };
+  } else {
+    throw new Error("Invalid credentials");
   }
-  return config;
-});
-
-const login = async (credentials) => {
-  const res = await API.post("/auth/login", credentials);
-  return res.data;
 };
 
-const authService = { login };
-
-export default authService;
+export default {
+  login,
+};
