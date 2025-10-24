@@ -4,5 +4,3 @@ Bugra
 bugra kesli buradaydı
 merhabaa
 main
-
-
