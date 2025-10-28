@@ -10,9 +10,9 @@ const LoginPage = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Şimdilik geçici login → backend bağlanınca değiştirilecek
+    
     if (email === "test@test.com" && password === "123456") {
-      navigate("/dashboard");
+      navigate("/Dashboard");
     } else {
       alert("Email veya şifre hatalı!");
     }
