@@ -1,30 +1,54 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../src/services/api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../src/services/constant";
 import "../styles/Login.css";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isRegister, setIsRegister] = useState(false); // panel kontrolü
+  const [isRegister, setIsRegister] = useState(false);
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email === "test@test.com" && password === "123456") {
-      alert("Login successful!");
-    } else {
-      alert("Email veya şifre hatalı!");
+    
+    try {
+      const res = await api.post("/api/token/", { 
+        username: email, 
+        password
+      });
+
+      localStorage.setItem(ACCESS_TOKEN, res.data.access);
+      localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+
+      console.log("Login successful:", res.data);
+      navigate("/dashboard");
+    } catch (error) {
+      alert(error);
     }
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    alert(`Registered with:\nName: ${regName}\nEmail: ${regEmail}`);
-    setIsRegister(false); // registerdan sonra login ekranına dön
-    setRegName("");
-    setRegEmail("");
-    setRegPassword("");
+    
+    try {
+      await api.post("/api/user/register/", { 
+        username: regEmail,
+        password: regPassword
+      });
+      
+      setIsRegister(false);
+      setRegName("");
+      setRegEmail("");
+      setRegPassword("");
+      navigate("/login");
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
