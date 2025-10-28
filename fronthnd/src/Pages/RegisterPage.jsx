@@ -1,10 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../api";
+
 function SignUpForm() {
   const [state, setState] = React.useState({
     name: "",
     email: "",
     password: ""
   });
+  const navigate = useNavigate();
+
   const handleChange = evt => {
     const value = evt.target.value;
     setState({
@@ -13,20 +18,24 @@ function SignUpForm() {
     });
   };
 
-  const handleOnSubmit = evt => {
+  const handleOnSubmit = async evt => {
     evt.preventDefault();
 
     const { name, email, password } = state;
-    alert(
-      `You are sign up with name: ${name} email: ${email} and password: ${password}`
-    );
 
-    for (const key in state) {
-      setState({
-        ...state,
-        [key]: ""
-      });
-    }
+  try {
+    await api.post("/api/user/register/", { 
+      username: email,  // veya ayrı bir username alanı kullanın
+      email: email,
+      password: password,
+      unvan: "" // veya kullanıcıdan alın
+    });
+
+    alert("Registration successful! Redirecting to login...");
+  } catch (error) {
+    console.error("Registration error:", error.response?.data);
+    alert(error.response?.data?.detail || "Registration failed");
+  }
   };
 
   return (
