@@ -4,8 +4,11 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constant.js";
 const apiUrl = "/choreo-apis/awbo/backend/rest-api-be2/v1.0";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
   timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  }
 });
 
 // Refresh token fonksiyonu
