@@ -1,0 +1,341 @@
+/* --- Global ve Renk Ayarları --- */
+:root {
+  --navy-blue: #001f3f; /* Lacivert */
+  --dark-header: #111111; /* Siyah (Navigasyon için) */
+  --light-bg: #f4f7f6;   /* Çok açık gri/beyaz arka plan */
+  --white: #ffffff;
+  --text-dark: #333;
+  --text-light: #f1f1f1;
+  --text-muted: #777;
+  --border-color: #ddd;
+  --accent-blue: #007bff; /* Vurgu mavisi */
+  --success-green: #28a745;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--light-bg);
+  color: var(--text-dark);
+}
+
+.modern-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+/* --- 1. Lacivert Üst Kısım --- */
+.dashboard-header {
+  background-color: var(--navy-blue);
+  color: var(--white);
+  /* Padding'i artırın (örn: 1rem 2rem yerine 2.5rem 3rem) */
+  padding: 3rem 32rem; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  /* Font boyutunu isteğinize göre ayarlayın, 3rem oldukça büyük */
+  font-size: 2rem; 
+}
+
+.dashboard-header button {
+  background: none;
+  border: 1px solid var(--white);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 1rem;
+}
+
+.dashboard-header button.refresh-btn {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.dashboard-header button.refresh-btn:hover {
+  background-color: var(--accent-blue);
+  color: var(--white);
+}
+
+.dashboard-header button.logout-btn:hover {
+  background-color: var(--white);
+  color: var(--navy-blue);
+}
+
+.dashboard-header button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* --- 2. Siyah Navigasyon Çubuğu --- */
+.dashboard-nav {
+  background-color: var(--dark-header);
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #333;
+}
+
+.nav-tab {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-tab:hover {
+  background-color: #222;
+}
+
+.nav-tab.active {
+  color: var(--white);
+  border-bottom-color: var(--accent-blue);
+}
+
+/* --- 3. Ana İçerik Alanı --- */
+.dashboard-main {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --- SEKME 1: Görev Listesi --- */
+.task-list-view {
+  width: 100%;
+}
+
+/* Hızlı Ekleme Formu */
+.quick-add-form {
+  display: flex;
+  margin-bottom: 2rem;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.quick-add-form input[type="text"] {
+  flex-grow: 1;
+  border: none;
+  padding: 1rem;
+  font-size: 1rem;
+  outline: none;
+}
+
+.quick-add-form button {
+  background-color: var(--accent-blue);
+  color: var(--white);
+  border: none;
+  padding: 0 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.quick-add-form button:hover {
+  background-color: #0056b3;
+}
+
+.quick-add-form button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+/* Görev Listesi */
+.tasks-list-container {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s;
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+.task-item.updating {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.task-item.done .task-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task-title {
+  margin-left: 0.75rem;
+  font-size: 1rem;
+}
+
+/* Özel Checkbox Stili (Görevler için) */
+.task-checkbox-wrap {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  user-select: none;
+}
+
+.task-checkbox-wrap input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkbox-ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #eee;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.task-checkbox-wrap:hover input ~ .checkbox-ui {
+  background-color: #ccc;
+}
+
+.task-checkbox-wrap input:checked ~ .checkbox-ui {
+  background-color: var(--success-green);
+  border-color: var(--success-green);
+}
+
+.checkbox-ui:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.task-checkbox-wrap input:checked ~ .checkbox-ui:after {
+  display: block;
+}
+
+
+/* --- SEKME 2: Yeni Görev Atama Formu --- */
+.assign-task-view {
+  display: flex;
+  justify-content: center;
+}
+
+.modern-form {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 600px;
+}
+
+.modern-form h2 {
+  text-align: center;
+  color: var(--navy-blue);
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  box-sizing: border-box; /* Önemli */
+  outline-color: var(--accent-blue);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Yan yana form elemanları için */
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.submit-task-btn {
+  width: 100%;
+  padding: 0.85rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--navy-blue);
+  color: var(--white);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-task-btn:hover:not(:disabled) {
+  background-color: #003a75;
+}
+
+.submit-task-btn:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
