@@ -110,10 +110,15 @@ WSGI_APPLICATION = 'giga_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'giga_db',
+        'USER': 'giga_user',
+        'PASSWORD': 'gigaAYBU',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation
