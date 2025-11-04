@@ -1,7 +1,6 @@
 # giga
 an task managment app
-
-
-
-
-merhaba hasan
+Bugra
+bugra kesli buradaydı
+merhabaa
+main
