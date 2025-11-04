@@ -1,8 +1,11 @@
-# urls.py
-from django.urls import path
-from .views import task_list, task_detail
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import MissionViewSet, UserViewSet
+
+router = DefaultRouter()
+router.register(r'missions', MissionViewSet, basename='mission')
+router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = [
-    path('missions/', task_list, name='task_list'),
-    path('missions/<int:pk>/', task_detail, name='task_detail'),
+    path('', include(router.urls)),
 ]
