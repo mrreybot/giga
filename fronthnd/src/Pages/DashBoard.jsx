@@ -2,169 +2,328 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../src/services/api";
 import { ACCESS_TOKEN } from "../../src/services/constant";
-// CSS dosyasını import ediyoruz (içeriği aşağıda verilecek)
-import "../styles/Dashboard.css"; 
+import "../styles/Dashboard.css";
 
-const TASKS_ENDPOINT = "/api/tasks/";
+const MISSIONS_ENDPOINT = "/api/missions/";
+const USERS_ENDPOINT = "/api/users/assignable_users/";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState([]);
-  const [newText, setNewText] = useState("");
+  const [missions, setMissions] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
-  // Hangi sekmenin aktif olduğunu tutmak için yeni state
-  const [activeTab, setActiveTab] = useState('list'); // 'list' veya 'assign'
+  const [activeTab, setActiveTab] = useState('list');
 
-  // --- Orijinal Fonksiyonlar (Değişiklik Yok) ---
+  const [formData, setFormData] = useState({
+    description: '',
+    assigned_date: '',
+    end_date: '',
+    from_to: '',
+    due_to: []
+  });
 
-  const attachAuth = () => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (token) api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    else delete api.defaults.headers.common["Authorization"];
-  };
-
+  // === INITIALIZATION ===
   useEffect(() => {
-    attachAuth();
-    fetchTasks();
+    console.log("🚀 Dashboard mounted - Loading data...");
+    loadDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchTasks = async () => {
-    setLoading(true);
+  const loadDashboardData = async () => {
     try {
-      const res = await api.get(TASKS_ENDPOINT);
-      setTasks(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error("Failed to fetch tasks:", err);
+      await fetchMissions();
+      await fetchUsers();
+    } catch (error) {
+      console.error("❌ Failed to load dashboard data:", error);
+    }
+  };
+
+  // === FETCH MISSIONS ===
+  const fetchMissions = async () => {
+    setLoading(true);
+    console.log("📥 Fetching missions from:", MISSIONS_ENDPOINT);
+    
+    try {
+      const response = await api.get(MISSIONS_ENDPOINT);
+      
+      console.log("✅ Missions fetched successfully:", response.data);
+      // API paginated response dönüyor, results'dan görevleri al
+      setMissions(Array.isArray(response.data.results) ? response.data.results : []);
+      
+    } catch (error) {
+      console.error("❌ Failed to fetch missions:", error);
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
+      
+      alert(`Görevler yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
+  // === FETCH USERS ===
+  const fetchUsers = async () => {
+    console.log("📥 Fetching users from:", USERS_ENDPOINT);
+    
+    try {
+      const response = await api.get(USERS_ENDPOINT);
+      
+      console.log("✅ Users fetched successfully:", response.data);
+      setUsers(Array.isArray(response.data) ? response.data : []);
+      
+    } catch (error) {
+      console.error("❌ Failed to fetch users:", error);
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
+      
+      alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+    }
+  };
+
+  // === LOGOUT ===
   const handleLogout = () => {
+    console.log("👋 Logging out...");
     localStorage.removeItem(ACCESS_TOKEN);
     navigate("/");
   };
 
-  // Bu fonksiyon SADECE "Görev Listesi" sekmesindeki hızlı ekleme formunu yönetir
-  const handleAddTask = async (e) => {
+  // === FORM HANDLERS ===
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleUserSelection = (userId) => {
+    setFormData(prev => {
+      const isSelected = prev.due_to.includes(userId);
+      return {
+        ...prev,
+        due_to: isSelected
+          ? prev.due_to.filter(id => id !== userId)
+          : [...prev.due_to, userId]
+      };
+    });
+  };
+
+  // === CREATE MISSION ===
+  const handleSubmitMission = async (e) => {
     e.preventDefault();
-    const title = newText.trim();
-    if (!title) return;
+    
+    // Validasyon
+    if (!formData.description.trim()) {
+      alert("Lütfen açıklama giriniz!");
+      return;
+    }
+    if (!formData.assigned_date || !formData.end_date) {
+      alert("Lütfen tarih aralığı seçiniz!");
+      return;
+    }
+    if (formData.due_to.length === 0) {
+      alert("Lütfen en az bir kullanıcı seçiniz!");
+      return;
+    }
+
     setSaving(true);
-
-    const tempId = `temp-${Date.now()}`;
-    const tempTask = { id: tempId, title, completed: false, isTemp: true, isUpdating: true };
-    setTasks((t) => [tempTask, ...t]);
-    setNewText("");
-
+    console.log("📤 Submitting mission:", formData);
+    
     try {
-      const res = await api.post(TASKS_ENDPOINT, { title });
-      setTasks((prev) =>
-        prev.map((tk) => (tk.id === tempId ? { ...res.data } : tk))
-      );
-    } catch (err) {
-      console.error("Create task failed:", err);
-      setTasks((prev) => prev.filter((tk) => tk.id !== tempId));
+      const response = await api.post(MISSIONS_ENDPOINT, formData);
+      
+      console.log("✅ Mission created successfully:", response.data);
+      alert("Görev başarıyla oluşturuldu!");
+      
+      // Formu temizle
+      setFormData({
+        description: '',
+        assigned_date: '',
+        end_date: '',
+        from_to: '',
+        due_to: []
+      });
+      
+      // Görevleri yenile
+      await fetchMissions();
+      
+      // Liste sekmesine geç
+      setActiveTab('list');
+      
+    } catch (error) {
+      console.error("❌ Failed to create mission:", error);
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
+      
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.message ||
+                          error.message;
+      
+      alert(`Görev oluşturulurken hata oluştu!\n${errorMessage}`);
+      
     } finally {
       setSaving(false);
     }
   };
 
-  const toggleDone = async (task) => {
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === task.id ? { ...t, completed: !t.completed, isUpdating: true } : t
+  // === TOGGLE COMPLETE ===
+  const toggleComplete = async (mission) => {
+    console.log("🔄 Toggling mission completion:", mission.id);
+    
+    // Optimistic update
+    setMissions(prev =>
+      prev.map(m =>
+        m.id === mission.id ? { ...m, completed: !m.completed, isUpdating: true } : m
       )
     );
 
     try {
-      await api.patch(`${TASKS_ENDPOINT}${task.id}/`, { completed: !task.completed });
-      setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, isUpdating: false } : t)));
-    } catch (err) {
-      console.error("Toggle failed, reverting:", err);
-      setTasks((prev) =>
-        prev.map((t) => (t.id === task.id ? { ...t, completed: task.completed, isUpdating: false } : t))
+      const response = await api.patch(
+        `${MISSIONS_ENDPOINT}${mission.id}/toggle_complete/`
       );
+      
+      console.log("✅ Mission toggled successfully:", response.data);
+      
+      setMissions(prev => 
+        prev.map(m => (m.id === mission.id ? { ...m, isUpdating: false } : m))
+      );
+      
+    } catch (error) {
+      console.error("❌ Failed to toggle mission:", error);
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
+      
+      // Revert the change
+      setMissions(prev =>
+        prev.map(m => 
+          m.id === mission.id 
+            ? { ...m, completed: mission.completed, isUpdating: false } 
+            : m
+        )
+      );
+      
+      alert("Görev durumu güncellenemedi!");
     }
   };
 
-  // --- YENİ RENDER (Görünüm) ---
+  // === HELPERS ===
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('tr-TR');
+  };
+
+  const formatUserName = (user) => {
+    return user.full_name || user.username;
+  };
 
   return (
     <div className="modern-dashboard">
-      {/* 1. Lacivert Üst Kısım */}
+      {/* Header */}
       <header className="dashboard-header">
         <h1>Görev Paneli</h1>
         <div>
-          <button className="refresh-btn" onClick={fetchTasks} disabled={loading}>
-            {loading ? "Yenileniyor..." : "Yenile"}
+          <button className="refresh-btn" onClick={fetchMissions} disabled={loading}>
+            {loading ? "Yenileniyor..." : "🔄 Yenile"}
           </button>
           <button onClick={handleLogout} className="logout-btn">
-            Çıkış Yap
+            👋 Çıkış Yap
           </button>
         </div>
       </header>
 
-      {/* 2. Sekme Navigasyonu (Siyah) */}
+      {/* Tabs */}
       <nav className="dashboard-nav">
         <button
           className={`nav-tab ${activeTab === 'list' ? 'active' : ''}`}
           onClick={() => setActiveTab('list')}
         >
-          Görev Listesi
+          📋 Görevlerim ({missions.length})
         </button>
         <button
           className={`nav-tab ${activeTab === 'assign' ? 'active' : ''}`}
           onClick={() => setActiveTab('assign')}
         >
-          Yeni Görev Ata
+          ➕ Yeni Görev Ata
         </button>
       </nav>
 
-      {/* 3. Ana İçerik Alanı */}
+      {/* Main Content */}
       <main className="dashboard-main">
         
-        {/* SEKME 1: Görev Listesi (Fonksiyonel) */}
+        {/* SEKME 1: Görev Listesi */}
         {activeTab === 'list' && (
           <div className="task-list-view">
-            {/* Orijinal Hızlı Ekleme Formu (Stili güncellendi) */}
-            <form className="quick-add-form" onSubmit={handleAddTask}>
-              <input
-                type="text"
-                placeholder="Hızlı yeni görev başlığı..."
-                value={newText}
-                onChange={(e) => setNewText(e.target.value)}
-              />
-              <button type="submit" disabled={!newText.trim() || saving}>
-                {saving ? "Ekleniyor..." : "Ekle"}
-              </button>
-            </form>
-
-            {/* Orijinal Görev Listesi (Stili güncellendi) */}
-            <div className="tasks-list-container">
+            <div className="missions-list-container">
               {loading ? (
-                <div className="empty-state">Görevler yükleniyor...</div>
-              ) : tasks.length === 0 ? (
-                <div className="empty-state">Henüz görev yok.</div>
+                <div className="empty-state">
+                  <div className="spinner">⏳</div>
+                  Görevler yükleniyor...
+                </div>
+              ) : missions.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">📭</div>
+                  Size atanmış görev bulunmamaktadır.
+                </div>
               ) : (
-                tasks.map((task) => (
+                missions.map((mission) => (
                   <div
-                    key={task.id}
-                    className={`task-item ${task.completed ? "done" : ""} ${task.isUpdating ? "updating" : ""}`}
+                    key={mission.id}
+                    className={`mission-card ${mission.completed ? "completed" : ""} ${mission.isUpdating ? "updating" : ""}`}
                   >
-                    <label className="task-checkbox-wrap">
-                      <input
-                        type="checkbox"
-                        checked={!!task.completed}
-                        onChange={() => toggleDone(task)}
-                        disabled={task.isUpdating}
-                      />
-                      <span className="checkbox-ui" />
-                    </label>
-                    <span className="task-title">{task.title}</span>
+                    <div className="mission-header">
+                      <label className="task-checkbox-wrap">
+                        <input
+                          type="checkbox"
+                          checked={!!mission.completed}
+                          onChange={() => toggleComplete(mission)}
+                          disabled={mission.isUpdating}
+                        />
+                        <span className="checkbox-ui" />
+                      </label>
+                      <div className="mission-dates">
+                        <span className="date-badge">
+                          📅 {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
+                        </span>
+                        {mission.completed && (
+                          <span className="completed-badge">✓ Tamamlandı</span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="mission-body">
+                      <p className="mission-description">
+                        {mission.description || "Açıklama yok"}
+                      </p>
+                      
+                      {mission.from_to && (
+                        <p className="mission-location">
+                          📍 {mission.from_to}
+                        </p>
+                      )}
+                      
+                      {mission.assigned_users && mission.assigned_users.length > 0 && (
+                        <div className="assigned-users">
+                          <strong>👥 Atanan Kişiler:</strong>
+                          <div className="user-tags">
+                            {mission.assigned_users.map(user => (
+                              <span key={user.id} className="user-tag">
+                                👤 {formatUserName(user)}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {mission.created_by_info && (
+                        <div className="mission-creator">
+                          <small>
+                            Oluşturan: <strong>{formatUserName(mission.created_by_info)}</strong>
+                          </small>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))
               )}
@@ -172,40 +331,106 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* SEKME 2: Yeni Görev Atama (Görsel Arayüz) */}
+        {/* SEKME 2: Yeni Görev Atama */}
         {activeTab === 'assign' && (
           <div className="assign-task-view">
-            <form className="modern-form" onSubmit={(e) => e.preventDefault()}>
-              <h2>Detaylı Görev Oluştur</h2>
+            <form className="modern-form" onSubmit={handleSubmitMission}>
+              <h2>✍️ Detaylı Görev Oluştur</h2>
               
               <div className="form-group">
-                <label htmlFor="desc">Description (Açıklama)</label>
-                <textarea id="desc" rows="4" placeholder="Görevin detayları... (Bu form şu an görseldir)"></textarea>
+                <label htmlFor="desc">Açıklama *</label>
+                <textarea 
+                  id="desc"
+                  name="description"
+                  rows="5" 
+                  placeholder="Görevin detaylarını yazınız..."
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="date">Başlangıç Tarihi</label>
-                  <input type="date" id="date" />
+                  <label htmlFor="assigned_date">Başlangıç Tarihi *</label>
+                  <input 
+                    type="date" 
+                    id="assigned_date"
+                    name="assigned_date"
+                    value={formData.assigned_date}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="deadline">Son Teslim Tarihi</label>
-                  <input type="date" id="deadline" />
+                  <label htmlFor="end_date">Bitiş Tarihi *</label>
+                  <input 
+                    type="date" 
+                    id="end_date"
+                    name="end_date"
+                    value={formData.end_date}
+                    onChange={handleInputChange}
+                    min={formData.assigned_date}
+                    required
+                  />
                 </div>
               </div>
 
               <div className="form-group">
-                <label htmlFor="assignee">Kime</label>
-                <select id="assignee">
-                  <option value="">Seçiniz...</option>
-                  <option value="ali">Ali Yılmaz</option>
-                  <option value="veli">Veli Kaya</option>
-                  <option value="ayse">Ayşe Demir</option>
-                </select>
+                <label htmlFor="from_to">Konum / Rota (Opsiyonel)</label>
+                <input 
+                  type="text" 
+                  id="from_to"
+                  name="from_to"
+                  placeholder="Örn: Ankara - İstanbul"
+                  value={formData.from_to}
+                  onChange={handleInputChange}
+                />
               </div>
 
-              <button type="submit" className="submit-task-btn" disabled>
-                Görevi Ata (Devre Dışı)
+              <div className="form-group">
+                <label>
+                  Atanacak Kullanıcılar * 
+                  <span className="selection-count">
+                    ({formData.due_to.length} kişi seçildi)
+                  </span>
+                </label>
+                <div className="user-selection-grid">
+                  {users.length === 0 ? (
+                    <p className="text-muted">⏳ Kullanıcılar yükleniyor...</p>
+                  ) : (
+                    users.map(user => (
+                      <label key={user.id} className="user-checkbox-card">
+                        <input
+                          type="checkbox"
+                          checked={formData.due_to.includes(user.id)}
+                          onChange={() => handleUserSelection(user.id)}
+                        />
+                        <div className="user-info">
+                          <strong>
+                            {user.first_name && user.last_name 
+                              ? `${user.first_name} ${user.last_name}`
+                              : user.username}
+                          </strong>
+                          {user.unvan && (
+                            <span className="user-unvan">
+                              🏷️ {user.unvan}
+                            </span>
+                          )}
+                          <small>{user.email}</small>
+                        </div>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className="submit-task-btn"
+                disabled={saving || formData.due_to.length === 0}
+              >
+                {saving ? "⏳ Görev Oluşturuluyor..." : "✅ Görevi Ata"}
               </button>
             </form>
           </div>
