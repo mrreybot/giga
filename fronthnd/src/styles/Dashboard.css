@@ -1,14 +1,14 @@
-/* --- Global ve Renk Ayarları --- */
+
 :root {
-  --navy-blue: #001f3f; /* Lacivert */
-  --dark-header: #111111; /* Siyah (Navigasyon için) */
-  --light-bg: #f4f7f6;   /* Çok açık gri/beyaz arka plan */
+  --navy-blue: #001f3f; 
+  --dark-header: #111111; 
+  --light-bg: #f4f7f6;   
   --white: #ffffff;
   --text-dark: #333;
   --text-light: #f1f1f1;
   --text-muted: #777;
   --border-color: #ddd;
-  --accent-blue: #007bff; /* Vurgu mavisi */
+  --accent-blue: #007bff; 
   --success-green: #28a745;
 }
 
@@ -26,11 +26,11 @@ body {
 }
 
 
-/* --- 1. Lacivert Üst Kısım --- */
+
 .dashboard-header {
   background-color: var(--navy-blue);
   color: var(--white);
-  /* Padding'i artırın (örn: 1rem 2rem yerine 2.5rem 3rem) */
+  
   padding: 3rem 32rem; 
   display: flex;
   justify-content: space-between;
@@ -497,4 +497,85 @@ body {
     box-shadow: none;
     border: 1px solid #ddd;
   }
+}
+
+.filter-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.clear-filters-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.clear-filters-btn:hover {
+  background: #d32f2f;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.filter-select,
+.filter-input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.filter-results {
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.results-count {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
 }
