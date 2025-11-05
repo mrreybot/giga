@@ -25,7 +25,7 @@ const LoginPage = () => {
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
-      console.log("Login successful:", res.data);
+      console.log("Giriş başarılı:", res.data);
       navigate("/dashboard");
     } catch (error) {
       alert(error);
@@ -45,7 +45,7 @@ const LoginPage = () => {
       setRegName("");
       setRegEmail("");
       setRegPassword("");
-      navigate("/login");
+      console.log("Kayıt başarılı    Giriş yapabilirsiniz! ");
     } catch (error) {
       alert(error);
     }
@@ -55,8 +55,8 @@ const LoginPage = () => {
     <div className="login-container">
       <div className={`login-card transition-transform duration-500 ${isRegister ? "-translate-x-full" : "translate-x-0"}`}>
         {/* LOGIN PANEL */}
-        <h2>Welcome Back 👋</h2>
-        <p className="subtitle">Sign in to continue</p>
+        <h2>Hoşgeldiniz 👋</h2>
+        <p className="subtitle">Görevlerinize erişmek için giriş yapın</p>
 
         <form onSubmit={handleLogin}>
           <label>Email</label>
@@ -83,14 +83,14 @@ const LoginPage = () => {
 
       {/* REGISTER PANEL */}
       <div className={`login-card absolute top-0 left-0 transition-transform duration-500 ${isRegister ? "translate-x-0" : "translate-x-full"}`}>
-        <h2>Create Account</h2>
-        <p className="subtitle">Sign up to start managing tasks</p>
+        <h2>Hesabınızı oluşturaljım</h2>
+        <p className="subtitle">Devam etmek için kayıt olun</p>
 
         <form onSubmit={handleRegister}>
           <label>Name</label>
           <input
             type="text"
-            placeholder="Your Name"
+            placeholder="kullanıcı adı"
             value={regName}
             onChange={(e) => setRegName(e.target.value)}
             required
@@ -118,21 +118,22 @@ const LoginPage = () => {
         </form>
 
         <p className="login-footer mt-4 text-center">
-          Already have an account? 
-          <button className="text-blue-600 ml-1 font-semibold" onClick={() => setIsRegister(false)}>Login</button>
+          
         </p>
       </div>
 
-      {/* Sağ taraf görsel kısmı */}
+      { /* slide yapcam burayı */}
       <div className="login-side">
-        <h1>Task Manager</h1>
-        <p>Organize your work efficiently and boost productivity 📈</p>
-        <button
+        <h1>Görev Yönetimi</h1>
+        <p>Şirketinizi tek bir platformdan kontrol edin 📈</p>
+
+        {/*<button
           className="mt-6 px-4 py-2 bg-white text-blue-600 font-semibold rounded shadow hover:bg-gray-200 transition-all"
           onClick={() => setIsRegister(true)}
         >
           Create Account
-        </button>
+        </button>*/}
+        <p>Her tıklamada düzen, her adımda ilerleme</p>
       </div>
     </div>
   );
