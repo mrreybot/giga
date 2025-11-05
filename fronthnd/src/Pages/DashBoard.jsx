@@ -15,6 +15,15 @@ const Dashboard = () => {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('list');
 
+  // Filtre durumları
+  const [filters, setFilters] = useState({
+    status: 'all', // all, completed, pending
+    searchText: '',
+    selectedUser: 'all',
+    dateFrom: '',
+    dateTo: ''
+  });
+
   const [formData, setFormData] = useState({
     description: '',
     assigned_date: '',
@@ -48,7 +57,6 @@ const Dashboard = () => {
       const response = await api.get(MISSIONS_ENDPOINT);
       
       console.log("✅ Missions fetched successfully:", response.data);
-      // API paginated response dönüyor, results'dan görevleri al
       setMissions(Array.isArray(response.data.results) ? response.data.results : []);
       
     } catch (error) {
@@ -79,6 +87,71 @@ const Dashboard = () => {
       
       alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
     }
+  };
+
+  // === FILTER LOGIC ===
+  const filteredMissions = missions.filter(mission => {
+    // Durum filtresi
+    if (filters.status === 'completed' && !mission.completed) return false;
+    if (filters.status === 'pending' && mission.completed) return false;
+
+    // Metin arama
+    if (filters.searchText) {
+      const searchLower = filters.searchText.toLowerCase();
+      const descMatch = mission.description?.toLowerCase().includes(searchLower);
+      const locationMatch = mission.from_to?.toLowerCase().includes(searchLower);
+      const creatorMatch = formatUserName(mission.created_by_info)?.toLowerCase().includes(searchLower);
+      
+      if (!descMatch && !locationMatch && !creatorMatch) return false;
+    }
+
+    // Kullanıcı filtresi
+    if (filters.selectedUser !== 'all') {
+      const hasUser = mission.assigned_users?.some(u => u.id === parseInt(filters.selectedUser));
+      if (!hasUser) return false;
+    }
+
+    // Tarih filtresi (başlangıç)
+    if (filters.dateFrom) {
+      const missionDate = new Date(mission.assigned_date);
+      const filterDate = new Date(filters.dateFrom);
+      if (missionDate < filterDate) return false;
+    }
+
+    // Tarih filtresi (bitiş)
+    if (filters.dateTo) {
+      const missionDate = new Date(mission.end_date);
+      const filterDate = new Date(filters.dateTo);
+      if (missionDate > filterDate) return false;
+    }
+
+    return true;
+  });
+
+  // === FILTER HANDLERS ===
+  const handleFilterChange = (name, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      status: 'all',
+      searchText: '',
+      selectedUser: 'all',
+      dateFrom: '',
+      dateTo: ''
+    });
+  };
+
+  const hasActiveFilters = () => {
+    return filters.status !== 'all' || 
+           filters.searchText !== '' || 
+           filters.selectedUser !== 'all' ||
+           filters.dateFrom !== '' ||
+           filters.dateTo !== '';
   };
 
   // === LOGOUT ===
@@ -113,7 +186,6 @@ const Dashboard = () => {
   const handleSubmitMission = async (e) => {
     e.preventDefault();
     
-    // Validasyon
     if (!formData.description.trim()) {
       alert("Lütfen açıklama giriniz!");
       return;
@@ -136,7 +208,6 @@ const Dashboard = () => {
       console.log("✅ Mission created successfully:", response.data);
       alert("Görev başarıyla oluşturuldu!");
       
-      // Formu temizle
       setFormData({
         description: '',
         assigned_date: '',
@@ -145,10 +216,7 @@ const Dashboard = () => {
         due_to: []
       });
       
-      // Görevleri yenile
       await fetchMissions();
-      
-      // Liste sekmesine geç
       setActiveTab('list');
       
     } catch (error) {
@@ -171,7 +239,6 @@ const Dashboard = () => {
   const toggleComplete = async (mission) => {
     console.log("🔄 Toggling mission completion:", mission.id);
     
-    // Optimistic update
     setMissions(prev =>
       prev.map(m =>
         m.id === mission.id ? { ...m, completed: !m.completed, isUpdating: true } : m
@@ -191,10 +258,7 @@ const Dashboard = () => {
       
     } catch (error) {
       console.error("❌ Failed to toggle mission:", error);
-      console.error("Error status:", error.response?.status);
-      console.error("Error data:", error.response?.data);
       
-      // Revert the change
       setMissions(prev =>
         prev.map(m => 
           m.id === mission.id 
@@ -215,6 +279,7 @@ const Dashboard = () => {
   };
 
   const formatUserName = (user) => {
+    if (!user) return '';
     return user.full_name || user.username;
   };
 
@@ -255,19 +320,110 @@ const Dashboard = () => {
         {/* SEKME 1: Görev Listesi */}
         {activeTab === 'list' && (
           <div className="task-list-view">
+            {/* Filtre Paneli */}
+            <div className="filter-panel">
+              <div className="filter-header">
+                <h3>🔍 Filtrele</h3>
+                {hasActiveFilters() && (
+                  <button className="clear-filters-btn" onClick={clearFilters}>
+                    ✕ Filtreleri Temizle
+                  </button>
+                )}
+              </div>
+
+              <div className="filter-grid">
+                {/* Durum Filtresi */}
+                <div className="filter-group">
+                  <label>Durum</label>
+                  <select 
+                    value={filters.status}
+                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="all">Tümü ({missions.length})</option>
+                    <option value="pending">Devam Eden ({missions.filter(m => !m.completed).length})</option>
+                    <option value="completed">Tamamlanan ({missions.filter(m => m.completed).length})</option>
+                  </select>
+                </div>
+
+                {/* Metin Arama */}
+                <div className="filter-group">
+                  <label>Arama</label>
+                  <input
+                    type="text"
+                    placeholder="Açıklama, konum veya oluşturan..."
+                    value={filters.searchText}
+                    onChange={(e) => handleFilterChange('searchText', e.target.value)}
+                    className="filter-input"
+                  />
+                </div>
+
+                {/* Kullanıcı Filtresi */}
+                <div className="filter-group">
+                  <label>Atanan Kişi</label>
+                  <select
+                    value={filters.selectedUser}
+                    onChange={(e) => handleFilterChange('selectedUser', e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="all">Tüm Kullanıcılar</option>
+                    {users.map(user => (
+                      <option key={user.id} value={user.id}>
+                        {formatUserName(user) || user.username}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Tarih Aralığı */}
+                <div className="filter-group">
+                  <label>Başlangıç Tarihi</label>
+                  <input
+                    type="date"
+                    value={filters.dateFrom}
+                    onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
+                    className="filter-input"
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <label>Bitiş Tarihi</label>
+                  <input
+                    type="date"
+                    value={filters.dateTo}
+                    onChange={(e) => handleFilterChange('dateTo', e.target.value)}
+                    className="filter-input"
+                  />
+                </div>
+              </div>
+
+              {/* Sonuç Sayısı */}
+              <div className="filter-results">
+                <span className="results-count">
+                  {filteredMissions.length} görev gösteriliyor
+                  {hasActiveFilters() && ` (${missions.length} toplam)`}
+                </span>
+              </div>
+            </div>
+
+            {/* Görev Listesi */}
             <div className="missions-list-container">
               {loading ? (
                 <div className="empty-state">
                   <div className="spinner">⏳</div>
                   Görevler yükleniyor...
                 </div>
-              ) : missions.length === 0 ? (
+              ) : filteredMissions.length === 0 ? (
                 <div className="empty-state">
-                  <div className="empty-icon">📭</div>
-                  Size atanmış görev bulunmamaktadır.
+                  <div className="empty-icon">
+                    {hasActiveFilters() ? '🔍' : '📭'}
+                  </div>
+                  {hasActiveFilters() 
+                    ? 'Filtrelere uygun görev bulunamadı.'
+                    : 'Size atanmış görev bulunmamaktadır.'}
                 </div>
               ) : (
-                missions.map((mission) => (
+                filteredMissions.map((mission) => (
                   <div
                     key={mission.id}
                     className={`mission-card ${mission.completed ? "completed" : ""} ${mission.isUpdating ? "updating" : ""}`}
