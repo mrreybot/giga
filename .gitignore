@@ -1,1 +1,27 @@
 node_modules/
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.so
+
+# SQLite database
+*.sqlite3
+
+# Virtual environments
+venv/
+env/
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# Django static and media files
+/static/
+/media/
+
+# OS files
+.DS_Store
+Thumbs.db
