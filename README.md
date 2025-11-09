@@ -1,5 +1,5 @@
 # giga
-an task managment app
+a task managment app
 Bugra
 bugra kesli buradaydı
 merhabaa
