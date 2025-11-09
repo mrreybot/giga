@@ -90,7 +90,7 @@ form input:focus {
 
 /* Sağ taraf görselli alan */
 .login-side {
-  width: 55%;
+  width: 65%;
   background: linear-gradient(135deg, #4a57ff, #7647ff);
   color: #fff;
   display: flex;
@@ -109,6 +109,20 @@ form input:focus {
   font-size: 20px;
   max-width: 380px;
   opacity: 0.9;
+}
+.login-side {
+  animation: slideInFromLeft 0.8s ease-out;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* 📱 Mobile uyum */
