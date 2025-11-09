@@ -29,7 +29,8 @@ const Dashboard = () => {
     assigned_date: '',
     end_date: '',
     from_to: '',
-    due_to: []
+    due_to: [],
+    attachments: []
   });
 
   // === INITIALIZATION ===
@@ -213,7 +214,8 @@ const Dashboard = () => {
         assigned_date: '',
         end_date: '',
         from_to: '',
-        due_to: []
+        due_to: [],
+        attachments: [],
       });
       
       await fetchMissions();
@@ -479,6 +481,27 @@ const Dashboard = () => {
                           </small>
                         </div>
                       )}
+                      {/* Ekler / Dosyalar */}
+                      {mission.attachments && mission.attachments.length > 0 && (
+                        <div className="mission-attachments">
+                          <strong>📎 Ekler:</strong>
+                          <ul className="attachment-list">
+                            {mission.attachments.map((file) => (
+                              <li key={file.id}>
+                                <a
+                                  href={file.file}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  {file.file.split("/").pop()}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
                     </div>
                   </div>
                 ))
@@ -543,6 +566,31 @@ const Dashboard = () => {
                   onChange={handleInputChange}
                 />
               </div>
+
+              <div className="form-group">
+
+                <label htmlFor="attachments">Dosya Ekle (Opsiyonel)</label>
+                <input
+                  type="file"
+                  id="attachments"
+                  name="attachments"
+                  multiple // birden fazla dosya seçilebilir
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      attachments: Array.from(e.target.files)
+                    }))
+                  }
+                />
+                {formData.attachments.length > 0 && (
+                  <ul className="attachment-list">
+                    {formData.attachments.map((file, index) => (
+                      <li key={index}>📎 {file.name}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
 
               <div className="form-group">
                 <label>
