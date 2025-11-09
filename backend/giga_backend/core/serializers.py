@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Mission
+from .models import CustomUser, Mission,MissionAttachment
 
 # ---------------------------
 # CustomUser Serializer
@@ -26,11 +26,22 @@ class CustomUserSerializer(serializers.ModelSerializer):
         )
         return user
 
+class MissionAttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MissionAttachment
+        fields = ['id', 'file', 'uploaded_at']
 # ---------------------------
 # Mission Serializer
 # ---------------------------
 class MissionSerializer(serializers.ModelSerializer):
     # Okuma sırasında kullanıcı detaylarını göster
+    attachments = MissionAttachmentSerializer(many=True, read_only=True)
+    new_attachments = serializers.ListField(
+        child=serializers.FileField(),
+        write_only=True,
+        required=False
+    )
+
     due_to_details = CustomUserSerializer(source='due_to', many=True, read_only=True)
     created_by_details = CustomUserSerializer(source='created_by', read_only=True)
     
@@ -51,41 +62,39 @@ class MissionSerializer(serializers.ModelSerializer):
             'end_date',
             'from_to',
             'due_to',  # Yazma için
-            'due_to_details',  # Okuma için
+            'due_to_details',
+            'attachments',  # Okuma için
             'created_by',
             'created_by_details',
             'completed',
             'created_at',
-            'updated_at'
+            'updated_at',
+            'attachments',
+            'new_attachments'       
+               
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'created_by']
     
     def create(self, validated_data):
-        # due_to listesini çıkar
         due_to_users = validated_data.pop('due_to', [])
-        
-        # Mission'ı oluştur
+        new_files = validated_data.pop('new_attachments', [])
         mission = Mission.objects.create(**validated_data)
-        
-        # Kullanıcıları ekle
         if due_to_users:
             mission.due_to.set(due_to_users)
-        
+        for f in new_files:
+            MissionAttachment.objects.create(mission=mission, file=f)
         return mission
     
     def update(self, instance, validated_data):
-        # due_to güncellemesi
         due_to_users = validated_data.pop('due_to', None)
-        
-        # Diğer alanları güncelle
+        new_files = validated_data.pop('new_attachments', [])
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
-        
-        # Kullanıcıları güncelle
         if due_to_users is not None:
             instance.due_to.set(due_to_users)
-        
+        for f in new_files:
+            MissionAttachment.objects.create(mission=instance, file=f)
         return instance
     
     def to_representation(self, instance):
@@ -96,3 +105,11 @@ class MissionSerializer(serializers.ModelSerializer):
         representation['created_by_info'] = representation.pop('created_by_details', None)
         representation.pop('due_to', None)  # Write-only field'ı kaldır
         return representation
+    
+
+from .models import MissionAttachment
+
+class MissionAttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MissionAttachment
+        fields = ['id', 'file', 'uploaded_at']
