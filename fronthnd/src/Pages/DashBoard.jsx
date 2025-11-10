@@ -15,9 +15,9 @@ const Dashboard = () => {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('list');
 
-  // Filtre durumları
+  
   const [filters, setFilters] = useState({
-    status: 'all', // all, completed, pending
+    status: 'all', 
     searchText: '',
     selectedUser: 'all',
     dateFrom: '',
@@ -184,58 +184,98 @@ const Dashboard = () => {
   };
 
   // === CREATE MISSION ===
-  const handleSubmitMission = async (e) => {
-    e.preventDefault();
-    
-    if (!formData.description.trim()) {
-      alert("Lütfen açıklama giriniz!");
-      return;
-    }
-    if (!formData.assigned_date || !formData.end_date) {
-      alert("Lütfen tarih aralığı seçiniz!");
-      return;
-    }
-    if (formData.due_to.length === 0) {
-      alert("Lütfen en az bir kullanıcı seçiniz!");
-      return;
-    }
+  // === CREATE MISSION (FIXED VERSION - new_attachments) ===
+const handleSubmitMission = async (e) => {
+  e.preventDefault();
+  
+  if (!formData.description.trim()) {
+    alert("Lütfen açıklama giriniz!");
+    return;
+  }
+  if (!formData.assigned_date || !formData.end_date) {
+    alert("Lütfen tarih aralığı seçiniz!");
+    return;
+  }
+  if (formData.due_to.length === 0) {
+    alert("Lütfen en az bir kullanıcı seçiniz!");
+    return;
+  }
 
-    setSaving(true);
-    console.log("📤 Submitting mission:", formData);
+  setSaving(true);
+  console.log("📤 Submitting mission:", formData);
+  
+  try {
+    // Create FormData to handle file uploads
+    const submitData = new FormData();
     
-    try {
-      const response = await api.post(MISSIONS_ENDPOINT, formData);
-      
-      console.log("✅ Mission created successfully:", response.data);
-      alert("Görev başarıyla oluşturuldu!");
-      
-      setFormData({
-        description: '',
-        assigned_date: '',
-        end_date: '',
-        from_to: '',
-        due_to: [],
-        attachments: [],
-      });
-      
-      await fetchMissions();
-      setActiveTab('list');
-      
-    } catch (error) {
-      console.error("❌ Failed to create mission:", error);
-      console.error("Error status:", error.response?.status);
-      console.error("Error data:", error.response?.data);
-      
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message ||
-                          error.message;
-      
-      alert(`Görev oluşturulurken hata oluştu!\n${errorMessage}`);
-      
-    } finally {
-      setSaving(false);
+    // Add basic fields
+    submitData.append('description', formData.description);
+    submitData.append('assigned_date', formData.assigned_date);
+    submitData.append('end_date', formData.end_date);
+    
+    // Add optional location
+    if (formData.from_to) {
+      submitData.append('from_to', formData.from_to);
     }
-  };
+    
+    // Add each user ID separately
+    formData.due_to.forEach(userId => {
+      submitData.append('due_to', userId);
+    });
+    
+    // ✅ DÜZELTME: Backend'de new_attachments bekleniyor!
+    formData.attachments.forEach(file => {
+      submitData.append('new_attachments', file);
+    });
+    
+    // 🔍 DEBUG: FormData içeriğini görelim
+    console.log("📦 FormData içeriği:");
+    for (let pair of submitData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+    
+    // Send with FormData
+    const response = await api.post(MISSIONS_ENDPOINT, submitData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    });
+    
+    console.log("✅ Mission created successfully:", response.data);
+    alert("Görev başarıyla oluşturuldu!");
+    
+    // Reset form
+    setFormData({
+      description: '',
+      assigned_date: '',
+      end_date: '',
+      from_to: '',
+      due_to: [],
+      attachments: [],
+    });
+    
+    // Clear file input
+    const fileInput = document.getElementById('attachments');
+    if (fileInput) fileInput.value = '';
+    
+    await fetchMissions();
+    setActiveTab('list');
+    
+  } catch (error) {
+    console.error("❌ Failed to create mission:", error);
+    console.error("Error status:", error.response?.status);
+    console.error("Error data:", error.response?.data);
+    
+    const errorMessage = error.response?.data?.detail || 
+                        error.response?.data?.message ||
+                        error.message;
+    
+    alert(`Görev oluşturulurken hata oluştu!\n${errorMessage}`);
+    
+  } finally {
+    setSaving(false);
+  }
+};
 
   // === TOGGLE COMPLETE ===
   const toggleComplete = async (mission) => {
@@ -427,50 +467,58 @@ const Dashboard = () => {
               ) : (
                 filteredMissions.map((mission) => (
                   <div
-                    key={mission.id}
-                    className={`mission-card ${mission.completed ? "completed" : ""} ${mission.isUpdating ? "updating" : ""}`}
-                  >
-                    <div className="mission-header">
-                      <label className="task-checkbox-wrap">
-                        <input
-                          type="checkbox"
-                          checked={!!mission.completed}
-                          onChange={() => toggleComplete(mission)}
-                          disabled={mission.isUpdating}
-                        />
-                        <span className="checkbox-ui" />
-                      </label>
-                      <div className="mission-dates">
-                        <span className="date-badge">
-                          📅 {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
-                        </span>
-                        {mission.completed && (
-                          <span className="completed-badge">✓ Tamamlandı</span>
-                        )}
-                      </div>
-                    </div>
+                      key={mission.id}
+                      className={`mission-card ${mission.completed ? "completed" : ""} ${mission.isUpdating ? "updating" : ""}`}
+                    >
+                   <div className="mission-header">
+                    <label className="task-checkbox-wrap">
+                      <input
+                        type="checkbox"
+                        checked={!!mission.completed}
+                        onChange={() => toggleComplete(mission)}
+                        disabled={mission.isUpdating}
+                      />
+                         <span className="checkbox-ui" />
+                          </label>
+                          <div className="mission-dates">
+                            <span className="date-badge">
+                              📅 {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
+                            </span>
+                            {mission.completed && (
+                              <span className="completed-badge">✓ Tamamlandı</span>
+                            )}
+                          </div>
+                        </div>
                     
                     <div className="mission-body">
-                      <p className="mission-description">
-                        {mission.description || "Açıklama yok"}
+                    <p className="mission-description">
+                      {mission.description || "Açıklama yok"}
+                    </p>
+                    
+                    {mission.from_to && (
+                      <p className="mission-location">
+                        📍 {mission.from_to}
                       </p>
+                    )}
                       
-                      {mission.from_to && (
-                        <p className="mission-location">
-                          📍 {mission.from_to}
-                        </p>
-                      )}
-                      
-                      {mission.assigned_users && mission.assigned_users.length > 0 && (
-                        <div className="assigned-users">
-                          <strong>👥 Atanan Kişiler:</strong>
-                          <div className="user-tags">
-                            {mission.assigned_users.map(user => (
-                              <span key={user.id} className="user-tag">
-                                👤 {formatUserName(user)}
-                              </span>
+                       {mission.attachments && mission.attachments.length > 0 && (
+                        <div className="mission-attachments">
+                          <strong>📎 Ekler ({mission.attachments.length}):</strong>
+                          <ul className="attachment-list">
+                            {mission.attachments.map((file) => (
+                              <li key={file.id}>
+                                <a
+                                  href={file.file}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="attachment-link"
+                                  download
+                                >
+                                  📄 {file.file.split("/").pop()}
+                                </a>
+                              </li>
                             ))}
-                          </div>
+                          </ul>
                         </div>
                       )}
                       
@@ -481,26 +529,7 @@ const Dashboard = () => {
                           </small>
                         </div>
                       )}
-                      {/* Ekler / Dosyalar */}
-                      {mission.attachments && mission.attachments.length > 0 && (
-                        <div className="mission-attachments">
-                          <strong>📎 Ekler:</strong>
-                          <ul className="attachment-list">
-                            {mission.attachments.map((file) => (
-                              <li key={file.id}>
-                                <a
-                                  href={file.file}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-blue-600 hover:underline"
-                                >
-                                  {file.file.split("/").pop()}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                      
 
                     </div>
                   </div>
