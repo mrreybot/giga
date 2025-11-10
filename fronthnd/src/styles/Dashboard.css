@@ -590,3 +590,66 @@ body {
   list-style: none;
   margin: 2px 0;
 }
+/* Ek Dosyalar Stilleri */
+.mission-attachments {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #4a90e2;
+}
+
+.mission-attachments strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.attachment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.attachment-list li {
+  display: flex;
+  align-items: center;
+}
+
+.attachment-link {
+  color: #4a90e2;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: white;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  word-break: break-all;
+}
+
+.attachment-link:hover {
+  background: #e3f2fd;
+  color: #1976d2;
+  text-decoration: underline;
+}
+
+/* Form için de stil */
+.form-group .attachment-list {
+  margin-top: 8px;
+  padding: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.form-group .attachment-list li {
+  font-size: 13px;
+  color: #555;
+  padding: 4px 0;
+}
