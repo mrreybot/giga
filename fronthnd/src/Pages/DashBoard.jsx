@@ -6,15 +6,17 @@ import "../styles/Dashboard.css";
 
 const MISSIONS_ENDPOINT = "/api/missions/";
 const USERS_ENDPOINT = "/api/users/assignable_users/";
+const ORG_CHART_ENDPOINT = "/api/users/organization_chart/";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [missions, setMissions] = useState([]);
   const [users, setUsers] = useState([]);
+  const [orgChart, setOrgChart] = useState({ CEO: [], MANAGER: [], EMPLOYEE: [] });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('list');
-
+  const [showOrgChart, setShowOrgChart] = useState(false);
   
   const [filters, setFilters] = useState({
     status: 'all', 
@@ -33,9 +35,10 @@ const Dashboard = () => {
     attachments: []
   });
 
+  const [editingMission, setEditingMission] = useState(null);
+
   // === INITIALIZATION ===
   useEffect(() => {
-    console.log("🚀 Dashboard mounted - Loading data...");
     loadDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -44,59 +47,57 @@ const Dashboard = () => {
     try {
       await fetchMissions();
       await fetchUsers();
+      await fetchOrgChart();
     } catch (error) {
       console.error("❌ Failed to load dashboard data:", error);
     }
   };
 
-  // === FETCH MISSIONS ===
   const fetchMissions = async () => {
     setLoading(true);
-    console.log("📥 Fetching missions from:", MISSIONS_ENDPOINT);
-    
     try {
       const response = await api.get(MISSIONS_ENDPOINT);
-      
-      console.log("✅ Missions fetched successfully:", response.data);
       setMissions(Array.isArray(response.data.results) ? response.data.results : []);
-      
     } catch (error) {
       console.error("❌ Failed to fetch missions:", error);
-      console.error("Error status:", error.response?.status);
-      console.error("Error data:", error.response?.data);
-      
       alert(`Görevler yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // === FETCH USERS ===
-  const fetchUsers = async () => {
-    console.log("📥 Fetching users from:", USERS_ENDPOINT);
+ const fetchUsers = async () => {
+  try {
+    console.log("🔍 Fetching users from:", USERS_ENDPOINT);
+    const response = await api.get(USERS_ENDPOINT);
+    console.log("✅ Users response:", response);
+    console.log("📦 Users data:", response.data);
     
+    // Backend'den gelen data formatını kontrol et
+    const userData = response.data.results || response.data;
+    setUsers(Array.isArray(userData) ? userData : []);
+    
+  } catch (error) {
+    console.error("❌ Failed to fetch users:", error);
+    console.error("📍 Error response:", error.response);
+    alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+  }
+};
+
+  const fetchOrgChart = async () => {
     try {
-      const response = await api.get(USERS_ENDPOINT);
-      
-      console.log("✅ Users fetched successfully:", response.data);
-      setUsers(Array.isArray(response.data) ? response.data : []);
-      
+      const response = await api.get(ORG_CHART_ENDPOINT);
+      setOrgChart(response.data);
     } catch (error) {
-      console.error("❌ Failed to fetch users:", error);
-      console.error("Error status:", error.response?.status);
-      console.error("Error data:", error.response?.data);
-      
-      alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+      console.error("❌ Failed to fetch org chart:", error);
     }
   };
 
   // === FILTER LOGIC ===
   const filteredMissions = missions.filter(mission => {
-    // Durum filtresi
     if (filters.status === 'completed' && !mission.completed) return false;
     if (filters.status === 'pending' && mission.completed) return false;
 
-    // Metin arama
     if (filters.searchText) {
       const searchLower = filters.searchText.toLowerCase();
       const descMatch = mission.description?.toLowerCase().includes(searchLower);
@@ -106,20 +107,17 @@ const Dashboard = () => {
       if (!descMatch && !locationMatch && !creatorMatch) return false;
     }
 
-    // Kullanıcı filtresi
     if (filters.selectedUser !== 'all') {
       const hasUser = mission.assigned_users?.some(u => u.id === parseInt(filters.selectedUser));
       if (!hasUser) return false;
     }
 
-    // Tarih filtresi (başlangıç)
     if (filters.dateFrom) {
       const missionDate = new Date(mission.assigned_date);
       const filterDate = new Date(filters.dateFrom);
       if (missionDate < filterDate) return false;
     }
 
-    // Tarih filtresi (bitiş)
     if (filters.dateTo) {
       const missionDate = new Date(mission.end_date);
       const filterDate = new Date(filters.dateTo);
@@ -129,12 +127,8 @@ const Dashboard = () => {
     return true;
   });
 
-  // === FILTER HANDLERS ===
   const handleFilterChange = (name, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFilters(prev => ({ ...prev, [name]: value }));
   };
 
   const clearFilters = () => {
@@ -157,7 +151,6 @@ const Dashboard = () => {
 
   // === LOGOUT ===
   const handleLogout = () => {
-    console.log("👋 Logging out...");
     localStorage.removeItem(ACCESS_TOKEN);
     navigate("/");
   };
@@ -165,10 +158,7 @@ const Dashboard = () => {
   // === FORM HANDLERS ===
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleUserSelection = (userId) => {
@@ -183,104 +173,101 @@ const Dashboard = () => {
     });
   };
 
-  // === CREATE MISSION ===
-  // === CREATE MISSION (FIXED VERSION - new_attachments) ===
-const handleSubmitMission = async (e) => {
-  e.preventDefault();
-  
-  if (!formData.description.trim()) {
-    alert("Lütfen açıklama giriniz!");
-    return;
-  }
-  if (!formData.assigned_date || !formData.end_date) {
-    alert("Lütfen tarih aralığı seçiniz!");
-    return;
-  }
-  if (formData.due_to.length === 0) {
-    alert("Lütfen en az bir kullanıcı seçiniz!");
-    return;
-  }
+  // === CREATE/UPDATE MISSION ===
+  const handleSubmitMission = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.description.trim()) {
+      alert("Lütfen açıklama giriniz!");
+      return;
+    }
+    if (!formData.assigned_date || !formData.end_date) {
+      alert("Lütfen tarih aralığı seçiniz!");
+      return;
+    }
+    if (formData.due_to.length === 0) {
+      alert("Lütfen en az bir kullanıcı seçiniz!");
+      return;
+    }
 
-  setSaving(true);
-  console.log("📤 Submitting mission:", formData);
-  
-  try {
-    // Create FormData to handle file uploads
-    const submitData = new FormData();
+    setSaving(true);
     
-    // Add basic fields
-    submitData.append('description', formData.description);
-    submitData.append('assigned_date', formData.assigned_date);
-    submitData.append('end_date', formData.end_date);
-    
-    // Add optional location
-    if (formData.from_to) {
-      submitData.append('from_to', formData.from_to);
-    }
-    
-    // Add each user ID separately
-    formData.due_to.forEach(userId => {
-      submitData.append('due_to', userId);
-    });
-    
-    // ✅ DÜZELTME: Backend'de new_attachments bekleniyor!
-    formData.attachments.forEach(file => {
-      submitData.append('new_attachments', file);
-    });
-    
-    // 🔍 DEBUG: FormData içeriğini görelim
-    console.log("📦 FormData içeriği:");
-    for (let pair of submitData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-    
-    // Send with FormData
-    const response = await api.post(MISSIONS_ENDPOINT, submitData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
+    try {
+      const submitData = new FormData();
+      submitData.append('description', formData.description);
+      submitData.append('assigned_date', formData.assigned_date);
+      submitData.append('end_date', formData.end_date);
+      
+      if (formData.from_to) {
+        submitData.append('from_to', formData.from_to);
       }
-    });
-    
-    console.log("✅ Mission created successfully:", response.data);
-    alert("Görev başarıyla oluşturuldu!");
-    
-    // Reset form
+      
+      formData.due_to.forEach(userId => {
+        submitData.append('due_to', userId);
+      });
+      
+      formData.attachments.forEach(file => {
+        submitData.append('new_attachments', file);
+      });
+      
+      if (editingMission) {
+        // GÜNCELLEME
+        await api.patch(`${MISSIONS_ENDPOINT}${editingMission.id}/`, submitData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        alert("Görev başarıyla güncellendi!");
+        setEditingMission(null);
+      } else {
+        // YENİ OLUŞTURMA
+        await api.post(MISSIONS_ENDPOINT, submitData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        alert("Görev başarıyla oluşturuldu!");
+      }
+      
+      // Reset form
+      setFormData({
+        description: '',
+        assigned_date: '',
+        end_date: '',
+        from_to: '',
+        due_to: [],
+        attachments: [],
+      });
+      
+      const fileInput = document.getElementById('attachments');
+      if (fileInput) fileInput.value = '';
+      
+      await fetchMissions();
+      setActiveTab('list');
+      
+    } catch (error) {
+      console.error("❌ Failed to save mission:", error);
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.message ||
+                          error.message;
+      alert(`Görev kaydedilirken hata oluştu!\n${errorMessage}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // === EDIT MISSION ===
+  const handleEditMission = (mission) => {
+    setEditingMission(mission);
     setFormData({
-      description: '',
-      assigned_date: '',
-      end_date: '',
-      from_to: '',
-      due_to: [],
-      attachments: [],
+      description: mission.description,
+      assigned_date: mission.assigned_date,
+      end_date: mission.end_date,
+      from_to: mission.from_to || '',
+      due_to: mission.assigned_users?.map(u => u.id) || [],
+      attachments: []
     });
-    
-    // Clear file input
-    const fileInput = document.getElementById('attachments');
-    if (fileInput) fileInput.value = '';
-    
-    await fetchMissions();
-    setActiveTab('list');
-    
-  } catch (error) {
-    console.error("❌ Failed to create mission:", error);
-    console.error("Error status:", error.response?.status);
-    console.error("Error data:", error.response?.data);
-    
-    const errorMessage = error.response?.data?.detail || 
-                        error.response?.data?.message ||
-                        error.message;
-    
-    alert(`Görev oluşturulurken hata oluştu!\n${errorMessage}`);
-    
-  } finally {
-    setSaving(false);
-  }
-};
+    setActiveTab('assign');
+  };
 
   // === TOGGLE COMPLETE ===
   const toggleComplete = async (mission) => {
-    console.log("🔄 Toggling mission completion:", mission.id);
-    
     setMissions(prev =>
       prev.map(m =>
         m.id === mission.id ? { ...m, completed: !m.completed, isUpdating: true } : m
@@ -288,11 +275,9 @@ const handleSubmitMission = async (e) => {
     );
 
     try {
-      const response = await api.patch(
+      await api.patch(
         `${MISSIONS_ENDPOINT}${mission.id}/toggle_complete/`
       );
-      
-      console.log("✅ Mission toggled successfully:", response.data);
       
       setMissions(prev => 
         prev.map(m => (m.id === mission.id ? { ...m, isUpdating: false } : m))
@@ -300,6 +285,7 @@ const handleSubmitMission = async (e) => {
       
     } catch (error) {
       console.error("❌ Failed to toggle mission:", error);
+      alert(error.response?.data?.detail || "Görev durumu güncellenemedi!");
       
       setMissions(prev =>
         prev.map(m => 
@@ -308,8 +294,6 @@ const handleSubmitMission = async (e) => {
             : m
         )
       );
-      
-      alert("Görev durumu güncellenemedi!");
     }
   };
 
@@ -325,12 +309,27 @@ const handleSubmitMission = async (e) => {
     return user.full_name || user.username;
   };
 
+  const getRoleBadgeClass = (role) => {
+    switch(role) {
+      case 'CEO': return 'role-badge-ceo';
+      case 'MANAGER': return 'role-badge-manager';
+      case 'EMPLOYEE': return 'role-badge-employee';
+      default: return 'role-badge-default';
+    }
+  };
+
   return (
     <div className="modern-dashboard">
       {/* Header */}
       <header className="dashboard-header">
         <h1>Görev Paneli</h1>
         <div>
+          <button 
+            className="org-chart-btn" 
+            onClick={() => setShowOrgChart(!showOrgChart)}
+          >
+            👥 Organizasyon
+          </button>
           <button className="refresh-btn" onClick={fetchMissions} disabled={loading}>
             {loading ? "Yenileniyor..." : "🔄 Yenile"}
           </button>
@@ -340,11 +339,97 @@ const handleSubmitMission = async (e) => {
         </div>
       </header>
 
+      {/* Organization Chart Modal */}
+      {showOrgChart && (
+        <div className="modal-overlay" onClick={() => setShowOrgChart(false)}>
+          <div className="org-chart-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>🏢 Organizasyon Yapısı</h2>
+              <button className="close-modal" onClick={() => setShowOrgChart(false)}>✕</button>
+            </div>
+            
+            <div className="org-chart-content">
+              {/* CEO Section */}
+              <div className="org-section">
+                <h3 className="org-title ceo-title">👑 CEO</h3>
+                <div className="org-grid">
+                  {orgChart.CEO.length === 0 ? (
+                    <p className="empty-role">Henüz CEO tanımlanmamış</p>
+                  ) : (
+                    orgChart.CEO.map(user => (
+                      <div key={user.id} className="org-card ceo-card">
+                        <div className="org-card-header">
+                          <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
+                            {user.role}
+                          </span>
+                        </div>
+                        <h4>{formatUserName(user)}</h4>
+                        <p className="user-email">{user.email}</p>
+                        {user.unvan && <p className="user-unvan">🏷️ {user.unvan}</p>}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Manager Section */}
+              <div className="org-section">
+                <h3 className="org-title manager-title">👔 Yöneticiler</h3>
+                <div className="org-grid">
+                  {orgChart.MANAGER.length === 0 ? (
+                    <p className="empty-role">Henüz yönetici tanımlanmamış</p>
+                  ) : (
+                    orgChart.MANAGER.map(user => (
+                      <div key={user.id} className="org-card manager-card">
+                        <div className="org-card-header">
+                          <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
+                            {user.role}
+                          </span>
+                        </div>
+                        <h4>{formatUserName(user)}</h4>
+                        <p className="user-email">{user.email}</p>
+                        {user.unvan && <p className="user-unvan">🏷️ {user.unvan}</p>}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Employee Section */}
+              <div className="org-section">
+                <h3 className="org-title employee-title">💼 Çalışanlar</h3>
+                <div className="org-grid">
+                  {orgChart.EMPLOYEE.length === 0 ? (
+                    <p className="empty-role">Henüz çalışan tanımlanmamış</p>
+                  ) : (
+                    orgChart.EMPLOYEE.map(user => (
+                      <div key={user.id} className="org-card employee-card">
+                        <div className="org-card-header">
+                          <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
+                            {user.role}
+                          </span>
+                        </div>
+                        <h4>{formatUserName(user)}</h4>
+                        <p className="user-email">{user.email}</p>
+                        {user.unvan && <p className="user-unvan">🏷️ {user.unvan}</p>}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tabs */}
       <nav className="dashboard-nav">
         <button
           className={`nav-tab ${activeTab === 'list' ? 'active' : ''}`}
-          onClick={() => setActiveTab('list')}
+          onClick={() => {
+            setActiveTab('list');
+            setEditingMission(null);
+          }}
         >
           📋 Görevlerim ({missions.length})
         </button>
@@ -352,7 +437,7 @@ const handleSubmitMission = async (e) => {
           className={`nav-tab ${activeTab === 'assign' ? 'active' : ''}`}
           onClick={() => setActiveTab('assign')}
         >
-          ➕ Yeni Görev Ata
+          {editingMission ? '✏️ Görevi Düzenle' : '➕ Yeni Görev Ata'}
         </button>
       </nav>
 
@@ -374,7 +459,6 @@ const handleSubmitMission = async (e) => {
               </div>
 
               <div className="filter-grid">
-                {/* Durum Filtresi */}
                 <div className="filter-group">
                   <label>Durum</label>
                   <select 
@@ -388,7 +472,6 @@ const handleSubmitMission = async (e) => {
                   </select>
                 </div>
 
-                {/* Metin Arama */}
                 <div className="filter-group">
                   <label>Arama</label>
                   <input
@@ -400,7 +483,6 @@ const handleSubmitMission = async (e) => {
                   />
                 </div>
 
-                {/* Kullanıcı Filtresi */}
                 <div className="filter-group">
                   <label>Atanan Kişi</label>
                   <select
@@ -417,7 +499,6 @@ const handleSubmitMission = async (e) => {
                   </select>
                 </div>
 
-                {/* Tarih Aralığı */}
                 <div className="filter-group">
                   <label>Başlangıç Tarihi</label>
                   <input
@@ -439,7 +520,6 @@ const handleSubmitMission = async (e) => {
                 </div>
               </div>
 
-              {/* Sonuç Sayısı */}
               <div className="filter-results">
                 <span className="results-count">
                   {filteredMissions.length} görev gösteriliyor
@@ -467,41 +547,54 @@ const handleSubmitMission = async (e) => {
               ) : (
                 filteredMissions.map((mission) => (
                   <div
-                      key={mission.id}
-                      className={`mission-card ${mission.completed ? "completed" : ""} ${mission.isUpdating ? "updating" : ""}`}
-                    >
-                   <div className="mission-header">
-                    <label className="task-checkbox-wrap">
-                      <input
-                        type="checkbox"
-                        checked={!!mission.completed}
-                        onChange={() => toggleComplete(mission)}
-                        disabled={mission.isUpdating}
-                      />
-                         <span className="checkbox-ui" />
-                          </label>
-                          <div className="mission-dates">
-                            <span className="date-badge">
-                              📅 {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
-                            </span>
-                            {mission.completed && (
-                              <span className="completed-badge">✓ Tamamlandı</span>
-                            )}
-                          </div>
-                        </div>
+                    key={mission.id}
+                    className={`mission-card ${mission.completed ? "completed" : ""} ${mission.isUpdating ? "updating" : ""}`}
+                  >
+                    <div className="mission-header">
+                      {mission.can_complete && (
+                        <label className="task-checkbox-wrap">
+                          <input
+                            type="checkbox"
+                            checked={!!mission.completed}
+                            onChange={() => toggleComplete(mission)}
+                            disabled={mission.isUpdating}
+                          />
+                          <span className="checkbox-ui" />
+                        </label>
+                      )}
+                      
+                      <div className="mission-dates">
+                        <span className="date-badge">
+                          📅 {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
+                        </span>
+                        {mission.completed && (
+                          <span className="completed-badge">✓ Tamamlandı</span>
+                        )}
+                      </div>
+
+                      {mission.can_edit && (
+                        <button 
+                          className="edit-mission-btn"
+                          onClick={() => handleEditMission(mission)}
+                          title="Görevi Düzenle"
+                        >
+                          ✏️ Düzenle
+                        </button>
+                      )}
+                    </div>
                     
                     <div className="mission-body">
-                    <p className="mission-description">
-                      {mission.description || "Açıklama yok"}
-                    </p>
-                    
-                    {mission.from_to && (
-                      <p className="mission-location">
-                        📍 {mission.from_to}
+                      <p className="mission-description">
+                        {mission.description || "Açıklama yok"}
                       </p>
-                    )}
                       
-                       {mission.attachments && mission.attachments.length > 0 && (
+                      {mission.from_to && (
+                        <p className="mission-location">
+                          📍 {mission.from_to}
+                        </p>
+                      )}
+                      
+                      {mission.attachments && mission.attachments.length > 0 && (
                         <div className="mission-attachments">
                           <strong>📎 Ekler ({mission.attachments.length}):</strong>
                           <ul className="attachment-list">
@@ -529,8 +622,6 @@ const handleSubmitMission = async (e) => {
                           </small>
                         </div>
                       )}
-                      
-
                     </div>
                   </div>
                 ))
@@ -539,11 +630,34 @@ const handleSubmitMission = async (e) => {
           </div>
         )}
 
-        {/* SEKME 2: Yeni Görev Atama */}
+        {/* SEKME 2: Yeni Görev Atama / Düzenleme */}
         {activeTab === 'assign' && (
           <div className="assign-task-view">
             <form className="modern-form" onSubmit={handleSubmitMission}>
-              <h2>✍️ Detaylı Görev Oluştur</h2>
+              <h2>{editingMission ? '✏️ Görevi Düzenle' : '✍️ Detaylı Görev Oluştur'}</h2>
+              
+              {editingMission && (
+                <div className="edit-notice">
+                  <p>🔔 Görev #{editingMission.id} düzenleniyor</p>
+                  <button 
+                    type="button" 
+                    className="cancel-edit-btn"
+                    onClick={() => {
+                      setEditingMission(null);
+                      setFormData({
+                        description: '',
+                        assigned_date: '',
+                        end_date: '',
+                        from_to: '',
+                        due_to: [],
+                        attachments: []
+                      });
+                    }}
+                  >
+                    ✕ İptal
+                  </button>
+                </div>
+              )}
               
               <div className="form-group">
                 <label htmlFor="desc">Açıklama *</label>
@@ -597,13 +711,12 @@ const handleSubmitMission = async (e) => {
               </div>
 
               <div className="form-group">
-
                 <label htmlFor="attachments">Dosya Ekle (Opsiyonel)</label>
                 <input
                   type="file"
                   id="attachments"
                   name="attachments"
-                  multiple // birden fazla dosya seçilebilir
+                  multiple
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
@@ -619,7 +732,6 @@ const handleSubmitMission = async (e) => {
                   </ul>
                 )}
               </div>
-
 
               <div className="form-group">
                 <label>
@@ -645,6 +757,9 @@ const handleSubmitMission = async (e) => {
                               ? `${user.first_name} ${user.last_name}`
                               : user.username}
                           </strong>
+                          <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
+                            {user.role}
+                          </span>
                           {user.unvan && (
                             <span className="user-unvan">
                               🏷️ {user.unvan}
@@ -663,7 +778,7 @@ const handleSubmitMission = async (e) => {
                 className="submit-task-btn"
                 disabled={saving || formData.due_to.length === 0}
               >
-                {saving ? "⏳ Görev Oluşturuluyor..." : "✅ Görevi Ata"}
+                {saving ? "⏳ Kaydediliyor..." : editingMission ? "💾 Değişiklikleri Kaydet" : "✅ Görevi Ata"}
               </button>
             </form>
           </div>
