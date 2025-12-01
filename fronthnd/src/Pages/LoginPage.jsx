@@ -142,11 +142,8 @@ const LoginPage = () => {
         <span className="collapsed-title">Görev Yönetimi</span>
         <p>Şirketinizi tek bir platformdan kontrol edin</p>
         <p>Her tıklamada düzen, her adımda ilerleme</p>
-        <p>Her tıklamada düzen, her adımda ilerleme</p>
-        <p>Her tıklamada düzen, her adımda ilerleme</p>
-        <p>Her tıklamada düzen, her adımda ilerleme</p>
-        <p>Her tıklamada düzen, her adımda ilerleme</p>
-        <p>Her tıklamada düzen, her adımda ilerleme</p>
+        <p>Her şey yerli yerinde.</p>
+        <p>Değerinize değer katın.</p>
       </div>
     </div>
   </div>
