@@ -56,7 +56,7 @@ const LoginPage = () => {
       {/* LOGIN PANEL - Sadece bu görünecek */}
       {!isRegister && (
         <div className="login-card">
-          <h2>Hoşgeldiniz 👋</h2>
+          <h2>Hoşgeldiniz</h2>
           <p className="subtitle">Görevlerinize erişmek için giriş yapın</p>
 
           <form onSubmit={handleLogin}>
@@ -138,11 +138,18 @@ const LoginPage = () => {
 
       {/* SAĞ TARAF GRADIENT ALAN */}
       <div className="login-side">
-        <h1>Görev Yönetimi</h1>
-        <p>Şirketinizi tek bir platformdan kontrol edin 📈</p>
+        <div className="sidebar-content">
+        <span className="collapsed-title">Görev Yönetimi</span>
+        <p>Şirketinizi tek bir platformdan kontrol edin</p>
+        <p>Her tıklamada düzen, her adımda ilerleme</p>
+        <p>Her tıklamada düzen, her adımda ilerleme</p>
+        <p>Her tıklamada düzen, her adımda ilerleme</p>
+        <p>Her tıklamada düzen, her adımda ilerleme</p>
+        <p>Her tıklamada düzen, her adımda ilerleme</p>
         <p>Her tıklamada düzen, her adımda ilerleme</p>
       </div>
     </div>
+  </div>
   );
 };
 
