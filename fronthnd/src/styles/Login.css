@@ -1,74 +1,91 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden;
+    background-color: #efefe8 !important;
+    width: 100%;
 }
 
 .login-container {
   display: flex;
+  overflow : hidden;
   flex-direction: row-reverse; /* Kolonların yerini değiştirir */
   height: 100vh;
-  width: 100%;
-  background: #f4f6ff;
+  width: 150%;
+  background: #efefe8;
   position: relative; 
+  justify-content: space-between;
+  /* 💎 ARKA PLAN EKLEME */
+  background-color: #efefe8 !important;
 }
 
 .login-card {
-  width: 70%;
+  flex-grow: 1; /* Kalan tüm boşluğu doldurur */
   min-width: 350px;
   min-height: 550px; 
   padding: 50px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background-color: #efefe8 !important;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
   animation: fadeInSlide 0.6s ease-out;
 }
 
 h2 {
-  font-size: 32px;
-  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  color:#444;
+  font-weight: 900;
+  font-size: 50px;
   margin-bottom: 10px;
 }
 
 .subtitle {
+  font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   margin-bottom: 30px;
-  color: #555;
+  color: #444;
 }
 
 form label {
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   margin-top: 15px;
   color: #444;
 }
 
 form input {
+  font-family: 'Montserrat', sans-serif;
   width: 100%;
   padding: 12px;
   margin-top: 5px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #444;
   font-size: 15px;
   outline: none;
   transition: 0.2s;
 }
 
 form input:focus {
-  border-color: #4a57ff;
-  box-shadow: 0 0 6px rgba(74, 87, 255, 0.3);
+  border-color: #444;
+  box-shadow: 0 0 6px #444444;
 }
 
 .login-btn {
   width: 100%;
+  font-family: 'Montserrat', sans-serif;
   margin-top: 25px;
   padding: 12px;
   border-radius: 8px;
   background: #4a57ff;
   border: none;
-  color: #fff;
+  color: #efefe8;
   font-size: 17px;
   cursor: pointer;
   transition: 0.25s;
@@ -79,6 +96,7 @@ form input:focus {
 }
 
 .login-footer {
+  font-family: 'Montserrat', sans-serif;
   margin-top: 20px;
   font-size: 14px;
   color: #444;
@@ -87,36 +105,84 @@ form input:focus {
 
 .login-footer a,
 .register-link {
+  font-family: 'Montserrat', sans-serif;
   color: #4a57ff;
   cursor: pointer;
   font-weight: 500;
 }
 
-/* Sağ taraf görselli alan */
 .login-side {
-  width: 55%;
-  background: linear-gradient(135deg, #4a57ff, #7647ff);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 60px;
+    width: 15%; /* Başlangıç genişliği */
+    
+    /* 🛠️ DÜZELTME: Padding'i buradan siliyoruz veya 0 yapıyoruz */
+    padding: 0; 
+    
+    /* Animasyon listesine padding'i de ekliyoruz */
+    transition: width 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                padding 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+    overflow: hidden; 
+    position: relative;
+    background: linear-gradient(-90deg, #4a57ff, #7647ff);
+    font-family: 'Montserrat', sans-serif;
+    color: #efefe8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    will-change: width, padding;
+    transform: translateZ(0);
 }
 
-.login-side h1 {
-  font-size: 48px;
-  font-weight: 700;
+.login-side:hover {
+    width: 30%; 
+    padding: 69px; 
 }
 
+.collapsed-title {
+    /* Konumlandırma */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    
+    /* Animasyon */
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    
+    /* Font ve Stil */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 50px; /* Dar alana sığması için fontu biraz küçülttüm */
+    font-weight: 900;
+    
+    /* 🛠️ DÜZELTME: Yazının kırılmasını kesinlikle engeller */
+    white-space: nowrap; 
+    width: auto;
+    
+    color: #efefe8;
+    z-index: 10;
+}
+
+/* Hover durumu aynen kalabilir, sadece font boyutunu kontrol edin */
+.login-side:hover .collapsed-title {
+    transform: translate(0, 0) rotate(0deg);
+    transition-delay: .25s;
+    top: 169px;
+    left: 60px;
+    font-size: 50px;
+}
+
+/* 2. PARAGRAF ANİMASYONU (Sloganların Gelişi) */
 .login-side p {
-  margin-top: 15px;
-  font-size: 20px;
-  max-width: 380px;
-  opacity: 0.9;
+    transform: translateX(-50px); /* Hafif soldan gelsin */
+    opacity: 0;
+    transition: all 0.4s ease-in-out;
 }
 
-.login-side {
-  animation: slideInFromRight 0.8s ease-out; /* Animasyonu da güncelledim */
+.login-side:hover p {
+    transform: translateX(0);
+    color: #efefe8;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    opacity: 1;
+    transition-delay: 0.5s; /* Başlık oturduktan sonra gelsin */
 }
 
 /* 📱 Mobile uyum */
