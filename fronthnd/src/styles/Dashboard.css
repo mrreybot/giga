@@ -355,14 +355,6 @@ body {
   margin-left: 0.5rem;
 }
 
-/* Ünvan gösterimi */
-.user-unvan {
-  display: block;
-  color: #6c757d;
-  font-size: 0.85rem;
-  font-style: italic;
-  margin: 0.2rem 0;
-}
 
 /* Seçim sayacı */
 .selection-count {
@@ -389,27 +381,46 @@ body {
 }
 
 /* Kullanıcı kartı hover efekti güncelleme */
+.user-checkbox-card {
+  display: block;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background: #fefefe;
+}
+
+.user-checkbox-card input[type="checkbox"] {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+}
+
+.user-checkbox-card:hover {
+    border-color: var(--accent-blue);
+    background: #f0f7ff;
+}
 .user-checkbox-card:has(input:checked) {
-  border-color: #667eea;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  border-color: var(--success-green);
+  background: #f0fff4; 
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
 }
 
-/* Kullanıcı seçim grid scroll için özel stil */
 .user-selection-grid {
-  max-height: 500px;
-  padding-right: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px; /* Scrollbar için boşluk */
 }
 
-/* User tag için hover efekti */
-.user-tag {
-  transition: all 0.3s ease;
-}
 
-.user-tag:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-}
 
 /* Mission card animasyonu */
 @keyframes slideIn {
@@ -653,7 +664,120 @@ body {
   color: #555;
   padding: 4px 0;
 }
+/* ======================================================
+   💥 YENİ: GÖREV DETAY MODALI STİLLERİ
+   ====================================================== */
 
+/* Görev Kartına Tıklama Hissi (Pırıltı) */
+.mission-body {
+    cursor: pointer; /* Tıklanabilir olduğunu gösterir */
+    padding-top: 10px; 
+    border-top: 1px dashed #eee;
+    margin-top: 10px;
+    transition: background-color 0.2s; /* Geçiş animasyonu */
+}
+
+.mission-body:hover {
+    background-color: #f7f7f7; /* Hafif bir hover efekti */
+    border-radius: 6px;
+}
+
+/* MODAL KENDİSİ */
+.mission-detail-modal {
+  background: var(--white);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px; /* Detaylara odaklanma için daha dar */
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s ease;
+}
+
+.mission-detail-modal .modal-header h2 {
+    font-size: 1.5rem;
+    color: var(--navy-blue);
+    margin: 0;
+}
+
+.mission-detail-modal .modal-content {
+    padding: 30px;
+}
+
+/* Detay Durum Etiketi Kısmı */
+.detail-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pending-badge {
+    /* Devam Eden görevler için yumuşak sarı */
+    background: #fff3cd; 
+    color: #856404; 
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Açıklama alanı vurgusu */
+.detail-description {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--accent-blue);
+    padding: 15px;
+    background: #fcfcfc;
+    border-radius: 8px;
+}
+
+.detail-description strong {
+    color: var(--navy-blue);
+}
+
+
+/* Detay Kullanıcıları (Badgeler) */
+.detail-users {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.detail-users strong {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--navy-blue);
+    font-weight: 700;
+}
+
+.user-badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.user-detail-badge {
+    /* Atanan kullanıcılar için temiz ve kurumsal badge */
+    background: #f0f7ff;
+    color: var(--accent-blue);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid #cce5ff;
+}
+
+.detail-creator {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.detail-attachments {
+    margin-top: 20px;
+}
 
 .org-chart-btn {
   background: #28a745;
@@ -822,18 +946,21 @@ body {
 }
 
 .role-badge-ceo {
-  background: #ff6b6b;
-  color: white;
+  background: var(--navy-blue); /* Koyu Kurumsal Mavi */
+  color: #ffffff; /* Beyaz Metin */
+  border: 1px solid var(--navy-blue);
 }
 
 .role-badge-manager {
-  background: #4a90e2;
-  color: white;
+  background: #e9f5ff; /* Çok açık mavi (Hafif dolgu) */
+  color: var(--accent-blue); /* Vurgu Mavisi Metin */
+  border: 1px solid var(--accent-blue);
 }
 
 .role-badge-employee {
-  background: #28a745;
-  color: white;
+  background: #f1f1f1; /* Nötr Açık Gri */
+  color: var(--text-dark); /* Koyu Metin */
+  border: 1px solid var(--border-color); /* Hafif sınır */
 }
 
 .org-card h4 {
@@ -841,21 +968,30 @@ body {
   font-size: 18px;
   color: #2c3e50;
 }
-
-.user-email {
-  font-size: 13px;
-  color: #7f8c8d;
-  margin: 4px 0;
+.user-info strong {
+    font-size: 1rem;
+    color: var(--navy-blue);
+    display: block;
+    margin-bottom: 4px;
+}
+.user-info small {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.85rem;
 }
 
 .user-unvan {
-  display: inline-block;
-  font-size: 12px;
-  color: #6c757d;
-  background: #f8f9fa;
-  padding: 4px 10px;
-  border-radius: 12px;
-  margin-top: 8px;
+    /* Daha belirgin bir etiket görünümü */
+    background: #e9ecef; /* Çok açık gri */
+    color: #495057;
+    padding: 3px 8px;
+    border-radius: 4px; /* Köşeleri yuvarlatıldı */
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 0;
+    width: fit-content; /* Sadece metin kadar yer kaplasın */
+    order: 2; /* İsimden sonra gelsin */
 }
 
 .empty-role {
