@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('list');
+  const [selectedMission, setSelectedMission] = useState(null);
   const [showOrgChart, setShowOrgChart] = useState(false);
   
   const [filters, setFilters] = useState({
@@ -161,6 +162,13 @@ const Dashboard = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+const handleMissionClick = (mission) => { 
+  setSelectedMission(mission);
+};
+
+const closeMissionModal = () => { 
+  setSelectedMission(null);
+};
   const handleUserSelection = (userId) => {
     setFormData(prev => {
       const isSelected = prev.due_to.includes(userId);
@@ -338,6 +346,73 @@ const Dashboard = () => {
           </button>
         </div>
       </header>
+
+      {/* 💥 YENİ: GÖREV DETAY MODALI 💥 */}
+      {selectedMission && (
+        <div className="modal-overlay" onClick={closeMissionModal}>
+          <div className="mission-detail-modal" onClick={(e) => e.stopPropagation()}>
+            
+            <div className="modal-header">
+              <h2>{selectedMission.description}</h2>
+              <button className="close-modal" onClick={closeMissionModal}>✕</button>
+            </div>
+            
+            <div className="modal-content">
+              
+              <div className="detail-status">
+                <span className="date-badge">
+                  📅 {formatDate(selectedMission.assigned_date)} - {formatDate(selectedMission.end_date)}
+                </span>
+                {selectedMission.completed ? (
+                  <span className="completed-badge">✓ Tamamlandı</span>
+                ) : (
+                  <span className="pending-badge">... Devam Ediyor</span>
+                )}
+              </div>
+              
+              <p className="detail-description">
+                **Açıklama:** {selectedMission.description || "Açıklama yok"}
+              </p>
+              
+              {/* Atanan Kullanıcılar */}
+              <div className="detail-users">
+                <strong>👤 Atanan Kişiler:</strong>
+                <div className="user-badge-list">
+                  {selectedMission.assigned_users?.map(user => (
+                    <span key={user.id} className="user-detail-badge">
+                      {formatUserName(user)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Ekler */}
+              {selectedMission.attachments && selectedMission.attachments.length > 0 && (
+                <div className="mission-attachments detail-attachments">
+                  <strong>📎 Ekler ({selectedMission.attachments.length}):</strong>
+                  <ul className="attachment-list">
+                    {selectedMission.attachments.map((file) => (
+                      <li key={file.id}>
+                        <a href={file.file} target="_blank" rel="noopener noreferrer" className="attachment-link" download>
+                          📄 {file.file.split("/").pop()}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {/* Oluşturan Bilgisi */}
+              {selectedMission.created_by_info && (
+                <div className="detail-creator">
+                  Oluşturan: <strong>{formatUserName(selectedMission.created_by_info)}</strong>
+                </div>
+              )}
+
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Organization Chart Modal */}
       {showOrgChart && (
@@ -583,7 +658,8 @@ const Dashboard = () => {
                       )}
                     </div>
                     
-                    <div className="mission-body">
+                    <div className="mission-body" 
+                      onClick={() => handleMissionClick(mission)}>
                       <p className="mission-description">
                         {mission.description || "Açıklama yok"}
                       </p>
@@ -614,6 +690,7 @@ const Dashboard = () => {
                           </ul>
                         </div>
                       )}
+
                       
                       {mission.created_by_info && (
                         <div className="mission-creator">
