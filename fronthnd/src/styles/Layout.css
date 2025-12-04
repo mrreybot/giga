@@ -1,0 +1,36 @@
+/* ============================================
+   APP LAYOUT
+   ============================================ */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 280px; /* Sidebar genişliği */
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Sidebar collapsed olduğunda */
+.sidebar.collapsed ~ .main-content,
+.app-layout:has(.sidebar.collapsed) .main-content {
+  margin-left: 80px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 80px;
+  }
+  
+  .app-layout:has(.sidebar.collapsed) .main-content {
+    margin-left: 0;
+  }
+}
