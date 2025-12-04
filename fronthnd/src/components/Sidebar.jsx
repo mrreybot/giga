@@ -17,30 +17,30 @@ const Sidebar = () => {
     {
       id: 1,
       name: "Ana Sayfa",
-      icon: "🏠",
+      icon: "",
       path: "/home",
       description: "Dashboard ve istatistikler"
     },
     {
     id: 2,
     name: "Görevlerim",
-    icon: "📋",
-    path: "/home", 
+    icon: "",
+    path: "/dashboard", 
     description: "Yaklaşan görevler",
     state: { scrollToUpcoming: true } 
     },
     {
       id: 3,
       name: "Yeni Görev",
-      icon: "➕",
-      path: "/dashboard",
+      icon: "",
+      path: "/add-task",
       description: "Görev oluştur",
       state: { openTab: 'assign' }
     },
     {
       id: 4,
       name: "İstatistiklerim",
-      icon: "📊",
+      icon: "",
       path: "/statistics",
       description: "Performans ve raporlar"
     },
@@ -73,8 +73,7 @@ const Sidebar = () => {
         <div className="logo-section">
           {!isCollapsed && (
             <div className="logo-content">
-              <div className="logo-icon">📊</div>
-              <h2 className="logo-text">Görev Yönetimi</h2>
+              <h2 className="logo-text">Atasan A.Ş</h2>
             </div>
           )}
         </div>
@@ -119,7 +118,7 @@ const Sidebar = () => {
             onClick={() => navigate("/settings")}
             title={isCollapsed ? "Ayarlar" : ''}
           >
-            <span className="nav-icon">⚙️</span>
+            <span className="nav-icon"></span>
             {!isCollapsed && (
               <div className="nav-content">
                 <span className="nav-name">Ayarlar</span>
@@ -133,7 +132,7 @@ const Sidebar = () => {
             onClick={handleLogout}
             title={isCollapsed ? "Çıkış Yap" : ''}
           >
-            <span className="nav-icon">👋</span>
+            <span className="nav-icon"></span>
             {!isCollapsed && (
               <div className="nav-content">
                 <span className="nav-name">Çıkış Yap</span>
@@ -157,8 +156,8 @@ const Sidebar = () => {
           <div className="user-info">
             <div className="user-avatar">👤</div>
             <div className="user-details">
-              <p className="user-name">Hoşgeldiniz!</p>
-              <p className="user-role">Kullanıcı</p>
+              <p className="user-name">Merhaba!</p>
+              <p className="user-role">Tuna Berk</p>
             </div>
           </div>
         </div>
