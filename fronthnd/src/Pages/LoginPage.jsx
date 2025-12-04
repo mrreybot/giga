@@ -26,7 +26,7 @@ const LoginPage = () => {
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
       console.log("Giriş başarılı:", res.data);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (error) {
       alert(error);
     }
