@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import api from "../services/api";
 import { ACCESS_TOKEN } from "../services/constant";
 import "../styles/HomePage.css";
@@ -8,6 +8,8 @@ const MISSIONS_ENDPOINT = "/api/missions/";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const upcomingMissionsRef = useRef(null);
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -20,6 +22,17 @@ const HomePage = () => {
   useEffect(() => {
     fetchMissions();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.scrollToUpcoming && upcomingMissionsRef.current) {
+      setTimeout(() => {
+        upcomingMissionsRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 100);
+    }
+  }, [location.state]);
 
   const fetchMissions = async () => {
     setLoading(true);
@@ -405,7 +418,7 @@ const HomePage = () => {
         )}
 
         {/* Yaklaşan Görevler */}
-        <div className="upcoming-missions">
+        <div className="upcoming-missions" ref={upcomingMissionsRef}>
           <h2>📌 Yaklaşan Görevler</h2>
           <div className="upcoming-list">
             {missions
