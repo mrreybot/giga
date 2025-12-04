@@ -22,11 +22,12 @@ const Sidebar = () => {
       description: "Dashboard ve istatistikler"
     },
     {
-      id: 2,
-      name: "Görevlerim",
-      icon: "📋",
-      path: "/dashboard",
-      description: "Tüm görevleriniz"
+    id: 2,
+    name: "Görevlerim",
+    icon: "📋",
+    path: "/home", 
+    description: "Yaklaşan görevler",
+    state: { scrollToUpcoming: true } 
     },
     {
       id: 3,
@@ -35,7 +36,14 @@ const Sidebar = () => {
       path: "/dashboard",
       description: "Görev oluştur",
       state: { openTab: 'assign' }
-    }
+    },
+    {
+      id: 4,
+      name: "İstatistiklerim",
+      icon: "📊",
+      path: "/statistics",
+      description: "Performans ve raporlar"
+    },
   ];
 
   const isActive = (path) => {
