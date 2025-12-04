@@ -1,1071 +1,646 @@
+/* MODERN GÖREV PANELİ STİLLERİ
+  Renk Paleti:
+  - Arka Plan: #f9fafb (Hafif Beyaz)
+  - Header: #1f2937 (Koyu Gri/Siyah)
+  - Aksan (Primary): #1e40af (Navy Blue)
+  - Kenarlıklar: #e5e7eb
+  - Metin: #111827 (Koyu Metin) ve #6b7280 (Açık Metin/Detaylar)
+*/
 
-:root {
-  --navy-blue: #001f3f; 
-  --dark-header: #111111; 
-  --light-bg: #f4f7f6;   
-  --white: #ffffff;
-  --text-dark: #333;
-  --text-light: #f1f1f1;
-  --text-muted: #777;
-  --border-color: #ddd;
-  --accent-blue: #007bff; 
-  --success-green: #28a745;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+/* === GENEL DÜZEN VE SIFIRLAMA === */
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: var(--light-bg);
-  color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    background-color: #f9fafb; /* Arka Plan */
+    font-family: 'Inter', sans-serif;
+    color: #111827; /* Koyu Metin */
+    line-height: 1.6;
 }
 
 .modern-dashboard {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+    min-height: 100vh;
 }
 
-
-
+/* === HEADER === */
 .dashboard-header {
-  background-color: var(--navy-blue);
-  color: var(--white);
-  
-  padding: 3rem 32rem; 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 400px;
+    margin-bottom: 24px;
+    background-color: #1f2937; /* Koyu Header */
+    color: #f9fafb;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-header h1 {
-  margin: 0;
-  /* Font boyutunu isteğinize göre ayarlayın, 3rem oldukça büyük */
-  font-size: 2rem; 
-}
-
-.dashboard-header button {
-  background: none;
-  border: 1px solid var(--white);
-  color: var(--white);
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-left: 1rem;
-}
-
-.dashboard-header button.refresh-btn {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-}
-
-.dashboard-header button.refresh-btn:hover {
-  background-color: var(--accent-blue);
-  color: var(--white);
-}
-
-.dashboard-header button.logout-btn:hover {
-  background-color: var(--white);
-  color: var(--navy-blue);
-}
-
-.dashboard-header button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-
-/* --- 2. Siyah Navigasyon Çubuğu --- */
-.dashboard-nav {
-  background-color: var(--dark-header);
-  display: flex;
-  justify-content: center;
-  border-bottom: 1px solid #333;
-}
-
-.nav-tab {
-  background: none;
-  border: none;
-  color: var(--text-light);
-  padding: 1rem 1.5rem;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.nav-tab:hover {
-  background-color: #222;
-}
-
-.nav-tab.active {
-  color: var(--white);
-  border-bottom-color: var(--accent-blue);
-}
-
-/* --- 3. Ana İçerik Alanı --- */
-.dashboard-main {
-  padding: 2rem;
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* --- SEKME 1: Görev Listesi --- */
-.task-list-view {
-  width: 100%;
-}
-
-/* Hızlı Ekleme Formu */
-.quick-add-form {
-  display: flex;
-  margin-bottom: 2rem;
-  background: var(--white);
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  overflow: hidden;
-}
-
-.quick-add-form input[type="text"] {
-  flex-grow: 1;
-  border: none;
-  padding: 1rem;
-  font-size: 1rem;
-  outline: none;
-}
-
-.quick-add-form button {
-  background-color: var(--accent-blue);
-  color: var(--white);
-  border: none;
-  padding: 0 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.quick-add-form button:hover {
-  background-color: #0056b3;
-}
-
-.quick-add-form button:disabled {
-  background-color: #aaa;
-  cursor: not-allowed;
-}
-
-/* Görev Listesi */
-.tasks-list-container {
-  background: var(--white);
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  overflow: hidden;
-}
-
-.empty-state {
-  padding: 2rem;
-  text-align: center;
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.task-item {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.2s;
-}
-
-.task-item:last-child {
-  border-bottom: none;
-}
-
-.task-item.updating {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.task-item.done .task-title {
-  text-decoration: line-through;
-  color: var(--text-muted);
-}
-
-.task-title {
-  margin-left: 0.75rem;
-  font-size: 1rem;
-}
-
-/* Özel Checkbox Stili (Görevler için) */
-.task-checkbox-wrap {
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
-  user-select: none;
-}
-
-.task-checkbox-wrap input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.checkbox-ui {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: #eee;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.task-checkbox-wrap:hover input ~ .checkbox-ui {
-  background-color: #ccc;
-}
-
-.task-checkbox-wrap input:checked ~ .checkbox-ui {
-  background-color: var(--success-green);
-  border-color: var(--success-green);
-}
-
-.checkbox-ui:after {
-  content: "";
-  position: absolute;
-  display: none;
-  left: 6px;
-  top: 2px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
-}
-
-.task-checkbox-wrap input:checked ~ .checkbox-ui:after {
-  display: block;
-}
-
-
-/* --- SEKME 2: Yeni Görev Atama Formu --- */
-.assign-task-view {
-  display: flex;
-  justify-content: center;
-}
-
-.modern-form {
-  background: var(--white);
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 600px;
-}
-
-.modern-form h2 {
-  text-align: center;
-  color: var(--navy-blue);
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 1.25rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 0.75rem;
-  font-size: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  box-sizing: border-box; /* Önemli */
-  outline-color: var(--accent-blue);
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-/* Yan yana form elemanları için */
-.form-row {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.form-row .form-group {
-  flex: 1;
-}
-
-.submit-task-btn {
-  width: 100%;
-  padding: 0.85rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 5px;
-  background-color: var(--navy-blue);
-  color: var(--white);
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.submit-task-btn:hover:not(:disabled) {
-  background-color: #003a75;
-}
-
-.submit-task-btn:disabled {
-  background-color: #aaa;
-  cursor: not-allowed;
-}
-
-/* ============================================
-   EK STILLER - Ünvan ve Görev Detayları
-   ============================================ */
-
-/* Tamamlandı Badge */
-.completed-badge {
-  background: #28a745;
-  color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-left: 0.5rem;
-}
-
-
-/* Seçim sayacı */
-.selection-count {
-  color: #667eea;
-  font-weight: bold;
-  margin-left: 0.5rem;
-  font-size: 0.9rem;
-}
-
-/* Görev oluşturan kişi bilgisi */
-.mission-creator {
-  margin-top: 1rem;
-  padding-top: 0.8rem;
-  border-top: 1px dashed #dee2e6;
-}
-
-.mission-creator small {
-  color: #6c757d;
-  font-size: 0.85rem;
-}
-
-.mission-creator strong {
-  color: #495057;
-}
-
-/* Kullanıcı kartı hover efekti güncelleme */
-.user-checkbox-card {
-  display: block;
-  border: 2px solid var(--border-color);
-  border-radius: 10px;
-  padding: 15px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  background: #fefefe;
-}
-
-.user-checkbox-card input[type="checkbox"] {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 20px;
-    height: 20px;
-    z-index: 2;
-}
-
-.user-checkbox-card:hover {
-    border-color: var(--accent-blue);
-    background: #f0f7ff;
-}
-.user-checkbox-card:has(input:checked) {
-  border-color: var(--success-green);
-  background: #f0fff4; 
-  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
-}
-
-.user-selection-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 10px; /* Scrollbar için boşluk */
-}
-
-
-
-/* Mission card animasyonu */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.mission-card {
-  animation: slideIn 0.3s ease-out;
-}
-
-/* Loading state için pulse animasyonu */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.mission-card.updating {
-  animation: pulse 1s ease-in-out infinite;
-}
-
-/* Form validasyon stilleri */
-.form-group input:invalid:not(:placeholder-shown),
-.form-group textarea:invalid:not(:placeholder-shown),
-.form-group select:invalid:not(:placeholder-shown) {
-  border-color: #dc3545;
-}
-
-.form-group input:valid:not(:placeholder-shown),
-.form-group textarea:valid:not(:placeholder-shown),
-.form-group select:valid:not(:placeholder-shown) {
-  border-color: #28a745;
-}
-
-/* Responsive iyileştirmeler */
-@media (max-width: 992px) {
-  .user-selection-grid {
-    max-height: 300px;
-  }
-}
-
-@media (max-width: 576px) {
-  .mission-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .mission-dates {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .date-badge,
-  .completed-badge {
-    display: inline-block;
-    font-size: 0.8rem;
-    padding: 0.3rem 0.6rem;
-  }
-}
-
-/* Print stilleri (opsiyonel) */
-@media print {
-  .dashboard-header,
-  .dashboard-nav,
-  .refresh-btn,
-  .logout-btn,
-  .task-checkbox-wrap,
-  .submit-task-btn {
-    display: none;
-  }
-
-  .mission-card {
-    page-break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-}
-
-.filter-panel {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.filter-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.filter-header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #333;
-}
-
-.clear-filters-btn {
-  background: #f44336;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.2s;
-}
-
-.clear-filters-btn:hover {
-  background: #d32f2f;
-}
-
-.filter-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.filter-group label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #555;
-  margin-bottom: 5px;
-}
-
-.filter-select,
-.filter-input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-
-.filter-select:focus,
-.filter-input:focus {
-  outline: none;
-  border-color: #4CAF50;
-}
-
-.filter-results {
-  padding-top: 15px;
-  border-top: 1px solid #eee;
-}
-
-.results-count {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
-}
-.attachment-list {
-  margin-top: 0.5rem;
-  padding-left: 1rem;
-  color: #333;
-  font-size: 0.9rem;
-}
-
-.attachment-list li {
-  list-style: none;
-  margin: 2px 0;
-}
-/* Ek Dosyalar Stilleri */
-.mission-attachments {
-  margin-top: 12px;
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 3px solid #4a90e2;
-}
-
-.mission-attachments strong {
-  display: block;
-  margin-bottom: 8px;
-  color: #2c3e50;
-  font-size: 14px;
-}
-
-.attachment-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.attachment-list li {
-  display: flex;
-  align-items: center;
-}
-
-.attachment-link {
-  color: #4a90e2;
-  text-decoration: none;
-  font-size: 14px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: white;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  word-break: break-all;
-}
-
-.attachment-link:hover {
-  background: #e3f2fd;
-  color: #1976d2;
-  text-decoration: underline;
-}
-
-/* Form için de stil */
-.form-group .attachment-list {
-  margin-top: 8px;
-  padding: 8px;
-  background: #f0f0f0;
-  border-radius: 4px;
-}
-
-.form-group .attachment-list li {
-  font-size: 13px;
-  color: #555;
-  padding: 4px 0;
-}
-/* ======================================================
-   💥 YENİ: GÖREV DETAY MODALI STİLLERİ
-   ====================================================== */
-
-/* Görev Kartına Tıklama Hissi (Pırıltı) */
-.mission-body {
-    cursor: pointer; /* Tıklanabilir olduğunu gösterir */
-    padding-top: 10px; 
-    border-top: 1px dashed #eee;
-    margin-top: 10px;
-    transition: background-color 0.2s; /* Geçiş animasyonu */
-}
-
-.mission-body:hover {
-    background-color: #f7f7f7; /* Hafif bir hover efekti */
-    border-radius: 6px;
-}
-
-/* MODAL KENDİSİ */
-.mission-detail-modal {
-  background: var(--white);
-  border-radius: 16px;
-  width: 90%;
-  max-width: 700px; /* Detaylara odaklanma için daha dar */
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  animation: slideUp 0.3s ease;
-}
-
-.mission-detail-modal .modal-header h2 {
-    font-size: 1.5rem;
-    color: var(--navy-blue);
+    font-size: 1.8rem;
+    font-weight: 700;
     margin: 0;
 }
 
-.mission-detail-modal .modal-content {
-    padding: 30px;
+.dashboard-header div > button {
+    padding: 10px 18px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-/* Detay Durum Etiketi Kısmı */
-.detail-status {
+.org-chart-btn {
+    background-color: #374151;
+    color: #f9fafb;
+}
+
+.org-chart-btn:hover {
+    background-color: #4b5563;
+}
+
+.refresh-btn {
+    background-color: #e5e7eb;
+    color: #111827;
+}
+
+.refresh-btn:hover:not(:disabled) {
+    background-color: #d1d5db;
+}
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.logout-btn {
+    background-color: #dc2626; /* Kırmızı */
+    color: #ffffff;
+}
+
+.logout-btn:hover {
+    background-color: #b91c1c;
+}
+
+/* === GÖREV LİSTESİ VE FİLTRE DÜZENİ === */
+.dashboard-main {
+    display: flex;
+    gap: 24px;
+}
+
+.task-list-view {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* === FİLTRE PANELİ === */
+.filter-panel {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.filter-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: #1e40af; /* Aksan rengi */
+}
+
+.clear-filters-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.clear-filters-btn:hover {
+    color: #b91c1c;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #6b7280;
+}
+
+.filter-select, .filter-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background-color: #f9fafb;
+    color: #111827;
+    transition: border-color 0.2s;
+}
+
+.filter-select:focus, .filter-input:focus {
+    border-color: #1e40af;
+    outline: none;
+    box-shadow: 0 0 0 1px #1e40af;
+}
+
+.filter-results {
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.results-count {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* === GÖREV LİSTESİ (CARDS) === */
+.missions-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    padding-bottom: 20px;
+}
+
+.mission-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.mission-card:hover {
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.1);
+    transform: translateY(-2px);
+    border-color: #1e40af30;
+}
+
+.mission-card.completed {
+    border-left: 6px solid #10b981; /* Yeşil Tamamlandı */
+    opacity: 0.85;
+}
+
+.mission-card.updating {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.mission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #f3f4f6;
+    background-color: #f9fafb;
+}
+
+/* Checkbox Styling (Aesthetics) */
+.task-checkbox-wrap {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px; /* Yer aç */
+}
+
+.task-checkbox-wrap input {
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-ui {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 18px;
+    width: 18px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    transition: all 0.2s;
+    border: 1px solid #d1d5db;
+}
+
+.task-checkbox-wrap input:checked ~ .checkbox-ui {
+    background-color: #1e40af; /* Navy Blue */
+    border-color: #1e40af;
+}
+
+.checkbox-ui:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.task-checkbox-wrap input:checked ~ .checkbox-ui:after {
+    display: block;
+}
+
+/* Badges */
+.mission-dates {
+    display: flex;
+    flex-grow: 1;
+    margin-left: 15px;
+    gap: 10px;
+}
+
+.date-badge, .completed-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.date-badge {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.completed-badge {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.edit-mission-btn {
+    background: none;
+    border: none;
+    color: #1e40af;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: opacity 0.2s;
+}
+
+.edit-mission-btn:hover {
+    opacity: 0.8;
+}
+
+/* Mission Body */
+.mission-body {
+    padding: 15px;
+    cursor: pointer;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.mission-description {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.mission-location, .mission-creator {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-bottom: 5px;
+}
+.mission-creator {
+    margin-top: auto; /* En alta iter */
+    padding-top: 10px;
+    border-top: 1px dashed #e5e7eb;
+}
+
+.mission-attachments {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.attachment-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 5px;
+}
+
+.attachment-link {
+    color: #1e40af;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.attachment-link:hover {
+    text-decoration: underline;
+}
+
+
+/* === BOŞ DURUM/YÜKLENİYOR === */
+.empty-state {
+    grid-column: 1 / -1; /* Tüm gridi kapla */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 1.1rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.spinner {
+    font-size: 2rem;
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* === MODAL STİLLERİ (Ortak) === */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.mission-detail-modal, .org-chart-modal {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 600px; /* Detay modalı genişliği */
+    display: flex;
+    flex-direction: column;
+}
+
+.org-chart-modal {
+    width: 1000px; /* Organizasyon modalı daha geniş */
+}
+
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.pending-badge {
-    /* Devam Eden görevler için yumuşak sarı */
-    background: #fff3cd; 
-    color: #856404; 
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-/* Açıklama alanı vurgusu */
-.detail-description {
-    font-size: 1rem;
-    margin-bottom: 20px;
-    border-left: 3px solid var(--accent-blue);
-    padding: 15px;
-    background: #fcfcfc;
-    border-radius: 8px;
-}
-
-.detail-description strong {
-    color: var(--navy-blue);
-}
-
-
-/* Detay Kullanıcıları (Badgeler) */
-.detail-users {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px dashed var(--border-color);
-}
-
-.detail-users strong {
-    display: block;
-    margin-bottom: 10px;
-    color: var(--navy-blue);
-    font-weight: 700;
-}
-
-.user-badge-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.user-detail-badge {
-    /* Atanan kullanıcılar için temiz ve kurumsal badge */
-    background: #f0f7ff;
-    color: var(--accent-blue);
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    border: 1px solid #cce5ff;
-}
-
-.detail-creator {
-    margin-top: 20px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-.detail-attachments {
-    margin-top: 20px;
-}
-
-.org-chart-btn {
-  background: #28a745;
-  color: white;
-  border: 1px solid #28a745;
-}
-
-.org-chart-btn:hover {
-  background: #218838;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  animation: fadeIn 0.2s ease;
-}
-
-.org-chart-modal {
-  background: white;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 1200px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 32px;
-  border-bottom: 2px solid #f0f0f0;
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 10;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .modal-header h2 {
-  margin: 0;
-  color: #001f3f;
-  font-size: 28px;
+    font-size: 1.5rem;
+    margin: 0;
+    color: #1e40af;
 }
 
 .close-modal {
-  background: #f44336;
-  color: white;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.2s;
 }
 
 .close-modal:hover {
-  background: #d32f2f;
-  transform: rotate(90deg);
+    color: #111827;
 }
 
+.modal-content p strong {
+    color: #111827;
+}
+
+.completed-text {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.pending-text {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.assigned-users-list {
+    margin-top: 15px;
+}
+
+.assigned-users-list ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.assigned-users-list li {
+    background-color: #eef2ff; /* Çok açık mavi */
+    color: #1e40af;
+    padding: 6px 12px;
+    border-radius: 9999px; /* Tam yuvarlak */
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 20px;
+}
+
+.close-modal-btn {
+    background-color: #f3f4f6;
+    color: #111827;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.close-modal-btn:hover {
+    background-color: #e5e7eb;
+}
+
+/* === ORGANİZASYON ŞEMASI STİLLERİ === */
 .org-chart-content {
-  padding: 32px;
-}
-
-.org-section {
-  margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
 }
 
 .org-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 3px solid;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-bottom: 2px solid;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
 }
 
-.org-title.ceo-title {
-  border-color: #ff6b6b;
-  color: #ff6b6b;
-}
-
-.org-title.manager-title {
-  border-color: #4a90e2;
-  color: #4a90e2;
-}
-
-.org-title.employee-title {
-  border-color: #28a745;
-  color: #28a745;
-}
+.ceo-title { border-color: #ef4444; color: #ef4444; }
+.manager-title { border-color: #f59e0b; color: #f59e0b; }
+.employee-title { border-color: #10b981; color: #10b981; }
 
 .org-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
 }
 
 .org-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  border: 2px solid #e0e0e0;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background-color: #f9fafb;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
 }
 
-.org-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-.org-card.ceo-card {
-  border-color: #ff6b6b;
-  background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
-}
-
-.org-card.ceo-card:hover {
-  border-color: #ff5252;
-  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
-}
-
-.org-card.manager-card {
-  border-color: #4a90e2;
-  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
-}
-
-.org-card.manager-card:hover {
-  border-color: #357ABD;
-  box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
-}
-
-.org-card.employee-card {
-  border-color: #28a745;
-  background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
-}
-
-.org-card.employee-card:hover {
-  border-color: #218838;
-  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-}
+.ceo-card { border-left: 4px solid #ef4444; }
+.manager-card { border-left: 4px solid #f59e0b; }
+.employee-card { border-left: 4px solid #10b981; }
 
 .org-card-header {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
-}
-
-.role-badge {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.role-badge-ceo {
-  background: var(--navy-blue); /* Koyu Kurumsal Mavi */
-  color: #ffffff; /* Beyaz Metin */
-  border: 1px solid var(--navy-blue);
-}
-
-.role-badge-manager {
-  background: #e9f5ff; /* Çok açık mavi (Hafif dolgu) */
-  color: var(--accent-blue); /* Vurgu Mavisi Metin */
-  border: 1px solid var(--accent-blue);
-}
-
-.role-badge-employee {
-  background: #f1f1f1; /* Nötr Açık Gri */
-  color: var(--text-dark); /* Koyu Metin */
-  border: 1px solid var(--border-color); /* Hafif sınır */
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
 }
 
 .org-card h4 {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-  color: #2c3e50;
-}
-.user-info strong {
-    font-size: 1rem;
-    color: var(--navy-blue);
-    display: block;
-    margin-bottom: 4px;
-}
-.user-info small {
-    display: block;
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 1.1rem;
+    margin: 0 0 5px 0;
+    color: #1e40af;
 }
 
-.user-unvan {
-    /* Daha belirgin bir etiket görünümü */
-    background: #e9ecef; /* Çok açık gri */
-    color: #495057;
-    padding: 3px 8px;
-    border-radius: 4px; /* Köşeleri yuvarlatıldı */
-    font-size: 0.75rem;
-    font-weight: 500;
-    display: inline-block;
-    margin-top: 0;
-    width: fit-content; /* Sadece metin kadar yer kaplasın */
-    order: 2; /* İsimden sonra gelsin */
+.user-email, .user-unvan {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0;
 }
+
+.role-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.role-badge-ceo { background-color: #fee2e2; color: #ef4444; }
+.role-badge-manager { background-color: #fef3c7; color: #f59e0b; }
+.role-badge-employee { background-color: #d1fae5; color: #10b981; }
+.role-badge-default { background-color: #e0e7ff; color: #374151; }
 
 .empty-role {
-  text-align: center;
-  color: #999;
-  font-style: italic;
-  padding: 40px;
-  background: #f9f9f9;
-  border-radius: 8px;
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 10px;
 }
 
-.edit-mission-btn {
-  background: #4a90e2;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-  margin-left: auto;
+
+/* === RESPONSIVE TASARIM (Mobil Uyum) === */
+@media (max-width: 1024px) {
+    .org-chart-modal {
+        width: 95%;
+    }
 }
 
-.edit-mission-btn:hover {
-  background: #357ABD;
-  transform: scale(1.05);
-}
+@media (max-width: 768px) {
+    .modern-dashboard {
+        padding: 16px;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
 
-.edit-notice {
-  background: #fff3cd;
-  border: 2px solid #ffc107;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    .dashboard-header h1 {
+        margin-bottom: 10px;
+    }
+    
+    .dashboard-header div {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+    }
 
-.edit-notice p {
-  margin: 0;
-  font-weight: 600;
-  color: #856404;
-}
+    .dashboard-header div > button {
+        flex-grow: 1;
+        margin-left: 0;
+        margin-right: 8px;
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
 
-.cancel-edit-btn {
-  background: #6c757d;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
-}
+    .filter-grid {
+        grid-template-columns: 1fr; /* Mobil'de tek sütun */
+    }
 
-.cancel-edit-btn:hover {
-  background: #5a6268;
-}
+    .missions-list-container {
+        grid-template-columns: 1fr; /* Mobil'de tek sütun */
+    }
+    
+    .mission-card:hover {
+        transform: none; /* Mobil'de transform kaldırılsın */
+    }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    .mission-detail-modal {
+        width: 95%;
+        padding: 20px;
+    }
 }
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
