@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import api from "../services/api";
 import { ACCESS_TOKEN } from "../services/constant";
 import "../styles/HomePage.css";
@@ -7,7 +7,6 @@ import "../styles/HomePage.css";
 const MISSIONS_ENDPOINT = "/api/missions/";
 
 const HomePage = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const upcomingMissionsRef = useRef(null);
   const [missions, setMissions] = useState([]);
@@ -45,11 +44,6 @@ const HomePage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem(ACCESS_TOKEN);
-    navigate("/");
   };
 
   // Takvim hesaplamaları
@@ -195,17 +189,9 @@ const HomePage = () => {
       {/* Header */}
       <header className="home-header">
         <div className="header-content">
-          <h1>🏠 Ana Sayfa</h1>
+          <h1> Hoşgeldiniz</h1>
           <div className="header-actions">
-            <button className="nav-btn" onClick={() => navigate('/dashboard')}>
-              📋 Görev Paneli
-            </button>
-            <button className="refresh-btn" onClick={fetchMissions} disabled={loading}>
-              {loading ? "Yenileniyor..." : "🔄 Yenile"}
-            </button>
-            <button onClick={handleLogout} className="logout-btn">
-              👋 Çıkış Yap
-            </button>
+            
           </div>
         </div>
       </header>
@@ -214,7 +200,7 @@ const HomePage = () => {
         {/* İstatistik Kartları */}
         <div className="stats-grid">
           <div className="stat-card total-card">
-            <div className="stat-icon">📊</div>
+            
             <div className="stat-info">
               <h3>Toplam Görev</h3>
               <p className="stat-number">{totalMissions}</p>
@@ -222,7 +208,7 @@ const HomePage = () => {
           </div>
 
           <div className="stat-card completed-card">
-            <div className="stat-icon">✅</div>
+            
             <div className="stat-info">
               <h3>Tamamlanan</h3>
               <p className="stat-number">{completedMissions}</p>
@@ -230,7 +216,7 @@ const HomePage = () => {
           </div>
 
           <div className="stat-card pending-card">
-            <div className="stat-icon">⏳</div>
+            
             <div className="stat-info">
               <h3>Devam Eden</h3>
               <p className="stat-number">{pendingMissions}</p>
@@ -238,7 +224,7 @@ const HomePage = () => {
           </div>
 
           <div className="stat-card rate-card">
-            <div className="stat-icon">📈</div>
+            
             <div className="stat-info">
               <h3>Tamamlanma Oranı</h3>
               <p className="stat-number">{completionRate}%</p>
@@ -419,7 +405,7 @@ const HomePage = () => {
 
         {/* Yaklaşan Görevler */}
         <div className="upcoming-missions" ref={upcomingMissionsRef}>
-          <h2>📌 Yaklaşan Görevler</h2>
+          <h2>Yaklaşan Görevler</h2>
           <div className="upcoming-list">
             {missions
               .filter(m => !m.completed && new Date(m.end_date) >= new Date())

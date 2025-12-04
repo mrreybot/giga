@@ -1,0 +1,578 @@
+/* ===== REVİZE EDİLMİŞ ADD TASK STİLLERİ (GOOGLE/MICROSOFT MİNİMAL) ===== */
+
+/* Renk Paleti (Dashboard ile uyumlu):
+   - Arka Plan: #f9fafb
+   - Header: #1f2937 (Koyu Gri/Siyah)
+   - Aksan (Primary): #1e40af (Navy Blue)
+   - Kenarlıklar: #e5e7eb
+   - Metin: #111827 ve #6b7280
+*/
+
+.add-task-page {
+  min-height: 100vh;
+  background-color: #f9fafb; /* Düz, temiz gri */
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  color: #111827;
+}
+
+/* ===== PAGE HEADER (Koyu ve Minimal) ===== */
+.page-header {
+  background-color: #1f2937; /* Gradient yok, düz kurumsal koyu renk */
+  color: white;
+  padding: 1rem 35rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px; /* Daha az yuvarlak */
+  background: transparent;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: none;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+  transform: translateX(-2px);
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.25rem; /* Daha sade başlık boyutu */
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.add-task-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.task-form-wrapper {
+  background: white;
+  border-radius: 8px; /* 16px'den 8px'e düşürüldü */
+  border: 1px solid #e5e7eb; /* İnce çerçeve */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Çok hafif gölge */
+  overflow: hidden;
+}
+
+/* ===== EDIT NOTICE (Sarı Uyarı Alanı) ===== */
+.edit-notice {
+  background-color: #fffbeb; /* Düz açık sarı */
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid #fcd34d;
+}
+
+.notice-icon {
+  font-size: 1.25rem;
+  color: #d97706;
+}
+
+.notice-text {
+  font-weight: 500;
+  color: #92400e;
+  font-size: 0.9rem;
+}
+
+/* ===== FORM ===== */
+.task-form {
+  padding: 2rem;
+}
+
+/* ===== FORM SECTION ===== */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section:last-of-type {
+  margin-bottom: 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  padding: 0;
+}
+
+.selection-count {
+  padding: 0.25rem 0.75rem;
+  background-color: #eff6ff; /* Çok açık mavi */
+  color: #1e40af; /* Aksan rengi */
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ===== FORM GROUPS ===== */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151; /* Koyu gri */
+}
+
+.required {
+  color: #dc2626; /* Kırmızı */
+  margin-left: 0.25rem;
+}
+
+.optional {
+  font-weight: 400;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+/* ===== FORM INPUTS (Google Material / Microsoft Fluent Tarzı) ===== */
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #d1d5db; /* Standart gri sınır */
+  border-radius: 4px; /* Keskin köşeler */
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.2s;
+  background: white;
+  color: #111827;
+}
+
+.form-input:hover,
+.form-textarea:hover,
+.form-select:hover {
+  border-color: #9ca3af;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #1e40af; /* Aksan rengi */
+  box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1); /* Hafif mavi hare */
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* ===== FILE INPUT ===== */
+.file-input-wrapper {
+  position: relative;
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 2px dashed #d1d5db; /* Kesik gri çizgi */
+  border-radius: 6px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.file-label:hover {
+  border-color: #1e40af;
+  background: #eff6ff; /* Hover'da hafif mavi zemin */
+}
+
+.file-icon {
+  font-size: 1.5rem;
+  color: #6b7280;
+}
+
+.file-label:hover .file-icon {
+  color: #1e40af;
+}
+
+.file-text {
+  font-size: 0.9rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+/* ===== SELECTED FILES ===== */
+.selected-files {
+  margin-top: 1rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.remove-file {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: #ef4444;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.remove-file:hover {
+  background: #fef2f2;
+  color: #dc2626;
+  transform: none;
+}
+
+/* ===== USERS GRID ===== */
+.loading-users,
+.no-users {
+  padding: 2.5rem;
+  text-align: center;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.loading-users .spinner {
+  font-size: 2rem;
+  color: #1e40af;
+  margin-bottom: 1rem;
+  animation: spin 2s linear infinite;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Biraz daha kompakt */
+  gap: 1rem;
+}
+
+/* ===== USER CARD (Sadeleştirilmiş) ===== */
+.user-card {
+  position: relative;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.user-card:hover {
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+  transform: translateY(-1px);
+}
+
+/* Seçili Kart Stili - Aksan Rengi */
+.user-card.selected {
+  border-color: #1e40af;
+  background-color: #eff6ff; /* Çok açık mavi */
+  box-shadow: 0 0 0 1px #1e40af;
+}
+
+.user-checkbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.user-card-content {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e5e7eb; /* Düz gri */
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.user-card.selected .user-avatar {
+  background-color: #1e40af;
+  color: white;
+  transform: none;
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  margin: 0 0 0.15rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-email {
+  margin: 0 0 0.4rem 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-badges {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+/* Badge'ler - Düz Renkler */
+.role-badge {
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: inline-block;
+  letter-spacing: 0.02em;
+}
+
+.role-badge-ceo {
+  background-color: #1e40af;
+  color: white;
+}
+
+.role-badge-manager {
+  background-color: #059669; /* Yeşil */
+  color: white;
+}
+
+.role-badge-employee {
+  background-color: #f59e0b; /* Turuncu */
+  color: white;
+}
+
+.role-badge-default {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.unvan-badge {
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+
+.check-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1e40af;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.user-card.selected .check-indicator {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ===== FORM ACTIONS (Sade Butonlar) ===== */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* İptal Butonu - Beyaz/Gri */
+.btn-cancel {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+/* Kaydet Butonu - Düz Navy Blue */
+.btn-submit {
+  background-color: #1e40af;
+  color: white;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #1c388e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(30, 64, 175, 0.15);
+}
+
+.btn-icon {
+  font-size: 1rem;
+}
+
+.btn-spinner {
+  font-size: 1rem;
+  animation: spin 2s linear infinite;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .add-task-container {
+    padding: 1rem;
+  }
+
+  .task-form {
+    padding: 1.25rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .user-card-content {
+    padding: 0.75rem;
+  }
+}
