@@ -1,109 +1,108 @@
-from django.shortcuts import render
-from .models import CustomUser
-from rest_framework.permissions import AllowAny
-from rest_framework import generics
-from .serializers import CustomUserSerializer
+from rest_framework import generics, viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.contrib.auth import get_user_model
+from django.db.models import Q  # ✅ ÖNEMLİ: Bu satırı ekledik!
+from .models import Mission
+from .serializers import CustomUserSerializer, MissionSerializer
 
-# Create your views here.
+User = get_user_model()
+
+
 class CreateUserView(generics.CreateAPIView):
-    queryset = CustomUser.objects.all()
+    queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [AllowAny]
 
 
-
-
-
-
-from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from .models import Mission, CustomUser
-from .serializers import MissionSerializer
-
 class MissionViewSet(viewsets.ModelViewSet):
-    """
-    Mission CRUD işlemleri
-    - List: Sadece giriş yapan kullanıcıya atanan görevleri göster
-    - Create: Yeni görev oluştur
-    - Update/Delete: Görev güncelle/sil
-    """
     serializer_class = MissionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        """
-        Giriş yapan kullanıcıya atanan görevleri filtrele
-        """
+        """Kullanıcının görebildiği görevleri getir"""
         user = self.request.user
-        # Kullanıcıya atanan tüm görevler
-        return Mission.objects.filter(due_to=user).distinct().prefetch_related('due_to', 'created_by')
+        # Kullanıcının oluşturduğu veya kendisine atanan görevler
+        return Mission.objects.filter(
+            Q(created_by=user) | Q(due_to=user)
+        ).distinct()
+    
+    def get_serializer_context(self):
+        """Serializer'a request context'i gönder (permissions için gerekli)"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
     
     def perform_create(self, serializer):
-        """
-        Görev oluştururken created_by alanını otomatik doldur
-        """
+        """Yeni görev oluştururken created_by'ı set et"""
         serializer.save(created_by=self.request.user)
+    
+    def update(self, request, *args, **kwargs):
+        """Sadece created_by düzenleyebilir"""
+        mission = self.get_object()
+        if not mission.can_edit(request.user):
+            return Response(
+                {"detail": "Bu görevi düzenleme yetkiniz yok."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().update(request, *args, **kwargs)
+    
+    def partial_update(self, request, *args, **kwargs):
+        """Sadece created_by düzenleyebilir"""
+        mission = self.get_object()
+        if not mission.can_edit(request.user):
+            return Response(
+                {"detail": "Bu görevi düzenleme yetkiniz yok."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().partial_update(request, *args, **kwargs)
     
     @action(detail=True, methods=['patch'])
     def toggle_complete(self, request, pk=None):
-        """
-        Görevin tamamlanma durumunu değiştir
-        """
+        """Görevi tamamla/tamamlanmadı olarak işaretle"""
         mission = self.get_object()
-        mission.completed = not mission.completed
-        mission.save()
-        serializer = self.get_serializer(mission)
-        return Response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
-    def my_missions(self, request):
-        """
-        Giriş yapan kullanıcının görevlerini getir
-        """
-        missions = self.get_queryset()
-        serializer = self.get_serializer(missions, many=True)
-        return Response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
-    def all_missions(self, request):
-        """
-        Tüm görevleri getir (admin/yönetici için)
-        Sadece staff kullanıcılar erişebilir
-        """
-        if not request.user.is_staff:
+        
+        # Sadece görev atananlar complete edebilir
+        if not mission.can_complete(request.user):
             return Response(
-                {"detail": "Bu işlem için yetkiniz yok."},
+                {"detail": "Bu görevi tamamlama yetkiniz yok. Sadece size atanan görevleri tamamlayabilirsiniz."},
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        missions = Mission.objects.all().prefetch_related('due_to', 'created_by')
-        serializer = self.get_serializer(missions, many=True)
+        mission.completed = not mission.completed
+        mission.save()
+        
+        serializer = self.get_serializer(mission)
         return Response(serializer.data)
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Kullanıcı listesi (sadece okuma)
-    Görev atamak için kullanılacak
-    """
-    queryset = CustomUser.objects.filter(is_active=True)
+class AssignableUsersView(generics.ListAPIView):
+    """Görev atanabilecek kullanıcıları listele"""
     serializer_class = CustomUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
-    @action(detail=False, methods=['get'])
-    def assignable_users(self, request):
-        """
-        Görev atanabilecek aktif kullanıcılar
-        """
-        users = CustomUser.objects.filter(is_active=True).order_by('username')
-        serializer = self.get_serializer(users, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return User.objects.all().order_by('role', 'username')
+
+
+class OrganizationChartView(generics.ListAPIView):
+    """Organizasyon yapısını getir (CEO, Manager, Employee)"""
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
     
-    @action(detail=False, methods=['get'])
-    def me(self, request):
-        """
-        Giriş yapan kullanıcının bilgileri
-        """
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
+    def list(self, request, *args, **kwargs):
+        users = User.objects.all().order_by('role', 'username')
+        
+        # Role'lere göre grupla
+        org_chart = {
+            'CEO': [],
+            'MANAGER': [],
+            'EMPLOYEE': []
+        }
+        
+        for user in users:
+            serializer = self.get_serializer(user)
+            org_chart[user.role].append(serializer.data)
+        
+        return Response(org_chart)

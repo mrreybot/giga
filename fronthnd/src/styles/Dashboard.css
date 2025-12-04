@@ -355,14 +355,6 @@ body {
   margin-left: 0.5rem;
 }
 
-/* Ünvan gösterimi */
-.user-unvan {
-  display: block;
-  color: #6c757d;
-  font-size: 0.85rem;
-  font-style: italic;
-  margin: 0.2rem 0;
-}
 
 /* Seçim sayacı */
 .selection-count {
@@ -389,27 +381,46 @@ body {
 }
 
 /* Kullanıcı kartı hover efekti güncelleme */
+.user-checkbox-card {
+  display: block;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background: #fefefe;
+}
+
+.user-checkbox-card input[type="checkbox"] {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+}
+
+.user-checkbox-card:hover {
+    border-color: var(--accent-blue);
+    background: #f0f7ff;
+}
 .user-checkbox-card:has(input:checked) {
-  border-color: #667eea;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  border-color: var(--success-green);
+  background: #f0fff4; 
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
 }
 
-/* Kullanıcı seçim grid scroll için özel stil */
 .user-selection-grid {
-  max-height: 500px;
-  padding-right: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px; /* Scrollbar için boşluk */
 }
 
-/* User tag için hover efekti */
-.user-tag {
-  transition: all 0.3s ease;
-}
 
-.user-tag:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-}
 
 /* Mission card animasyonu */
 @keyframes slideIn {
@@ -579,3 +590,482 @@ body {
   color: #666;
   font-weight: 500;
 }
+.attachment-list {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.attachment-list li {
+  list-style: none;
+  margin: 2px 0;
+}
+/* Ek Dosyalar Stilleri */
+.mission-attachments {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #4a90e2;
+}
+
+.mission-attachments strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.attachment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.attachment-list li {
+  display: flex;
+  align-items: center;
+}
+
+.attachment-link {
+  color: #4a90e2;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: white;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  word-break: break-all;
+}
+
+.attachment-link:hover {
+  background: #e3f2fd;
+  color: #1976d2;
+  text-decoration: underline;
+}
+
+/* Form için de stil */
+.form-group .attachment-list {
+  margin-top: 8px;
+  padding: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.form-group .attachment-list li {
+  font-size: 13px;
+  color: #555;
+  padding: 4px 0;
+}
+/* ======================================================
+   💥 YENİ: GÖREV DETAY MODALI STİLLERİ
+   ====================================================== */
+
+/* Görev Kartına Tıklama Hissi (Pırıltı) */
+.mission-body {
+    cursor: pointer; /* Tıklanabilir olduğunu gösterir */
+    padding-top: 10px; 
+    border-top: 1px dashed #eee;
+    margin-top: 10px;
+    transition: background-color 0.2s; /* Geçiş animasyonu */
+}
+
+.mission-body:hover {
+    background-color: #f7f7f7; /* Hafif bir hover efekti */
+    border-radius: 6px;
+}
+
+/* MODAL KENDİSİ */
+.mission-detail-modal {
+  background: var(--white);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px; /* Detaylara odaklanma için daha dar */
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s ease;
+}
+
+.mission-detail-modal .modal-header h2 {
+    font-size: 1.5rem;
+    color: var(--navy-blue);
+    margin: 0;
+}
+
+.mission-detail-modal .modal-content {
+    padding: 30px;
+}
+
+/* Detay Durum Etiketi Kısmı */
+.detail-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pending-badge {
+    /* Devam Eden görevler için yumuşak sarı */
+    background: #fff3cd; 
+    color: #856404; 
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Açıklama alanı vurgusu */
+.detail-description {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--accent-blue);
+    padding: 15px;
+    background: #fcfcfc;
+    border-radius: 8px;
+}
+
+.detail-description strong {
+    color: var(--navy-blue);
+}
+
+
+/* Detay Kullanıcıları (Badgeler) */
+.detail-users {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.detail-users strong {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--navy-blue);
+    font-weight: 700;
+}
+
+.user-badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.user-detail-badge {
+    /* Atanan kullanıcılar için temiz ve kurumsal badge */
+    background: #f0f7ff;
+    color: var(--accent-blue);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid #cce5ff;
+}
+
+.detail-creator {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.detail-attachments {
+    margin-top: 20px;
+}
+
+.org-chart-btn {
+  background: #28a745;
+  color: white;
+  border: 1px solid #28a745;
+}
+
+.org-chart-btn:hover {
+  background: #218838;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+.org-chart-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 2px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #001f3f;
+  font-size: 28px;
+}
+
+.close-modal {
+  background: #f44336;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.close-modal:hover {
+  background: #d32f2f;
+  transform: rotate(90deg);
+}
+
+.org-chart-content {
+  padding: 32px;
+}
+
+.org-section {
+  margin-bottom: 40px;
+}
+
+.org-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid;
+}
+
+.org-title.ceo-title {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.org-title.manager-title {
+  border-color: #4a90e2;
+  color: #4a90e2;
+}
+
+.org-title.employee-title {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.org-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.org-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.org-card.ceo-card {
+  border-color: #ff6b6b;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+}
+
+.org-card.ceo-card:hover {
+  border-color: #ff5252;
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+}
+
+.org-card.manager-card {
+  border-color: #4a90e2;
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+}
+
+.org-card.manager-card:hover {
+  border-color: #357ABD;
+  box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+}
+
+.org-card.employee-card {
+  border-color: #28a745;
+  background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+}
+
+.org-card.employee-card:hover {
+  border-color: #218838;
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+}
+
+.org-card-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.role-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-badge-ceo {
+  background: var(--navy-blue); /* Koyu Kurumsal Mavi */
+  color: #ffffff; /* Beyaz Metin */
+  border: 1px solid var(--navy-blue);
+}
+
+.role-badge-manager {
+  background: #e9f5ff; /* Çok açık mavi (Hafif dolgu) */
+  color: var(--accent-blue); /* Vurgu Mavisi Metin */
+  border: 1px solid var(--accent-blue);
+}
+
+.role-badge-employee {
+  background: #f1f1f1; /* Nötr Açık Gri */
+  color: var(--text-dark); /* Koyu Metin */
+  border: 1px solid var(--border-color); /* Hafif sınır */
+}
+
+.org-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #2c3e50;
+}
+.user-info strong {
+    font-size: 1rem;
+    color: var(--navy-blue);
+    display: block;
+    margin-bottom: 4px;
+}
+.user-info small {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.user-unvan {
+    /* Daha belirgin bir etiket görünümü */
+    background: #e9ecef; /* Çok açık gri */
+    color: #495057;
+    padding: 3px 8px;
+    border-radius: 4px; /* Köşeleri yuvarlatıldı */
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 0;
+    width: fit-content; /* Sadece metin kadar yer kaplasın */
+    order: 2; /* İsimden sonra gelsin */
+}
+
+.empty-role {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 40px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.edit-mission-btn {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.edit-mission-btn:hover {
+  background: #357ABD;
+  transform: scale(1.05);
+}
+
+.edit-notice {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-notice p {
+  margin: 0;
+  font-weight: 600;
+  color: #856404;
+}
+
+.cancel-edit-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.cancel-edit-btn:hover {
+  background: #5a6268;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

@@ -2,15 +2,35 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class CustomUser(AbstractUser):
+    ROLE_CHOICES = [
+        ('CEO', 'CEO'),
+        ('MANAGER', 'Manager'),
+        ('EMPLOYEE', 'Employee'),
+    ]
+    
     unvan = models.CharField(max_length=100, blank=True, null=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='EMPLOYEE')
 
     def __str__(self):
-        return f"{self.username} ({self.unvan})" if self.unvan else self.username
+        return f"{self.username} ({self.get_role_display()})" if self.role else self.username
 
     class Meta:
         verbose_name = "Kullanıcı"
         verbose_name_plural = "Kullanıcılar"
 
+
+class MissionAttachment(models.Model):
+    mission = models.ForeignKey(
+        'Mission',
+        on_delete=models.CASCADE,
+        related_name='attachments'
+    )
+    file = models.FileField(upload_to='mission_files/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.file.name
+    
 
 class Mission(models.Model):
     description = models.TextField(blank=True, null=True)
@@ -25,7 +45,7 @@ class Mission(models.Model):
         blank=True
     )
     
-    # Görevi oluşturan kullanıcı (opsiyonel, tracking için)
+    # Görevi oluşturan kullanıcı
     created_by = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
@@ -34,10 +54,7 @@ class Mission(models.Model):
         related_name="created_missions"
     )
     
-    # Görev tamamlandı mı?
     completed = models.BooleanField(default=False)
-    
-    # Oluşturulma tarihi (otomatik)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -48,3 +65,25 @@ class Mission(models.Model):
         verbose_name = "Mission"
         verbose_name_plural = "Missions"
         ordering = ['-created_at']
+    
+    # ============ YETKİ KONTROL METODları ============
+    
+    def can_view(self, user):
+        """Kullanıcı bu görevi görebilir mi?"""
+        # Görevi oluşturan kişi görebilir
+        if self.created_by == user:
+            return True
+        # Görev kendisine atanmışsa görebilir
+        if self.due_to.filter(id=user.id).exists():
+            return True
+        return False
+    
+    def can_edit(self, user):
+        """Kullanıcı bu görevi düzenleyebilir mi?"""
+        # Sadece görevi oluşturan kişi düzenleyebilir
+        return self.created_by == user
+    
+    def can_complete(self, user):
+        """Kullanıcı bu görevi tamamlayabilir mi?"""
+        # Sadece görev kendisine atanmışsa complete edebilir
+        return self.due_to.filter(id=user.id).exists()
