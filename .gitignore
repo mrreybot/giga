@@ -25,3 +25,8 @@ env/
 # OS files
 .DS_Store
 Thumbs.db
+
+
+# SQLite database
+*.sqlite3
+backend/giga_backend/db.sqlite3
