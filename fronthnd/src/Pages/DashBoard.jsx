@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../src/services/api";
-import { ACCESS_TOKEN } from "../../src/services/constant";
+import api from "../services/api";
+import { ACCESS_TOKEN } from "../services/constant";
 import "../styles/Dashboard.css";
 
 const MISSIONS_ENDPOINT = "/api/missions/";
