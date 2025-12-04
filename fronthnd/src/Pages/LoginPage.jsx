@@ -45,9 +45,11 @@ const LoginPage = () => {
       setRegName("");
       setRegEmail("");
       setRegPassword("");
-      console.log("Kayıt başarılı    Giriş yapabilirsiniz! ");
+      console.log("Kayıt başarılı! Giriş yapabilirsiniz!");
     } catch (error) {
-      alert(error);
+      // Detaylı hata mesajını görelim
+      console.error("Hata detayı:", error.response?.data);
+      alert(JSON.stringify(error.response?.data, null, 2));
     }
   };
 
