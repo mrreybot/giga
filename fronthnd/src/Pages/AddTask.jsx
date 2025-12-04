@@ -1,52 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/AddTask.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import api from "../services/api";
+import "../styles/AddTask.css";
 
-const AddTask = ({
-  users = [],
-  editingMission = null,
-  onSubmit,
-  onCancel,
-  onSuccess,
-  api,
-  missionsEndpoint
-}) => {
-  // === STATE ===
+const MISSIONS_ENDPOINT = "/api/missions/";
+const USERS_ENDPOINT = "/api/users/assignable_users/";
+
+const AddTask = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditing = Boolean(id);
+
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  
   const [formData, setFormData] = useState({
     description: '',
     assigned_date: '',
     end_date: '',
     from_to: '',
     due_to: [],
-    attachments: [],
+    attachments: []
   });
-  const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState({});
 
-  // === EFFECTS ===
+  // === INITIALIZATION ===
   useEffect(() => {
-    if (editingMission) {
+    loadFormData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const loadFormData = async () => {
+    setLoading(true);
+    try {
+      await fetchUsers();
+      if (isEditing) {
+        await fetchMissionData();
+      }
+    } catch (error) {
+      console.error("❌ Failed to load form data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      console.log("🔍 Fetching users from:", USERS_ENDPOINT);
+      const response = await api.get(USERS_ENDPOINT);
+      const userData = response.data.results || response.data;
+      setUsers(Array.isArray(userData) ? userData : []);
+    } catch (error) {
+      console.error("❌ Failed to fetch users:", error);
+      alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+    }
+  };
+
+  const fetchMissionData = async () => {
+    try {
+      const response = await api.get(`${MISSIONS_ENDPOINT}${id}/`);
+      const mission = response.data;
+      
       setFormData({
-        description: editingMission.description || '',
-        assigned_date: editingMission.assigned_date || '',
-        end_date: editingMission.end_date || '',
-        from_to: editingMission.from_to || '',
-        due_to: editingMission.assigned_users?.map(u => u.id) || [],
+        description: mission.description || '',
+        assigned_date: mission.assigned_date || '',
+        end_date: mission.end_date || '',
+        from_to: mission.from_to || '',
+        due_to: mission.assigned_users?.map(u => u.id) || [],
         attachments: []
       });
-    } else {
-      resetForm();
+    } catch (error) {
+      console.error("❌ Failed to fetch mission:", error);
+      alert("Görev bilgileri yüklenirken hata oluştu!");
+      navigate("/dashboard");
     }
-  }, [editingMission]);
+  };
 
-  // === HANDLERS ===
+  // === FORM HANDLERS ===
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: null }));
-    }
   };
 
   const handleUserSelection = (userId) => {
@@ -59,79 +92,29 @@ const AddTask = ({
           : [...prev.due_to, userId]
       };
     });
-    
-    // Clear error when user selects someone
-    if (errors.due_to) {
-      setErrors(prev => ({ ...prev, due_to: null }));
-    }
   };
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
     setFormData(prev => ({
       ...prev,
-      attachments: files
+      attachments: Array.from(e.target.files)
     }));
   };
 
-  const removeAttachment = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      attachments: prev.attachments.filter((_, i) => i !== index)
-    }));
-  };
-
-  const resetForm = () => {
-    setFormData({
-      description: '',
-      assigned_date: '',
-      end_date: '',
-      from_to: '',
-      due_to: [],
-      attachments: [],
-    });
-    setErrors({});
-    
-    // Reset file input
-    const fileInput = document.getElementById('mission-attachments');
-    if (fileInput) fileInput.value = '';
-  };
-
-  // === VALIDATION ===
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.description.trim()) {
-      newErrors.description = 'Lütfen açıklama giriniz!';
-    }
-
-    if (!formData.assigned_date) {
-      newErrors.assigned_date = 'Başlangıç tarihi zorunludur!';
-    }
-
-    if (!formData.end_date) {
-      newErrors.end_date = 'Bitiş tarihi zorunludur!';
-    }
-
-    if (formData.assigned_date && formData.end_date) {
-      if (new Date(formData.end_date) < new Date(formData.assigned_date)) {
-        newErrors.end_date = 'Bitiş tarihi başlangıç tarihinden önce olamaz!';
-      }
-    }
-
-    if (formData.due_to.length === 0) {
-      newErrors.due_to = 'Lütfen en az bir kullanıcı seçiniz!';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // === SUBMIT ===
-  const handleSubmit = async (e) => {
+  // === SUBMIT MISSION ===
+  const handleSubmitMission = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    if (!formData.description.trim()) {
+      alert("Lütfen açıklama giriniz!");
+      return;
+    }
+    if (!formData.assigned_date || !formData.end_date) {
+      alert("Lütfen tarih aralığı seçiniz!");
+      return;
+    }
+    if (formData.due_to.length === 0) {
+      alert("Lütfen en az bir kullanıcı seçiniz!");
       return;
     }
 
@@ -155,31 +138,19 @@ const AddTask = ({
         submitData.append('new_attachments', file);
       });
       
-      if (editingMission) {
-        // UPDATE
-        await api.patch(`${missionsEndpoint}${editingMission.id}/`, submitData, {
+      if (isEditing) {
+        await api.patch(`${MISSIONS_ENDPOINT}${id}/`, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        
-        if (onSuccess) {
-          onSuccess('update', 'Görev başarıyla güncellendi!');
-        }
+        alert("✅ Görev başarıyla güncellendi!");
       } else {
-        // CREATE
-        await api.post(missionsEndpoint, submitData, {
+        await api.post(MISSIONS_ENDPOINT, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        
-        if (onSuccess) {
-          onSuccess('create', 'Görev başarıyla oluşturuldu!');
-        }
+        alert("✅ Görev başarıyla oluşturuldu!");
       }
       
-      resetForm();
-      
-      if (onSubmit) {
-        onSubmit();
-      }
+      navigate("/dashboard");
       
     } catch (error) {
       console.error("❌ Failed to save mission:", error);
@@ -193,256 +164,198 @@ const AddTask = ({
   };
 
   const handleCancel = () => {
-    resetForm();
-    if (onCancel) {
-      onCancel();
+    if (window.confirm("Değişiklikler kaydedilmeyecek. Çıkmak istediğinize emin misiniz?")) {
+      navigate("/dashboard");
     }
   };
 
   // === HELPERS ===
-  const getRoleBadgeClass = (role) => {
-    switch(role) {
-      case 'CEO': return 'mf-role-badge-ceo';
-      case 'MANAGER': return 'mf-role-badge-manager';
-      case 'EMPLOYEE': return 'mf-role-badge-employee';
-      default: return 'mf-role-badge-default';
-    }
-  };
-
-  const getUserDisplayName = (user) => {
+  const formatUserName = (user) => {
+    if (!user) return '';
     if (user.first_name && user.last_name) {
       return `${user.first_name} ${user.last_name}`;
     }
     return user.full_name || user.username;
   };
 
-  // === RENDER ===
+  const getRoleBadgeClass = (role) => {
+    switch(role) {
+      case 'CEO': return 'role-badge-ceo';
+      case 'MANAGER': return 'role-badge-manager';
+      case 'EMPLOYEE': return 'role-badge-employee';
+      default: return 'role-badge-default';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="add-task-page">
+        <div className="loading-container">
+          <div className="spinner">⏳</div>
+          <p>Yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mission-form-container">
-      <form className="mission-form" onSubmit={handleSubmit}>
-        <h2 className="mission-form-title">
-          {editingMission ? '✏️ Görevi Düzenle' : '✍️ Detaylı Görev Oluştur'}
-        </h2>
-        
-        {/* Edit Notice */}
-        {editingMission && (
-          <div className="mf-edit-notice">
-            <p>🔔 Görev #{editingMission.id} düzenleniyor</p>
-            <button 
-              type="button" 
-              className="mf-cancel-edit-btn"
-              onClick={handleCancel}
-            >
-              ✕ İptal
-            </button>
-          </div>
-        )}
-        
-        {/* Description */}
-        <div className={`mf-form-group ${errors.description ? 'has-error' : ''}`}>
-          <label htmlFor="mission-desc">
-            Açıklama <span className="required">*</span>
-          </label>
-          <textarea 
-            id="mission-desc"
-            name="description"
-            rows="5" 
-            placeholder="Görevin detaylarını yazınız..."
-            value={formData.description}
-            onChange={handleInputChange}
-            className={errors.description ? 'input-error' : ''}
-          />
-          {errors.description && (
-            <span className="mf-error-message">{errors.description}</span>
-          )}
-        </div>
-
-        {/* Date Row */}
-        <div className="mf-form-row">
-          <div className={`mf-form-group ${errors.assigned_date ? 'has-error' : ''}`}>
-            <label htmlFor="mission-assigned-date">
-              Başlangıç Tarihi <span className="required">*</span>
-            </label>
-            <input 
-              type="date" 
-              id="mission-assigned-date"
-              name="assigned_date"
-              value={formData.assigned_date}
-              onChange={handleInputChange}
-              className={errors.assigned_date ? 'input-error' : ''}
-            />
-            {errors.assigned_date && (
-              <span className="mf-error-message">{errors.assigned_date}</span>
-            )}
-          </div>
-          
-          <div className={`mf-form-group ${errors.end_date ? 'has-error' : ''}`}>
-            <label htmlFor="mission-end-date">
-              Bitiş Tarihi <span className="required">*</span>
-            </label>
-            <input 
-              type="date" 
-              id="mission-end-date"
-              name="end_date"
-              value={formData.end_date}
-              onChange={handleInputChange}
-              min={formData.assigned_date}
-              className={errors.end_date ? 'input-error' : ''}
-            />
-            {errors.end_date && (
-              <span className="mf-error-message">{errors.end_date}</span>
-            )}
-          </div>
-        </div>
-
-        {/* Location */}
-        <div className="mf-form-group">
-          <label htmlFor="mission-from-to">
-            Konum / Rota <span className="optional">(Opsiyonel)</span>
-          </label>
-          <input 
-            type="text" 
-            id="mission-from-to"
-            name="from_to"
-            placeholder="Örn: Ankara - İstanbul"
-            value={formData.from_to}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        {/* Attachments */}
-        <div className="mf-form-group">
-          <label htmlFor="mission-attachments">
-            Dosya Ekle <span className="optional">(Opsiyonel)</span>
-          </label>
-          <div className="mf-file-input-wrapper">
-            <input
-              type="file"
-              id="mission-attachments"
-              name="attachments"
-              multiple
-              onChange={handleFileChange}
-              className="mf-file-input"
-            />
-            <label htmlFor="mission-attachments" className="mf-file-input-label">
-              📁 Dosya Seç
-            </label>
-          </div>
-          
-          {formData.attachments.length > 0 && (
-            <ul className="mf-attachment-list">
-              {formData.attachments.map((file, index) => (
-                <li key={index} className="mf-attachment-item">
-                  <span>📎 {file.name}</span>
-                  <button 
-                    type="button"
-                    className="mf-remove-attachment"
-                    onClick={() => removeAttachment(index)}
-                  >
-                    ✕
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-          
-          {/* Show existing attachments when editing */}
-          {editingMission?.attachments?.length > 0 && (
-            <div className="mf-existing-attachments">
-              <p className="mf-existing-title">Mevcut Dosyalar:</p>
-              <ul className="mf-attachment-list">
-                {editingMission.attachments.map((att, index) => (
-                  <li key={index} className="mf-attachment-item existing">
-                    <a href={att.file} target="_blank" rel="noopener noreferrer">
-                      📄 {att.file_name || `Dosya ${index + 1}`}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {/* User Selection */}
-        <div className={`mf-form-group ${errors.due_to ? 'has-error' : ''}`}>
-          <label>
-            Atanacak Kullanıcılar <span className="required">*</span>
-            <span className="mf-selection-count">
-              ({formData.due_to.length} kişi seçildi)
-            </span>
-          </label>
-          
-          {errors.due_to && (
-            <span className="mf-error-message">{errors.due_to}</span>
-          )}
-          
-          <div className="mf-user-selection-grid">
-            {users.length === 0 ? (
-              <p className="mf-loading-text">⏳ Kullanıcılar yükleniyor...</p>
-            ) : (
-              users.map(user => (
-                <label 
-                  key={user.id} 
-                  className={`mf-user-checkbox-card ${
-                    formData.due_to.includes(user.id) ? 'selected' : ''
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.due_to.includes(user.id)}
-                    onChange={() => handleUserSelection(user.id)}
-                    className="mf-user-checkbox"
-                  />
-                  <div className="mf-user-info">
-                    <strong className="mf-user-name">
-                      {getUserDisplayName(user)}
-                    </strong>
-                    <span className={`mf-role-badge ${getRoleBadgeClass(user.role)}`}>
-                      {user.role}
-                    </span>
-                    {user.unvan && (
-                      <span className="mf-user-unvan">
-                        🏷️ {user.unvan}
-                      </span>
-                    )}
-                    <small className="mf-user-email">{user.email}</small>
-                  </div>
-                  <div className="mf-checkbox-indicator">
-                    {formData.due_to.includes(user.id) ? '✓' : ''}
-                  </div>
-                </label>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="mf-button-group">
-          {editingMission && (
-            <button 
-              type="button" 
-              className="mf-cancel-btn"
-              onClick={handleCancel}
-              disabled={saving}
-            >
-              İptal
-            </button>
-          )}
-          
-          <button 
-            type="submit" 
-            className="mf-submit-btn"
-            disabled={saving || formData.due_to.length === 0}
-          >
-            {saving 
-              ? "⏳ Kaydediliyor..." 
-              : editingMission 
-                ? "💾 Değişiklikleri Kaydet" 
-                : "✅ Görevi Ata"
-            }
+    <div className="add-task-page">
+      {/* HEADER */}
+      <div className="add-task-header">
+        <div className="header-content">
+          <button onClick={() => navigate("/dashboard")} className="back-btn">
+            ← Geri Dön
           </button>
+          <h1>{isEditing ? '✏️ Görevi Düzenle' : '➕ Yeni Görev Oluştur'}</h1>
         </div>
-      </form>
+      </div>
+
+      {/* MAIN CONTENT */}
+      <div className="add-task-content">
+        <div className="form-wrapper">
+          <form className="task-form" onSubmit={handleSubmitMission}>
+            
+            {isEditing && (
+              <div className="edit-notice">
+                <p>🔔 Görev #{id} düzenleniyor</p>
+              </div>
+            )}
+            
+            {/* AÇIKLAMA */}
+            <div className="form-group">
+              <label htmlFor="desc">
+                Açıklama <span className="required">*</span>
+              </label>
+              <textarea 
+                id="desc"
+                name="description"
+                rows="5" 
+                placeholder="Görevin detaylarını yazınız..."
+                value={formData.description}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            {/* TARİHLER */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="assigned_date">
+                  Başlangıç Tarihi <span className="required">*</span>
+                </label>
+                <input 
+                  type="date" 
+                  id="assigned_date"
+                  name="assigned_date"
+                  value={formData.assigned_date}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="end_date">
+                  Bitiş Tarihi <span className="required">*</span>
+                </label>
+                <input 
+                  type="date" 
+                  id="end_date"
+                  name="end_date"
+                  value={formData.end_date}
+                  onChange={handleInputChange}
+                  min={formData.assigned_date}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* KONUM */}
+            <div className="form-group">
+              <label htmlFor="from_to">Konum / Rota (Opsiyonel)</label>
+              <input 
+                type="text" 
+                id="from_to"
+                name="from_to"
+                placeholder="Örn: Ankara - İstanbul"
+                value={formData.from_to}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            {/* DOSYA EKLEME */}
+            <div className="form-group">
+              <label htmlFor="attachments">Dosya Ekle (Opsiyonel)</label>
+              <input
+                type="file"
+                id="attachments"
+                name="attachments"
+                multiple
+                onChange={handleFileChange}
+              />
+              {formData.attachments.length > 0 && (
+                <ul className="attachment-list">
+                  {formData.attachments.map((file, index) => (
+                    <li key={index}>📎 {file.name}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* KULLANICI SEÇİMİ */}
+            <div className="form-group">
+              <label>
+                Atanacak Kullanıcılar <span className="required">*</span>
+                <span className="selection-count">
+                  ({formData.due_to.length} kişi seçildi)
+                </span>
+              </label>
+              <div className="user-selection-grid">
+                {users.length === 0 ? (
+                  <p className="text-muted">⏳ Kullanıcılar yükleniyor...</p>
+                ) : (
+                  users.map(user => (
+                    <label key={user.id} className="user-checkbox-card">
+                      <input
+                        type="checkbox"
+                        checked={formData.due_to.includes(user.id)}
+                        onChange={() => handleUserSelection(user.id)}
+                      />
+                      <div className="user-info">
+                        <strong>{formatUserName(user)}</strong>
+                        <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
+                          {user.role}
+                        </span>
+                        {user.unvan && (
+                          <span className="user-unvan">🏷️ {user.unvan}</span>
+                        )}
+                        <small>{user.email}</small>
+                      </div>
+                    </label>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* BUTONLAR */}
+            <div className="form-actions">
+              <button 
+                type="button"
+                className="cancel-btn"
+                onClick={handleCancel}
+                disabled={saving}
+              >
+                ✕ İptal
+              </button>
+              <button 
+                type="submit" 
+                className="submit-btn"
+                disabled={saving || formData.due_to.length === 0}
+              >
+                {saving ? "⏳ Kaydediliyor..." : isEditing ? "💾 Değişiklikleri Kaydet" : "✅ Görevi Ata"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

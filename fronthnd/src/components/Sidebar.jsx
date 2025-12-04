@@ -32,7 +32,7 @@ const Sidebar = () => {
       id: 3,
       name: "Yeni Görev",
       icon: "➕",
-      path: "/dashboard",
+      path: "/add-task",
       description: "Görev oluştur",
       state: { openTab: 'assign' }
     }
