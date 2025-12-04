@@ -3,7 +3,8 @@ import LoginPage from "./Pages/LoginPage";
 import HomePage from "./Pages/HomePage";
 import Dashboard from "./Pages/DashBoard";
 import Layout from "./components/Layout";
-import Statistics from "./Pages/Statistics"
+import Statistics from "./Pages/Statistics";
+import Archive from "./Pages/ArchivePage";
 function App() {
   return (
     <Router>
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         
         {/* Diğer sayfalar - Sidebar VAR */}
+        <Route path="/arsiv" element={<Layout><Archive /></Layout>} />
         <Route path="/home" element={<Layout><HomePage /></Layout>} />
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
