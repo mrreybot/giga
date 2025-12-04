@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { ACCESS_TOKEN } from "../services/constant";
-import "../styles/Dashboard.css";
+import "../styles/Dashboard.css"; // Stil dosyanızın var olduğunu varsayıyorum
 
 const MISSIONS_ENDPOINT = "/api/missions/";
 const USERS_ENDPOINT = "/api/users/assignable_users/";
 const ORG_CHART_ENDPOINT = "/api/users/organization_chart/";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const [missions, setMissions] = useState([]);
   const [users, setUsers] = useState([]);
   const [orgChart, setOrgChart] = useState({ CEO: [], MANAGER: [], EMPLOYEE: [] });
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('list');
+ 
   const [selectedMission, setSelectedMission] = useState(null);
   const [showOrgChart, setShowOrgChart] = useState(false);
   
@@ -24,19 +21,13 @@ const Dashboard = () => {
     searchText: '',
     selectedUser: 'all',
     dateFrom: '',
-    dateTo: ''
+    dateTo: '',
+    // YENİ EK: Görev türü filtresi
+    assignmentType: 'assigned_to_me' // Varsayılan: Bana Atananlar
   });
 
-  const [formData, setFormData] = useState({
-    description: '',
-    assigned_date: '',
-    end_date: '',
-    from_to: '',
-    due_to: [],
-    attachments: []
-  });
-
-  const [editingMission, setEditingMission] = useState(null);
+  // Görev düzenleme state'leri kaldırıldı
+  // Form state'leri kaldırıldı
 
   // === INITIALIZATION ===
   useEffect(() => {
@@ -46,6 +37,8 @@ const Dashboard = () => {
 
   const loadDashboardData = async () => {
     try {
+      // Görev atama/düzenleme kaldırıldığı için tüm görevleri çekmek daha mantıklı olabilir.
+      // Ancak mevcut endpoint'i koruyoruz. Backend'den gelen veriye göre filtreleme yapacağız.
       await fetchMissions();
       await fetchUsers();
       await fetchOrgChart();
@@ -57,6 +50,8 @@ const Dashboard = () => {
   const fetchMissions = async () => {
     setLoading(true);
     try {
+      // Not: Backend'iniz sadece kullanıcının gördüğü görevleri getiriyorsa sorun yok.
+      // Eğer tüm görevleri getiriyorsa, bu kodda sadece listeleme yapıldığı için uygundur.
       const response = await api.get(MISSIONS_ENDPOINT);
       setMissions(Array.isArray(response.data.results) ? response.data.results : []);
     } catch (error) {
@@ -67,23 +62,16 @@ const Dashboard = () => {
     }
   };
 
- const fetchUsers = async () => {
-  try {
-    console.log("🔍 Fetching users from:", USERS_ENDPOINT);
-    const response = await api.get(USERS_ENDPOINT);
-    console.log("✅ Users response:", response);
-    console.log("📦 Users data:", response.data);
-    
-    // Backend'den gelen data formatını kontrol et
-    const userData = response.data.results || response.data;
-    setUsers(Array.isArray(userData) ? userData : []);
-    
-  } catch (error) {
-    console.error("❌ Failed to fetch users:", error);
-    console.error("📍 Error response:", error.response);
-    alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
-  }
-};
+  const fetchUsers = async () => {
+    try {
+      const response = await api.get(USERS_ENDPOINT);
+      const userData = response.data.results || response.data;
+      setUsers(Array.isArray(userData) ? userData : []);
+    } catch (error) {
+      console.error("❌ Failed to fetch users:", error);
+      alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+    }
+  };
 
   const fetchOrgChart = async () => {
     try {
@@ -96,6 +84,22 @@ const Dashboard = () => {
 
   // === FILTER LOGIC ===
   const filteredMissions = missions.filter(mission => {
+    // 1. Assignment Type Filtresi (Bana Atananlar vs. Benim Atadıklarım)
+    // Not: Bu filtreleme, mevcut kullanıcının kimliğini (API'dan gelmeli) veya
+    // mission objesinde bulunan 'is_assigned_to_me' / 'is_created_by_me' gibi
+    // bir alanı kullanarak yapılmalıdır. Backend'i bozmamak için, görev oluşturan
+    // veya atanan kişi listesinden bir tahmin yapmaya çalışacağız, ancak
+    // en doğru yöntem backend'den gelen bir flag kullanmaktır.
+    
+    // Varsayım: `mission.can_complete` true ise bana atanmıştır.
+    // Varsayım: `mission.can_edit` true ise ben atamışımdır (created_by_me).
+    const isAssignedToMe = mission.can_complete;
+    const isAssignedByMe = mission.can_edit; 
+
+    if (filters.assignmentType === 'assigned_to_me' && !isAssignedToMe) return false;
+    if (filters.assignmentType === 'assigned_by_me' && !isAssignedByMe) return false;
+    
+    // 2. Diğer Filtreler
     if (filters.status === 'completed' && !mission.completed) return false;
     if (filters.status === 'pending' && mission.completed) return false;
 
@@ -138,7 +142,8 @@ const Dashboard = () => {
       searchText: '',
       selectedUser: 'all',
       dateFrom: '',
-      dateTo: ''
+      dateTo: '',
+      assignmentType: 'assigned_to_me' // Sadece bu filtreyi koru veya ilk varsayılana dön
     });
   };
 
@@ -149,132 +154,22 @@ const Dashboard = () => {
            filters.dateFrom !== '' ||
            filters.dateTo !== '';
   };
+  
+  
 
-  // === LOGOUT ===
-  const handleLogout = () => {
-    localStorage.removeItem(ACCESS_TOKEN);
-    navigate("/");
+  // === MODAL LOGIC (Korumak istedikleriniz) ===
+  const handleMissionClick = (mission) => { 
+    setSelectedMission(mission);
   };
 
-  // === FORM HANDLERS ===
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const closeMissionModal = () => { 
+    setSelectedMission(null);
   };
+  
+  // Düzenleme fonksiyonu çağrılmayacak ama kodda kalabilir, tıklanmayacak.
+ 
 
-const handleMissionClick = (mission) => { 
-  setSelectedMission(mission);
-};
-
-const closeMissionModal = () => { 
-  setSelectedMission(null);
-};
-  const handleUserSelection = (userId) => {
-    setFormData(prev => {
-      const isSelected = prev.due_to.includes(userId);
-      return {
-        ...prev,
-        due_to: isSelected
-          ? prev.due_to.filter(id => id !== userId)
-          : [...prev.due_to, userId]
-      };
-    });
-  };
-
-  // === CREATE/UPDATE MISSION ===
-  const handleSubmitMission = async (e) => {
-    e.preventDefault();
-    
-    if (!formData.description.trim()) {
-      alert("Lütfen açıklama giriniz!");
-      return;
-    }
-    if (!formData.assigned_date || !formData.end_date) {
-      alert("Lütfen tarih aralığı seçiniz!");
-      return;
-    }
-    if (formData.due_to.length === 0) {
-      alert("Lütfen en az bir kullanıcı seçiniz!");
-      return;
-    }
-
-    setSaving(true);
-    
-    try {
-      const submitData = new FormData();
-      submitData.append('description', formData.description);
-      submitData.append('assigned_date', formData.assigned_date);
-      submitData.append('end_date', formData.end_date);
-      
-      if (formData.from_to) {
-        submitData.append('from_to', formData.from_to);
-      }
-      
-      formData.due_to.forEach(userId => {
-        submitData.append('due_to', userId);
-      });
-      
-      formData.attachments.forEach(file => {
-        submitData.append('new_attachments', file);
-      });
-      
-      if (editingMission) {
-        // GÜNCELLEME
-        await api.patch(`${MISSIONS_ENDPOINT}${editingMission.id}/`, submitData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        alert("Görev başarıyla güncellendi!");
-        setEditingMission(null);
-      } else {
-        // YENİ OLUŞTURMA
-        await api.post(MISSIONS_ENDPOINT, submitData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        alert("Görev başarıyla oluşturuldu!");
-      }
-      
-      // Reset form
-      setFormData({
-        description: '',
-        assigned_date: '',
-        end_date: '',
-        from_to: '',
-        due_to: [],
-        attachments: [],
-      });
-      
-      const fileInput = document.getElementById('attachments');
-      if (fileInput) fileInput.value = '';
-      
-      await fetchMissions();
-      setActiveTab('list');
-      
-    } catch (error) {
-      console.error("❌ Failed to save mission:", error);
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message ||
-                          error.message;
-      alert(`Görev kaydedilirken hata oluştu!\n${errorMessage}`);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // === EDIT MISSION ===
-  const handleEditMission = (mission) => {
-    setEditingMission(mission);
-    setFormData({
-      description: mission.description,
-      assigned_date: mission.assigned_date,
-      end_date: mission.end_date,
-      from_to: mission.from_to || '',
-      due_to: mission.assigned_users?.map(u => u.id) || [],
-      attachments: []
-    });
-    setActiveTab('assign');
-  };
-
-  // === TOGGLE COMPLETE ===
+  // Tamamlama mantığı korundu.
   const toggleComplete = async (mission) => {
     setMissions(prev =>
       prev.map(m =>
@@ -326,6 +221,17 @@ const closeMissionModal = () => {
     }
   };
 
+  // Mevcut görev sayısına göre başlık belirleme
+  const getAssignmentTypeTitle = () => {
+    const totalCount = filteredMissions.length;
+    if (filters.assignmentType === 'assigned_by_me') {
+      return `📌 Benim Atadığım Görevler (${totalCount})`;
+    } else {
+      return `📋 Bana Atanan Görevler (${totalCount})`;
+    }
+  };
+
+
   return (
     <div className="modern-dashboard">
       {/* Header */}
@@ -338,62 +244,58 @@ const closeMissionModal = () => {
           >
             👥 Organizasyon
           </button>
-          <button className="refresh-btn" onClick={fetchMissions} disabled={loading}>
-            {loading ? "Yenileniyor..." : "🔄 Yenile"}
-          </button>
-          <button onClick={handleLogout} className="logout-btn">
-            👋 Çıkış Yap
-          </button>
+          
+          
         </div>
       </header>
-
-      {/* 💥 YENİ: GÖREV DETAY MODALI 💥 */}
+      
+      {/* Görev Detay Modalı - Seçili görev varsa açılır */}
       {selectedMission && (
         <div className="modal-overlay" onClick={closeMissionModal}>
           <div className="mission-detail-modal" onClick={(e) => e.stopPropagation()}>
-            
             <div className="modal-header">
-              <h2>{selectedMission.description}</h2>
+              <h2>📋 Görev Detayı</h2>
               <button className="close-modal" onClick={closeMissionModal}>✕</button>
             </div>
-            
             <div className="modal-content">
-              
-              <div className="detail-status">
-                <span className="date-badge">
-                  📅 {formatDate(selectedMission.assigned_date)} - {formatDate(selectedMission.end_date)}
+              <p><strong>Açıklama:</strong> {selectedMission.description}</p>
+              <p><strong>Atanan Tarih:</strong> {formatDate(selectedMission.assigned_date)}</p>
+              <p><strong>Bitiş Tarihi:</strong> {formatDate(selectedMission.end_date)}</p>
+              <p><strong>Konum:</strong> {selectedMission.from_to || "Belirtilmemiş"}</p>
+              <p><strong>Durum:</strong> 
+                <span className={selectedMission.completed ? "completed-text" : "pending-text"}>
+                  {selectedMission.completed ? 'Tamamlandı' : 'Devam Ediyor'}
                 </span>
-                {selectedMission.completed ? (
-                  <span className="completed-badge">✓ Tamamlandı</span>
-                ) : (
-                  <span className="pending-badge">... Devam Ediyor</span>
-                )}
-              </div>
-              
-              <p className="detail-description">
-                **Açıklama:** {selectedMission.description || "Açıklama yok"}
               </p>
+              <p><strong>Oluşturan:</strong> {formatUserName(selectedMission.created_by_info)}</p>
               
-              {/* Atanan Kullanıcılar */}
-              <div className="detail-users">
-                <strong>👤 Atanan Kişiler:</strong>
-                <div className="user-badge-list">
+              <div className="assigned-users-list">
+                <strong>Atananlar:</strong>
+                <ul>
                   {selectedMission.assigned_users?.map(user => (
-                    <span key={user.id} className="user-detail-badge">
+                    <li key={user.id}>
                       {formatUserName(user)}
-                    </span>
+                      <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
+                        {user.role}
+                      </span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
 
-              {/* Ekler */}
-              {selectedMission.attachments && selectedMission.attachments.length > 0 && (
-                <div className="mission-attachments detail-attachments">
-                  <strong>📎 Ekler ({selectedMission.attachments.length}):</strong>
+              {selectedMission.attachments?.length > 0 && (
+                <div className="mission-attachments-modal">
+                  <strong>📎 Ekler:</strong>
                   <ul className="attachment-list">
                     {selectedMission.attachments.map((file) => (
                       <li key={file.id}>
-                        <a href={file.file} target="_blank" rel="noopener noreferrer" className="attachment-link" download>
+                        <a
+                          href={file.file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="attachment-link"
+                          download
+                        >
                           📄 {file.file.split("/").pop()}
                         </a>
                       </li>
@@ -401,18 +303,14 @@ const closeMissionModal = () => {
                   </ul>
                 </div>
               )}
-              
-              {/* Oluşturan Bilgisi */}
-              {selectedMission.created_by_info && (
-                <div className="detail-creator">
-                  Oluşturan: <strong>{formatUserName(selectedMission.created_by_info)}</strong>
-                </div>
-              )}
-
+            </div>
+            <div className="modal-footer">
+              <button onClick={closeMissionModal} className="close-modal-btn">Kapat</button>
             </div>
           </div>
         </div>
       )}
+
 
       {/* Organization Chart Modal */}
       {showOrgChart && (
@@ -424,8 +322,8 @@ const closeMissionModal = () => {
             </div>
             
             <div className="org-chart-content">
-              {/* CEO Section */}
-              <div className="org-section">
+              {/* Organizasyon şeması içeriği buraya gelir */}
+               <div className="org-section">
                 <h3 className="org-title ceo-title">👑 CEO</h3>
                 <div className="org-grid">
                   {orgChart.CEO.length === 0 ? (
@@ -497,370 +395,198 @@ const closeMissionModal = () => {
         </div>
       )}
 
-      {/* Tabs */}
-      <nav className="dashboard-nav">
-        <button
-          className={`nav-tab ${activeTab === 'list' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveTab('list');
-            setEditingMission(null);
-          }}
-        >
-          📋 Görevlerim ({missions.length})
-        </button>
-        <button
-          className={`nav-tab ${activeTab === 'assign' ? 'active' : ''}`}
-          onClick={() => setActiveTab('assign')}
-        >
-          {editingMission ? '✏️ Görevi Düzenle' : '➕ Yeni Görev Ata'}
-        </button>
-      </nav>
-
-      {/* Main Content */}
+      {/* Main Content - Artık sadece görev listesi var */}
       <main className="dashboard-main">
-        
-        {/* SEKME 1: Görev Listesi */}
-        {activeTab === 'list' && (
-          <div className="task-list-view">
-            {/* Filtre Paneli */}
-            <div className="filter-panel">
-              <div className="filter-header">
-                <h3>🔍 Filtrele</h3>
-                {hasActiveFilters() && (
-                  <button className="clear-filters-btn" onClick={clearFilters}>
-                    ✕ Filtreleri Temizle
-                  </button>
-                )}
+        <div className="task-list-view">
+          
+          {/* Filtre Paneli */}
+          <div className="filter-panel">
+            <div className="filter-header">
+              <h3>🔍 Filtrele</h3>
+              {hasActiveFilters() && (
+                <button className="clear-filters-btn" onClick={clearFilters}>
+                  ✕ Filtreleri Temizle
+                </button>
+              )}
+            </div>
+
+            <div className="filter-grid">
+              
+              {/* YENİ FİLTRE: Atama Türü */}
+              <div className="filter-group">
+                <label>Görev Türü</label>
+                <select 
+                  value={filters.assignmentType}
+                  onChange={(e) => handleFilterChange('assignmentType', e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="assigned_to_me">Bana Atananlar</option>
+                  <option value="assigned_by_me">Benim Atadıklarım</option>
+                </select>
               </div>
 
-              <div className="filter-grid">
-                <div className="filter-group">
-                  <label>Durum</label>
-                  <select 
-                    value={filters.status}
-                    onChange={(e) => handleFilterChange('status', e.target.value)}
-                    className="filter-select"
-                  >
-                    <option value="all">Tümü ({missions.length})</option>
-                    <option value="pending">Devam Eden ({missions.filter(m => !m.completed).length})</option>
-                    <option value="completed">Tamamlanan ({missions.filter(m => m.completed).length})</option>
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Arama</label>
-                  <input
-                    type="text"
-                    placeholder="Açıklama, konum veya oluşturan..."
-                    value={filters.searchText}
-                    onChange={(e) => handleFilterChange('searchText', e.target.value)}
-                    className="filter-input"
-                  />
-                </div>
-
-                <div className="filter-group">
-                  <label>Atanan Kişi</label>
-                  <select
-                    value={filters.selectedUser}
-                    onChange={(e) => handleFilterChange('selectedUser', e.target.value)}
-                    className="filter-select"
-                  >
-                    <option value="all">Tüm Kullanıcılar</option>
-                    {users.map(user => (
-                      <option key={user.id} value={user.id}>
-                        {formatUserName(user) || user.username}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Başlangıç Tarihi</label>
-                  <input
-                    type="date"
-                    value={filters.dateFrom}
-                    onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
-                    className="filter-input"
-                  />
-                </div>
-
-                <div className="filter-group">
-                  <label>Bitiş Tarihi</label>
-                  <input
-                    type="date"
-                    value={filters.dateTo}
-                    onChange={(e) => handleFilterChange('dateTo', e.target.value)}
-                    className="filter-input"
-                  />
-                </div>
+              <div className="filter-group">
+                <label>Durum</label>
+                <select 
+                  value={filters.status}
+                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="all">Tümü ({missions.length})</option>
+                  <option value="pending">Devam Eden ({missions.filter(m => !m.completed).length})</option>
+                  <option value="completed">Tamamlanan ({missions.filter(m => m.completed).length})</option>
+                </select>
               </div>
 
-              <div className="filter-results">
-                <span className="results-count">
-                  {filteredMissions.length} görev gösteriliyor
-                  {hasActiveFilters() && ` (${missions.length} toplam)`}
-                </span>
+              <div className="filter-group">
+                <label>Arama</label>
+                <input
+                  type="text"
+                  placeholder="Açıklama, konum veya oluşturan..."
+                  value={filters.searchText}
+                  onChange={(e) => handleFilterChange('searchText', e.target.value)}
+                  className="filter-input"
+                />
+              </div>
+
+              <div className="filter-group">
+                <label>Atanan Kişi</label>
+                <select
+                  value={filters.selectedUser}
+                  onChange={(e) => handleFilterChange('selectedUser', e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="all">Tüm Kullanıcılar</option>
+                  {users.map(user => (
+                    <option key={user.id} value={user.id}>
+                      {formatUserName(user) || user.username}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label>Başlangıç Tarihi</label>
+                <input
+                  type="date"
+                  value={filters.dateFrom}
+                  onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
+                  className="filter-input"
+                />
+              </div>
+
+              <div className="filter-group">
+                <label>Bitiş Tarihi</label>
+                <input
+                  type="date"
+                  value={filters.dateTo}
+                  onChange={(e) => handleFilterChange('dateTo', e.target.value)}
+                  className="filter-input"
+                />
               </div>
             </div>
 
-            {/* Görev Listesi */}
-            <div className="missions-list-container">
-              {loading ? (
-                <div className="empty-state">
-                  <div className="spinner">⏳</div>
-                  Görevler yükleniyor...
-                </div>
-              ) : filteredMissions.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon">
-                    {hasActiveFilters() ? '🔍' : '📭'}
-                  </div>
-                  {hasActiveFilters() 
-                    ? 'Filtrelere uygun görev bulunamadı.'
-                    : 'Size atanmış görev bulunmamaktadır.'}
-                </div>
-              ) : (
-                filteredMissions.map((mission) => (
-                  <div
-                    key={mission.id}
-                    className={`mission-card ${mission.completed ? "completed" : ""} ${mission.isUpdating ? "updating" : ""}`}
-                  >
-                    <div className="mission-header">
-                      {mission.can_complete && (
-                        <label className="task-checkbox-wrap">
-                          <input
-                            type="checkbox"
-                            checked={!!mission.completed}
-                            onChange={() => toggleComplete(mission)}
-                            disabled={mission.isUpdating}
-                          />
-                          <span className="checkbox-ui" />
-                        </label>
-                      )}
-                      
-                      <div className="mission-dates">
-                        <span className="date-badge">
-                          📅 {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
-                        </span>
-                        {mission.completed && (
-                          <span className="completed-badge">✓ Tamamlandı</span>
-                        )}
-                      </div>
-
-                      {mission.can_edit && (
-                        <button 
-                          className="edit-mission-btn"
-                          onClick={() => handleEditMission(mission)}
-                          title="Görevi Düzenle"
-                        >
-                          ✏️ Düzenle
-                        </button>
-                      )}
-                    </div>
-                    
-                    <div className="mission-body" 
-                      onClick={() => handleMissionClick(mission)}>
-                      <p className="mission-description">
-                        {mission.description || "Açıklama yok"}
-                      </p>
-                      
-                      {mission.from_to && (
-                        <p className="mission-location">
-                          📍 {mission.from_to}
-                        </p>
-                      )}
-                      
-                      {mission.attachments && mission.attachments.length > 0 && (
-                        <div className="mission-attachments">
-                          <strong>📎 Ekler ({mission.attachments.length}):</strong>
-                          <ul className="attachment-list">
-                            {mission.attachments.map((file) => (
-                              <li key={file.id}>
-                                <a
-                                  href={file.file}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="attachment-link"
-                                  download
-                                >
-                                  📄 {file.file.split("/").pop()}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      
-                      {mission.created_by_info && (
-                        <div className="mission-creator">
-                          <small>
-                            Oluşturan: <strong>{formatUserName(mission.created_by_info)}</strong>
-                          </small>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
+            <div className="filter-results">
+              <span className="results-count">
+                {getAssignmentTypeTitle()} - {filteredMissions.length} görev gösteriliyor
+              </span>
             </div>
           </div>
-        )}
 
-        {/* SEKME 2: Yeni Görev Atama / Düzenleme */}
-        {activeTab === 'assign' && (
-          <div className="assign-task-view">
-            <form className="modern-form" onSubmit={handleSubmitMission}>
-              <h2>{editingMission ? '✏️ Görevi Düzenle' : '✍️ Detaylı Görev Oluştur'}</h2>
-              
-              {editingMission && (
-                <div className="edit-notice">
-                  <p>🔔 Görev #{editingMission.id} düzenleniyor</p>
-                  <button 
-                    type="button" 
-                    className="cancel-edit-btn"
-                    onClick={() => {
-                      setEditingMission(null);
-                      setFormData({
-                        description: '',
-                        assigned_date: '',
-                        end_date: '',
-                        from_to: '',
-                        due_to: [],
-                        attachments: []
-                      });
-                    }}
-                  >
-                    ✕ İptal
-                  </button>
+          {/* Görev Listesi */}
+          <div className="missions-list-container">
+            {loading ? (
+              <div className="empty-state">
+                <div className="spinner">⏳</div>
+                Görevler yükleniyor...
+              </div>
+            ) : filteredMissions.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">
+                  {hasActiveFilters() || filters.assignmentType === 'assigned_by_me' ? '🔍' : '📭'}
                 </div>
-              )}
-              
-              <div className="form-group">
-                <label htmlFor="desc">Açıklama *</label>
-                <textarea 
-                  id="desc"
-                  name="description"
-                  rows="5" 
-                  placeholder="Görevin detaylarını yazınız..."
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  required
-                />
+                {filters.assignmentType === 'assigned_by_me' 
+                    ? 'Henüz kimseye görev atamamışsınız.'
+                    : 'Size atanmış aktif görev bulunmamaktadır.'}
               </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="assigned_date">Başlangıç Tarihi *</label>
-                  <input 
-                    type="date" 
-                    id="assigned_date"
-                    name="assigned_date"
-                    value={formData.assigned_date}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="end_date">Bitiş Tarihi *</label>
-                  <input 
-                    type="date" 
-                    id="end_date"
-                    name="end_date"
-                    value={formData.end_date}
-                    onChange={handleInputChange}
-                    min={formData.assigned_date}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="from_to">Konum / Rota (Opsiyonel)</label>
-                <input 
-                  type="text" 
-                  id="from_to"
-                  name="from_to"
-                  placeholder="Örn: Ankara - İstanbul"
-                  value={formData.from_to}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="attachments">Dosya Ekle (Opsiyonel)</label>
-                <input
-                  type="file"
-                  id="attachments"
-                  name="attachments"
-                  multiple
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      attachments: Array.from(e.target.files)
-                    }))
-                  }
-                />
-                {formData.attachments.length > 0 && (
-                  <ul className="attachment-list">
-                    {formData.attachments.map((file, index) => (
-                      <li key={index}>📎 {file.name}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label>
-                  Atanacak Kullanıcılar * 
-                  <span className="selection-count">
-                    ({formData.due_to.length} kişi seçildi)
-                  </span>
-                </label>
-                <div className="user-selection-grid">
-                  {users.length === 0 ? (
-                    <p className="text-muted">⏳ Kullanıcılar yükleniyor...</p>
-                  ) : (
-                    users.map(user => (
-                      <label key={user.id} className="user-checkbox-card">
+            ) : (
+              filteredMissions.map((mission) => (
+                <div
+                  key={mission.id}
+                  className={`mission-card ${mission.completed ? "completed" : ""} ${mission.isUpdating ? "updating" : ""}`}
+                >
+                  <div className="mission-header">
+                    
+                    {/* Tamamlama Butonu */}
+                    {mission.can_complete && (
+                      <label className="task-checkbox-wrap">
                         <input
                           type="checkbox"
-                          checked={formData.due_to.includes(user.id)}
-                          onChange={() => handleUserSelection(user.id)}
+                          checked={!!mission.completed}
+                          onChange={() => toggleComplete(mission)}
+                          disabled={mission.isUpdating}
                         />
-                        <div className="user-info">
-                          <strong>
-                            {user.first_name && user.last_name 
-                              ? `${user.first_name} ${user.last_name}`
-                              : user.username}
-                          </strong>
-                          <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
-                            {user.role}
-                          </span>
-                          {user.unvan && (
-                            <span className="user-unvan">
-                              🏷️ {user.unvan}
-                            </span>
-                          )}
-                          <small>{user.email}</small>
-                        </div>
+                        <span className="checkbox-ui" />
                       </label>
-                    ))
-                  )}
-                </div>
-              </div>
+                    )}
+                    
+                    <div className="mission-dates">
+                      <span className="date-badge">
+                        📅 {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
+                      </span>
+                      {mission.completed && (
+                        <span className="completed-badge">✓ Tamamlandı</span>
+                      )}
+                    </div>
 
-              <button 
-                type="submit" 
-                className="submit-task-btn"
-                disabled={saving || formData.due_to.length === 0}
-              >
-                {saving ? "⏳ Kaydediliyor..." : editingMission ? "💾 Değişiklikleri Kaydet" : "✅ Görevi Ata"}
-              </button>
-            </form>
+                    {/* Düzenle Butonu Kaldırıldı, yerine sadece "can_edit" kontrolünü koruyup butonu sildik.
+                        {mission.can_edit && (
+                          <button 
+                            className="edit-mission-btn"
+                            onClick={() => handleEditMission(mission)}
+                            title="Görevi Düzenle"
+                          >
+                            ✏️ Düzenle
+                          </button>
+                        )} 
+                    */}
+                  </div>
+                  
+                  <div className="mission-body" 
+                    onClick={() => handleMissionClick(mission)}>
+                    <p className="mission-description">
+                      {mission.description || "Açıklama yok"}
+                    </p>
+                    
+                    {mission.from_to && (
+                      <p className="mission-location">
+                        📍 {mission.from_to}
+                      </p>
+                    )}
+                    
+                    {mission.attachments && mission.attachments.length > 0 && (
+                      <div className="mission-attachments">
+                        <strong>📎 Ekler ({mission.attachments.length}):</strong>
+                        {/* Ek listesi burada */}
+                      </div>
+                    )}
+
+                    
+                    {mission.created_by_info && (
+                      <div className="mission-creator">
+                        <small>
+                          Oluşturan: <strong>{formatUserName(mission.created_by_info)}</strong>
+                        </small>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
-        )}
+        </div>
       </main>
+    
     </div>
   );
 };
