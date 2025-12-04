@@ -55,89 +55,100 @@ const LoginPage = () => {
 
   return (
     <div className="login-container">
-      <div className={`login-card transition-transform duration-500 ${isRegister ? "-translate-x-full" : "translate-x-0"}`}>
-        {/* LOGIN PANEL */}
-        <h2>Hoşgeldiniz 👋</h2>
-        <p className="subtitle">Görevlerinize erişmek için giriş yapın</p>
+      {/* LOGIN PANEL - Sadece bu görünecek */}
+      {!isRegister && (
+        <div className="login-card">
+          <h2>Hoşgeldiniz</h2>
+          <p className="subtitle">Görevlerinize erişmek için giriş yapın</p>
 
-        <form onSubmit={handleLogin}>
-          <label>Email</label>
-          <input
-            type="email"
-            placeholder="example@mail.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <form onSubmit={handleLogin}>
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="example@mail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-          <button type="submit" className="login-btn">Log In</button>
-        </form>
-      </div>
+            <button type="submit" className="login-btn">Log In</button>
+          </form>
 
-      {/* REGISTER PANEL */}
-      <div className={`login-card absolute top-0 left-0 transition-transform duration-500 ${isRegister ? "translate-x-0" : "translate-x-full"}`}>
-        <h2>Hesabınızı oluşturaljım</h2>
-        <p className="subtitle">Devam etmek için kayıt olun</p>
+          <p className="login-footer">
+            Hesabınız yok mu?{" "}
+            <span className="register-link" onClick={() => setIsRegister(true)}>
+              Kayıt Ol
+            </span>
+          </p>
+        </div>
+      )}
 
-        <form onSubmit={handleRegister}>
-          <label>Name</label>
-          <input
-            type="text"
-            placeholder="kullanıcı adı"
-            value={regName}
-            onChange={(e) => setRegName(e.target.value)}
-            required
-          />
+      {/* REGISTER PANEL - İstendiğinde görünecek */}
+      {isRegister && (
+        <div className="login-card">
+          <h2>Hesabınızı oluşturalım</h2>
+          <p className="subtitle">Devam etmek için kayıt olun</p>
 
-          <label>Email</label>
-          <input
-            type="email"
-            placeholder="example@mail.com"
-            value={regEmail}
-            onChange={(e) => setRegEmail(e.target.value)}
-            required
-          />
+          <form onSubmit={handleRegister}>
+            <label>Name</label>
+            <input
+              type="text"
+              placeholder="kullanıcı adı"
+              value={regName}
+              onChange={(e) => setRegName(e.target.value)}
+              required
+            />
 
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={regPassword}
-            onChange={(e) => setRegPassword(e.target.value)}
-            required
-          />
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="example@mail.com"
+              value={regEmail}
+              onChange={(e) => setRegEmail(e.target.value)}
+              required
+            />
 
-          <button type="submit" className="login-btn">Register</button>
-        </form>
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={regPassword}
+              onChange={(e) => setRegPassword(e.target.value)}
+              required
+            />
 
-        <p className="login-footer mt-4 text-center">
-          
-        </p>
-      </div>
+            <button type="submit" className="login-btn">Register</button>
+          </form>
 
-      { /* slide yapcam burayı */}
+          <p className="login-footer">
+            Zaten hesabınız var mı?{" "}
+            <span className="register-link" onClick={() => setIsRegister(false)}>
+              Giriş Yap
+            </span>
+          </p>
+        </div>
+      )}
+
+      {/* SAĞ TARAF GRADIENT ALAN */}
       <div className="login-side">
-        <h1>Görev Yönetimi</h1>
-        <p>Şirketinizi tek bir platformdan kontrol edin 📈</p>
-
-        {/*<button
-          className="mt-6 px-4 py-2 bg-white text-blue-600 font-semibold rounded shadow hover:bg-gray-200 transition-all"
-          onClick={() => setIsRegister(true)}
-        >
-          Create Account
-        </button>*/}
+        <div className="sidebar-content">
+        <span className="collapsed-title">Görev Yönetimi</span>
+        <p>Şirketinizi tek bir platformdan kontrol edin</p>
         <p>Her tıklamada düzen, her adımda ilerleme</p>
+        <p>Her şey yerli yerinde.</p>
+        <p>Değerinize değer katın.</p>
       </div>
     </div>
+  </div>
   );
 };
 
