@@ -2,7 +2,7 @@ import axios from "axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constant.js";
 
 // Production URL (opsiyonel)
-const apiUrl = "https://giga-backend-u7zs.onrender.com/"; // http://localhost:8000 --> local backende geçmek için bu url'i sağa yapıştır !!!
+const apiUrl = "http://localhost:8000"; // http://localhost:8000 --> local backende geçmek için bu url'i sağa yapıştır !!!
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,

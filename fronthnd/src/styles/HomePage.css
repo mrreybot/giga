@@ -4,7 +4,7 @@
 
 .home-page {
   min-height: 100vh;
-  background: #f3f4f6;
+  background: var(--bg-primary);
   padding-bottom: 3rem;
 }
 
@@ -12,8 +12,8 @@
    HEADER
    ============================================ */
 .home-header {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-primary);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -30,7 +30,7 @@
 
 .home-header h1 {
   font-size: 1.5rem;
-  color: #1f2937;
+  color: var(--text-primary);
   margin: 0;
   font-weight: 600;
 }
@@ -43,34 +43,34 @@
 
 .nav-btn, .refresh-btn, .logout-btn {
   padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-secondary);
   border-radius: 4px;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
-  background: #ffffff;
+  background: var(--card-bg);
 }
 
 .nav-btn {
-  background: #3b82f6;
+  background: var(--accent-primary);
   color: white;
-  border-color: #3b82f6;
+  border-color: var(--accent-primary);
 }
 
 .nav-btn:hover {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
 }
 
 .refresh-btn {
-  background: #ffffff;
-  color: #374151;
+  background: var(--card-bg);
+  color: var(--text-primary);
 }
 
 .refresh-btn:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
+  background: var(--bg-tertiary);
+  border-color: var(--text-tertiary);
 }
 
 .refresh-btn:disabled {
@@ -79,14 +79,14 @@
 }
 
 .logout-btn {
-  background: #ef4444;
+  background: var(--danger);
   color: white;
-  border-color: #ef4444;
+  border-color: var(--danger);
 }
 
 .logout-btn:hover {
-  background: #dc2626;
-  border-color: #dc2626;
+  background: var(--danger-dark);
+  border-color: var(--danger-dark);
 }
 
 /* ============================================
@@ -109,8 +109,8 @@
 }
 
 .stat-card {
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   padding: 1.5rem;
   display: flex;
@@ -120,7 +120,7 @@
 }
 
 .stat-card:hover {
-  border-color: #3b82f6;
+  border-color: var(--accent-primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -135,29 +135,29 @@
 }
 
 .total-card .stat-icon {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--info-light);
+  color: var(--info-dark);
 }
 
 .completed-card .stat-icon {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-light);
+  color: var(--success-dark);
 }
 
 .pending-card .stat-icon {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--warning-light);
+  color: var(--warning-dark);
 }
 
 .rate-card .stat-icon {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: var(--accent-lighter);
+  color: var(--accent-primary);
 }
 
 .stat-info h3 {
   margin: 0 0 0.25rem 0;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -167,15 +167,15 @@
   margin: 0;
   font-size: 1.875rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
 }
 
 /* ============================================
    KOCAMAN TAKVİM
    ============================================ */
 .calendar-section {
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -187,7 +187,7 @@
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .calendar-title {
@@ -199,15 +199,15 @@
 .calendar-title h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #111827;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .today-btn {
   padding: 0.5rem 1rem;
-  background: #3b82f6;
+  background: var(--accent-primary);
   color: white;
-  border: 1px solid #3b82f6;
+  border: 1px solid var(--accent-primary);
   border-radius: 4px;
   font-size: 0.875rem;
   font-weight: 500;
@@ -216,16 +216,16 @@
 }
 
 .today-btn:hover {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
 }
 
 .month-nav-btn {
   width: 36px;
   height: 36px;
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-secondary);
   border-radius: 4px;
   font-size: 1.25rem;
   cursor: pointer;
@@ -236,8 +236,8 @@
 }
 
 .month-nav-btn:hover {
-  background: #e5e7eb;
-  border-color: #9ca3af;
+  background: var(--border-primary);
+  border-color: var(--text-tertiary);
 }
 
 /* Takvim Loading */
@@ -249,7 +249,7 @@
 .calendar-loading .spinner {
   font-size: 2rem;
   animation: spin 1s linear infinite;
-  color: #3b82f6;
+  color: var(--accent-primary);
 }
 
 @keyframes spin {
@@ -269,11 +269,11 @@
   text-align: center;
   font-weight: 600;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   padding: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: #f9fafb;
+  background: var(--bg-tertiary);
   border-radius: 4px;
 }
 
@@ -286,8 +286,8 @@
 
 .calendar-day {
   min-height: 120px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
   border-radius: 4px;
   padding: 0.75rem;
   cursor: pointer;
@@ -298,8 +298,8 @@
 }
 
 .calendar-day:hover {
-  background: #f9fafb;
-  border-color: #3b82f6;
+  background: var(--card-hover);
+  border-color: var(--accent-primary);
 }
 
 .calendar-day.other-month {
@@ -307,20 +307,20 @@
 }
 
 .calendar-day.today {
-  background: #eff6ff;
-  border-color: #3b82f6;
+  background: var(--accent-light);
+  border-color: var(--accent-primary);
   border-width: 2px;
 }
 
 .calendar-day.has-missions {
-  background: #fef3c7;
-  border-color: #f59e0b;
+  background: var(--warning-light);
+  border-color: var(--warning);
 }
 
 .day-number {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
@@ -344,15 +344,15 @@
 }
 
 .mission-indicator.pending {
-  background: #fef3c7;
-  color: #92400e;
-  border: 1px solid #fbbf24;
+  background: var(--warning-light);
+  color: var(--warning-dark);
+  border: 1px solid var(--warning);
 }
 
 .mission-indicator.completed {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
+  background: var(--success-light);
+  color: var(--success-dark);
+  border: 1px solid var(--success);
 }
 
 .mission-indicator:hover {
@@ -365,7 +365,7 @@
 
 .more-indicator {
   padding: 3px 6px;
-  background: #3b82f6;
+  background: var(--accent-primary);
   color: white;
   border-radius: 3px;
   font-size: 0.625rem;
@@ -386,12 +386,12 @@
 }
 
 .start-badge {
-  background: #3b82f6;
+  background: var(--accent-primary);
   color: white;
 }
 
 .end-badge {
-  background: #ef4444;
+  background: var(--danger);
   color: white;
 }
 
@@ -402,8 +402,8 @@
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   padding: 1.25rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -426,14 +426,14 @@
 .mission-tooltip h4 {
   margin: 0 0 0.75rem 0;
   font-size: 1rem;
-  color: #111827;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .mission-tooltip p {
   margin: 0.5rem 0;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .mission-tooltip .status {
@@ -446,13 +446,13 @@
 }
 
 .mission-tooltip .status.completed {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-light);
+  color: var(--success-dark);
 }
 
 .mission-tooltip .status.pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--warning-light);
+  color: var(--warning-dark);
 }
 
 /* ============================================
@@ -464,7 +464,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--modal-overlay);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -479,8 +479,8 @@
 }
 
 .selected-date-modal .modal-content {
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--modal-bg);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   max-width: 700px;
   width: 100%;
@@ -505,31 +505,32 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .selected-date-modal .modal-header h3 {
   margin: 0;
   font-size: 1.25rem;
-  color: #111827;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .close-btn {
   width: 32px;
   height: 32px;
-  border: 1px solid #d1d5db;
-  background: #f9fafb;
+  border: 1px solid var(--border-secondary);
+  background: var(--bg-tertiary);
   border-radius: 4px;
   font-size: 1.25rem;
   cursor: pointer;
   transition: all 0.15s ease;
+  color: var(--text-primary);
 }
 
 .close-btn:hover {
-  background: #ef4444;
+  background: var(--danger);
   color: white;
-  border-color: #ef4444;
+  border-color: var(--danger);
 }
 
 .selected-date-modal .modal-body {
@@ -540,7 +541,7 @@
   text-align: center;
   padding: 3rem;
   font-size: 1rem;
-  color: #9ca3af;
+  color: var(--text-tertiary);
 }
 
 /* Tarih Görevleri Listesi */
@@ -551,11 +552,11 @@
 }
 
 .date-mission-card {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
   border-radius: 4px;
   padding: 1.25rem;
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--accent-primary);
   transition: all 0.15s ease;
 }
 
@@ -565,7 +566,7 @@
 }
 
 .date-mission-card.completed {
-  border-left-color: #10b981;
+  border-left-color: var(--success);
   opacity: 0.75;
 }
 
@@ -579,16 +580,16 @@
 .mission-card-header h4 {
   margin: 0;
   font-size: 1rem;
-  color: #111827;
+  color: var(--text-primary);
   font-weight: 600;
   flex: 1;
 }
 
 .completed-badge {
   padding: 0.25rem 0.5rem;
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
+  background: var(--success-light);
+  color: var(--success-dark);
+  border: 1px solid var(--success);
   border-radius: 3px;
   font-size: 0.75rem;
   font-weight: 500;
@@ -598,12 +599,12 @@
 .mission-card-body p {
   margin: 0.5rem 0;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .mission-location {
   font-weight: 500;
-  color: #3b82f6;
+  color: var(--accent-primary);
 }
 
 .mission-users {
@@ -616,7 +617,7 @@
 
 .user-badge {
   padding: 0.25rem 0.5rem;
-  background: #3b82f6;
+  background: var(--accent-primary);
   color: white;
   border-radius: 3px;
   font-size: 0.75rem;
@@ -633,12 +634,12 @@
 }
 
 .start-marker {
-  background: #3b82f6;
+  background: var(--accent-primary);
   color: white;
 }
 
 .end-marker {
-  background: #ef4444;
+  background: var(--danger);
   color: white;
 }
 
@@ -646,8 +647,8 @@
    YAKLAŞAN GÖREVLER
    ============================================ */
 .upcoming-missions {
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   padding: 2rem;
 }
@@ -655,7 +656,7 @@
 .upcoming-missions h2 {
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
-  color: #111827;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -668,8 +669,8 @@
 .upcoming-card {
   display: flex;
   gap: 1rem;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
   border-radius: 4px;
   padding: 1.25rem;
   transition: all 0.15s ease;
@@ -677,7 +678,7 @@
 }
 
 .upcoming-card:hover {
-  border-color: #3b82f6;
+  border-color: var(--accent-primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -688,7 +689,7 @@
   justify-content: center;
   min-width: 64px;
   height: 64px;
-  background: #3b82f6;
+  background: var(--accent-primary);
   color: white;
   border-radius: 4px;
 }
@@ -717,26 +718,26 @@
 .upcoming-info h4 {
   margin: 0;
   font-size: 1rem;
-  color: #111827;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .upcoming-info p {
   margin: 0;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .assigned-to {
   font-weight: 500;
-  color: #3b82f6;
+  color: var(--accent-primary);
 }
 
 .no-upcoming {
   text-align: center;
   padding: 3rem;
   font-size: 1rem;
-  color: #9ca3af;
+  color: var(--text-tertiary);
 }
 
 /* ============================================
@@ -759,7 +760,7 @@
   
   .header-content {
     flex-direction: column;
-    gap: 1rem;
+        gap: 1rem;
   }
   
   .header-actions {
