@@ -538,18 +538,6 @@ const Dashboard = () => {
                         <span className="completed-badge">✓ Tamamlandı</span>
                       )}
                     </div>
-
-                    {/* Düzenle Butonu Kaldırıldı, yerine sadece "can_edit" kontrolünü koruyup butonu sildik.
-                        {mission.can_edit && (
-                          <button 
-                            className="edit-mission-btn"
-                            onClick={() => handleEditMission(mission)}
-                            title="Görevi Düzenle"
-                          >
-                            ✏️ Düzenle
-                          </button>
-                        )} 
-                    */}
                   </div>
                   
                   <div className="mission-body" 
