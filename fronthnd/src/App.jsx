@@ -6,6 +6,7 @@ import Layout from "./components/Layout";
 import Statistics from "./Pages/Statistics";
 import Archive from "./Pages/ArchivePage";
 import AddTask from "./Pages/AddTask";
+import Profile from "./Pages/Profile";
 function App() {
   return (
     <Router>
@@ -15,6 +16,7 @@ function App() {
         
         {/* Diğer sayfalar - Sidebar VAR */}
         <Route path="/arsiv" element={<Layout><Archive /></Layout>} />
+        <Route path="/profil" element={<Layout><Profile /></Layout>} />
         <Route path="/add-task" element={<Layout><AddTask /></Layout>} />
         <Route path="/home" element={<Layout><HomePage /></Layout>} />
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
