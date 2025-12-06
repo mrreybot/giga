@@ -113,19 +113,7 @@ const Sidebar = () => {
         <div className="nav-section bottom-section">
           {!isCollapsed && <p className="nav-label">DİĞER</p>}
           
-          <button
-            className="nav-item settings-item"
-            onClick={() => navigate("/settings")}
-            title={isCollapsed ? "Ayarlar" : ''}
-          >
-            <span className="nav-icon"></span>
-            {!isCollapsed && (
-              <div className="nav-content">
-                <span className="nav-name">Ayarlar</span>
-                <span className="nav-description">Uygulama ayarları</span>
-              </div>
-            )}
-          </button>
+          
             <button
             className="nav-item settings-item"
             onClick={() => navigate("/profil")}

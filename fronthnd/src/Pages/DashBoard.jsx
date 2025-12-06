@@ -290,7 +290,7 @@ const Dashboard = () => {
               <div className="detail-section">
                 <label>📊 Durum:</label>
                 <span className={selectedMission.completed ? "status-completed" : "status-pending"}>
-                  {selectedMission.completed ? '✅ Tamamlandı' : '⏳ Devam Ediyor'}
+                  {selectedMission.completed ? ' Tamamlandı' : ' Devam Ediyor'}
                 </span>
               </div>
 
@@ -548,7 +548,7 @@ const Dashboard = () => {
             ) : filteredMissions.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">
-                  {hasActiveFilters() ? '🔍' : '📭'}
+                  {hasActiveFilters() ? '' : ''}
                 </div>
                 <h3>
                   {hasActiveFilters() 

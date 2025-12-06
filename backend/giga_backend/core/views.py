@@ -114,7 +114,7 @@ class MissionViewSet(viewsets.ModelViewSet):
         if due_to_ids:
             assigned_users = User.objects.filter(id__in=due_to_ids)
             
-            # ✅ EMPLOYEE ise sadece diğer EMPLOYEE'lere atayabilir
+            
             if user.role == 'EMPLOYEE':
                 invalid_users = assigned_users.exclude(role='EMPLOYEE')
                 if invalid_users.exists():
@@ -127,7 +127,7 @@ class MissionViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_403_FORBIDDEN
                     )
             
-            # ✅ MANAGER ise sadece EMPLOYEE'lere atayabilir
+            
             elif user.role == 'MANAGER':
                 invalid_users = assigned_users.exclude(role='EMPLOYEE')
                 if invalid_users.exists():
@@ -140,7 +140,7 @@ class MissionViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_403_FORBIDDEN
                     )
             
-            # ✅ CEO herkes atayabilir (kontrol yok)
+            
         
         # Görev oluştur
         serializer = self.get_serializer(data=request.data)
