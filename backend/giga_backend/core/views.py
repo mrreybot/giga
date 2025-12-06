@@ -2,18 +2,91 @@ from rest_framework import generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth import get_user_model
-from django.db.models import Q  # ✅ ÖNEMLİ: Bu satırı ekledik!
+from django.db.models import Q
 from .models import Mission
-from .serializers import CustomUserSerializer, MissionSerializer
+from .serializers import CustomUserSerializer, MissionSerializer, UserRegisterSerializer
+
+User = get_user_model()
 
 User = get_user_model()
 
 
 class CreateUserView(generics.CreateAPIView):
+    """Kullanıcı kayıt endpoint'i - Herkes erişebilir"""
     queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
+    serializer_class = UserRegisterSerializer  # Özel register serializer
     permission_classes = [AllowAny]
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        
+        return Response({
+            "message": "Kullanıcı başarıyla oluşturuldu!",
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "department": user.department,
+                "phone": user.phone
+            }
+        }, status=status.HTTP_201_CREATED)
+
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    """Kullanıcının kendi profilini görüntüleme ve güncelleme"""
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+    
+    def get_object(self):
+        return self.request.user
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)
+
+
+class ChangePasswordView(generics.GenericAPIView):
+    """Şifre değiştirme endpoint'i"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        
+        if not old_password or not new_password:
+            return Response(
+                {"detail": "Eski ve yeni şifre gereklidir."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Eski şifreyi kontrol et
+        if not user.check_password(old_password):
+            return Response(
+                {"detail": "Mevcut şifre yanlış."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Yeni şifreyi set et
+        user.set_password(new_password)
+        user.save()
+        
+        return Response(
+            {"message": "Şifre başarıyla güncellendi."},
+            status=status.HTTP_200_OK
+        )
 
 
 class MissionViewSet(viewsets.ModelViewSet):
@@ -84,6 +157,12 @@ class AssignableUsersView(generics.ListAPIView):
     
     def get_queryset(self):
         return User.objects.all().order_by('role', 'username')
+    
+    # Bu metodu ekle - direkt array dönmesi için
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)  # Direkt array döner
 
 
 class OrganizationChartView(generics.ListAPIView):
