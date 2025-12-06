@@ -5,6 +5,7 @@ import "../styles/AddTask.css";
 
 const MISSIONS_ENDPOINT = "/api/missions/";
 const USERS_ENDPOINT = "/api/users/assignable_users/";
+const PROFILE_ENDPOINT = "/api/user/profile/";
 
 const AddTask = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const AddTask = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   
   const [formData, setFormData] = useState({
     description: '',
@@ -25,6 +27,7 @@ const AddTask = () => {
   });
 
   useEffect(() => {
+    fetchCurrentUser();
     fetchUsers();
     
     if (editingMission) {
@@ -39,36 +42,40 @@ const AddTask = () => {
     }
   }, [editingMission]);
 
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await api.get(PROFILE_ENDPOINT);
+      setCurrentUser(response.data);
+      
+      // Artık EMPLOYEE'ler de görev oluşturabilir, yetki kontrolü kaldırıldı
+    } catch (error) {
+      console.error("❌ Kullanıcı bilgisi alınamadı:", error);
+    }
+  };
+
   const fetchUsers = async () => {
-  setLoading(true);
-  try {
-    console.log("🔍 Fetching users from:", USERS_ENDPOINT);
-    const response = await api.get(USERS_ENDPOINT);
-    
-    console.log("📦 Raw response:", response);
-    console.log("📊 Response data:", response.data);
-    console.log("🔢 Is array:", Array.isArray(response.data));
-    
-    // Backend'den direkt array dönüyor (pagination yok)
-    const userData = Array.isArray(response.data) ? response.data : [];
-    
-    console.log("👥 User data:", userData);
-    console.log("📏 User count:", userData.length);
-    
-    setUsers(userData);
-    
-    console.log("✅ Users set successfully:", userData.length, "users");
-  } catch (error) {
-    console.error("❌ Kullanıcılar yüklenemedi:", error);
-    console.error("❌ Error response:", error.response);
-    console.error("❌ Error message:", error.message);
-    alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
-    setUsers([]);
-  } finally {
-    setLoading(false);
-    console.log("🏁 Loading finished");
-  }
-};
+    setLoading(true);
+    try {
+      const response = await api.get(USERS_ENDPOINT);
+      
+      // Backend'den array veya obje dönebilir
+      let userData = [];
+      
+      if (Array.isArray(response.data)) {
+        userData = response.data;
+      } else if (response.data && typeof response.data === 'object') {
+        userData = Object.values(response.data).flat();
+      }
+      
+      setUsers(userData);
+    } catch (error) {
+      console.error("❌ Kullanıcılar yüklenemedi:", error);
+      alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -135,29 +142,24 @@ const AddTask = () => {
       submitData.append('assigned_date', formData.assigned_date);
       submitData.append('end_date', formData.end_date);
       
-      // from_to opsiyonel
       if (formData.from_to && formData.from_to.trim()) {
         submitData.append('from_to', formData.from_to);
       }
       
-      // due_to (atanan kullanıcılar) - ManyToMany field
       formData.due_to.forEach(userId => {
         submitData.append('due_to', userId);
       });
       
-      // Dosyalar (new_attachments)
       formData.attachments.forEach(file => {
         submitData.append('new_attachments', file);
       });
       
       if (editingMission) {
-        // Güncelleme
         await api.patch(`${MISSIONS_ENDPOINT}${editingMission.id}/`, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         alert("✅ Görev başarıyla güncellendi!");
       } else {
-        // Yeni oluşturma
         await api.post(MISSIONS_ENDPOINT, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
@@ -169,13 +171,13 @@ const AddTask = () => {
     } catch (error) {
       console.error("❌ Görev kaydedilemedi:", error);
       
-      // Detaylı hata mesajı
       let errorMessage = "Görev kaydedilirken hata oluştu!";
       
-      if (error.response?.data) {
+      if (error.response?.status === 403) {
+        errorMessage = error.response.data.detail || "Bu işlem için yetkiniz yok.";
+      } else if (error.response?.data) {
         const errorData = error.response.data;
         
-        // Eğer detaylı hata mesajı varsa
         if (typeof errorData === 'object') {
           const errors = Object.entries(errorData)
             .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
@@ -194,15 +196,9 @@ const AddTask = () => {
 
   const formatUserName = (user) => {
     if (!user) return 'İsimsiz Kullanıcı';
-    
-    // full_name varsa onu kullan
     if (user.full_name) return user.full_name;
-    
-    // first_name ve last_name varsa birleştir
     const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
     if (fullName) return fullName;
-    
-    // Yoksa username
     return user.username || 'İsimsiz Kullanıcı';
   };
 
@@ -231,6 +227,13 @@ const AddTask = () => {
           ← Geri Dön
         </button>
         <h1>{editingMission ? '✏️ Görevi Düzenle' : '➕ Yeni Görev Oluştur'}</h1>
+        {currentUser && (
+          <div className="user-role-badge">
+            <span className={`role-badge ${getRoleBadgeClass(currentUser.role)}`}>
+              {getRoleLabel(currentUser.role)}
+            </span>
+          </div>
+        )}
       </header>
 
       <main className="add-task-container">
@@ -356,7 +359,18 @@ const AddTask = () => {
             {/* GÖREV ATAMA */}
             <div className="form-section">
               <div className="section-header">
-                <h2 className="section-title">👥 Görev Atama</h2>
+                <h2 className="section-title">
+                  👥 Görev Atama
+                  {currentUser?.role === 'MANAGER' && (
+                    <span className="role-info"> (Sadece çalışanlara)</span>
+                  )}
+                  {currentUser?.role === 'EMPLOYEE' && (
+                    <span className="role-info"> (Sadece çalışanlara)</span>
+                  )}
+                  {currentUser?.role === 'CEO' && (
+                    <span className="role-info"> (Herkese)</span>
+                  )}
+                </h2>
                 <span className="selection-count">
                   {formData.due_to.length} kişi seçildi
                 </span>

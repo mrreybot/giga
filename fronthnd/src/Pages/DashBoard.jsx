@@ -246,12 +246,12 @@ const Dashboard = () => {
     <div className="modern-dashboard">
       {/* Header */}
       <header className="dashboard-header">
-        <h1>🎯 Görev Paneli</h1>
+        <h1>Görev Paneli</h1>
         <button 
           className="org-chart-btn" 
           onClick={() => setShowOrgChart(!showOrgChart)}
         >
-          👥 Organizasyon
+           Organizasyon
         </button>
       </header>
       
@@ -354,14 +354,14 @@ const Dashboard = () => {
         <div className="modal-overlay" onClick={() => setShowOrgChart(false)}>
           <div className="org-chart-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>🏢 Organizasyon Yapısı</h2>
+              <h2> Organizasyon Yapısı</h2>
               <button className="close-modal" onClick={() => setShowOrgChart(false)}>✕</button>
             </div>
             
             <div className="org-chart-content">
               {/* CEO Section */}
               <div className="org-section">
-                <h3 className="org-title ceo-title">👑 CEO</h3>
+                <h3 className="org-title ceo-title"> CEO</h3>
                 <div className="org-grid">
                   {orgChart.CEO.length === 0 ? (
                     <p className="empty-role">Henüz CEO tanımlanmamış</p>
@@ -384,7 +384,7 @@ const Dashboard = () => {
 
               {/* Manager Section */}
               <div className="org-section">
-                <h3 className="org-title manager-title">👔 Yöneticiler</h3>
+                <h3 className="org-title manager-title">Yöneticiler</h3>
                 <div className="org-grid">
                   {orgChart.MANAGER.length === 0 ? (
                     <p className="empty-role">Henüz yönetici tanımlanmamış</p>
@@ -407,7 +407,7 @@ const Dashboard = () => {
 
               {/* Employee Section */}
               <div className="org-section">
-                <h3 className="org-title employee-title">💼 Çalışanlar</h3>
+                <h3 className="org-title employee-title">Çalışanlar</h3>
                 <div className="org-grid">
                   {orgChart.EMPLOYEE.length === 0 ? (
                     <p className="empty-role">Henüz çalışan tanımlanmamış</p>
