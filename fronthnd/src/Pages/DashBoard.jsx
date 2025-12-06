@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
-import { ACCESS_TOKEN } from "../services/constant";
-import "../styles/Dashboard.css"; // Stil dosyanızın var olduğunu varsayıyorum
+import "../styles/Dashboard.css";
 
 const MISSIONS_ENDPOINT = "/api/missions/";
 const USERS_ENDPOINT = "/api/users/assignable_users/";
-const ORG_CHART_ENDPOINT = "/api/users/organization_chart/";
+const ORG_CHART_ENDPOINT = "/api/users/organization/";
 
 const Dashboard = () => {
   const [missions, setMissions] = useState([]);
@@ -22,41 +21,34 @@ const Dashboard = () => {
     selectedUser: 'all',
     dateFrom: '',
     dateTo: '',
-    // YENİ EK: Görev türü filtresi
-    assignmentType: 'assigned_to_me' // Varsayılan: Bana Atananlar
+    assignmentType: 'assigned_to_me' // Bana Atananlar / Benim Atadıklarım
   });
 
-  // Görev düzenleme state'leri kaldırıldı
-  // Form state'leri kaldırıldı
-
-  // === INITIALIZATION ===
   useEffect(() => {
     loadDashboardData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDashboardData = async () => {
     try {
-      // Görev atama/düzenleme kaldırıldığı için tüm görevleri çekmek daha mantıklı olabilir.
-      // Ancak mevcut endpoint'i koruyoruz. Backend'den gelen veriye göre filtreleme yapacağız.
       await fetchMissions();
       await fetchUsers();
       await fetchOrgChart();
     } catch (error) {
-      console.error("❌ Failed to load dashboard data:", error);
+      console.error("❌ Dashboard yüklenemedi:", error);
     }
   };
 
   const fetchMissions = async () => {
     setLoading(true);
     try {
-      // Not: Backend'iniz sadece kullanıcının gördüğü görevleri getiriyorsa sorun yok.
-      // Eğer tüm görevleri getiriyorsa, bu kodda sadece listeleme yapıldığı için uygundur.
       const response = await api.get(MISSIONS_ENDPOINT);
-      setMissions(Array.isArray(response.data.results) ? response.data.results : []);
+      // Backend direkt array veya results içinde array dönebilir
+      const missionData = response.data.results || response.data;
+      setMissions(Array.isArray(missionData) ? missionData : []);
     } catch (error) {
-      console.error("❌ Failed to fetch missions:", error);
+      console.error("❌ Görevler yüklenemedi:", error);
       alert(`Görevler yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+      setMissions([]);
     } finally {
       setLoading(false);
     }
@@ -65,11 +57,12 @@ const Dashboard = () => {
   const fetchUsers = async () => {
     try {
       const response = await api.get(USERS_ENDPOINT);
-      const userData = response.data.results || response.data;
-      setUsers(Array.isArray(userData) ? userData : []);
+      // Backend direkt array dönüyor
+      const userData = Array.isArray(response.data) ? response.data : [];
+      setUsers(userData);
     } catch (error) {
-      console.error("❌ Failed to fetch users:", error);
-      alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+      console.error("❌ Kullanıcılar yüklenemedi:", error);
+      setUsers([]);
     }
   };
 
@@ -78,31 +71,26 @@ const Dashboard = () => {
       const response = await api.get(ORG_CHART_ENDPOINT);
       setOrgChart(response.data);
     } catch (error) {
-      console.error("❌ Failed to fetch org chart:", error);
+      console.error("❌ Organizasyon şeması yüklenemedi:", error);
     }
   };
 
   // === FILTER LOGIC ===
   const filteredMissions = missions.filter(mission => {
-    // 1. Assignment Type Filtresi (Bana Atananlar vs. Benim Atadıklarım)
-    // Not: Bu filtreleme, mevcut kullanıcının kimliğini (API'dan gelmeli) veya
-    // mission objesinde bulunan 'is_assigned_to_me' / 'is_created_by_me' gibi
-    // bir alanı kullanarak yapılmalıdır. Backend'i bozmamak için, görev oluşturan
-    // veya atanan kişi listesinden bir tahmin yapmaya çalışacağız, ancak
-    // en doğru yöntem backend'den gelen bir flag kullanmaktır.
-    
-    // Varsayım: `mission.can_complete` true ise bana atanmıştır.
-    // Varsayım: `mission.can_edit` true ise ben atamışımdır (created_by_me).
+    // 1. Assignment Type Filtresi
+    // can_complete: true -> Bana atanmış
+    // can_edit: true -> Ben oluşturmuşum
     const isAssignedToMe = mission.can_complete;
     const isAssignedByMe = mission.can_edit; 
 
     if (filters.assignmentType === 'assigned_to_me' && !isAssignedToMe) return false;
     if (filters.assignmentType === 'assigned_by_me' && !isAssignedByMe) return false;
     
-    // 2. Diğer Filtreler
+    // 2. Status Filtresi
     if (filters.status === 'completed' && !mission.completed) return false;
     if (filters.status === 'pending' && mission.completed) return false;
 
+    // 3. Arama Filtresi
     if (filters.searchText) {
       const searchLower = filters.searchText.toLowerCase();
       const descMatch = mission.description?.toLowerCase().includes(searchLower);
@@ -112,11 +100,13 @@ const Dashboard = () => {
       if (!descMatch && !locationMatch && !creatorMatch) return false;
     }
 
+    // 4. Kullanıcı Filtresi
     if (filters.selectedUser !== 'all') {
       const hasUser = mission.assigned_users?.some(u => u.id === parseInt(filters.selectedUser));
       if (!hasUser) return false;
     }
 
+    // 5. Tarih Filtreleri
     if (filters.dateFrom) {
       const missionDate = new Date(mission.assigned_date);
       const filterDate = new Date(filters.dateFrom);
@@ -143,7 +133,7 @@ const Dashboard = () => {
       selectedUser: 'all',
       dateFrom: '',
       dateTo: '',
-      assignmentType: 'assigned_to_me' // Sadece bu filtreyi koru veya ilk varsayılana dön
+      assignmentType: 'assigned_to_me'
     });
   };
 
@@ -154,10 +144,8 @@ const Dashboard = () => {
            filters.dateFrom !== '' ||
            filters.dateTo !== '';
   };
-  
-  
 
-  // === MODAL LOGIC (Korumak istedikleriniz) ===
+  // === MODAL LOGIC ===
   const handleMissionClick = (mission) => { 
     setSelectedMission(mission);
   };
@@ -165,12 +153,10 @@ const Dashboard = () => {
   const closeMissionModal = () => { 
     setSelectedMission(null);
   };
-  
-  // Düzenleme fonksiyonu çağrılmayacak ama kodda kalabilir, tıklanmayacak.
- 
 
-  // Tamamlama mantığı korundu.
+  // === TOGGLE COMPLETE ===
   const toggleComplete = async (mission) => {
+    // Optimistic update
     setMissions(prev =>
       prev.map(m =>
         m.id === mission.id ? { ...m, completed: !m.completed, isUpdating: true } : m
@@ -178,18 +164,18 @@ const Dashboard = () => {
     );
 
     try {
-      await api.patch(
-        `${MISSIONS_ENDPOINT}${mission.id}/toggle_complete/`
-      );
+      await api.patch(`${MISSIONS_ENDPOINT}${mission.id}/toggle_complete/`);
       
+      // İşlem başarılı, isUpdating'i kaldır
       setMissions(prev => 
         prev.map(m => (m.id === mission.id ? { ...m, isUpdating: false } : m))
       );
       
     } catch (error) {
-      console.error("❌ Failed to toggle mission:", error);
+      console.error("❌ Görev durumu güncellenemedi:", error);
       alert(error.response?.data?.detail || "Görev durumu güncellenemedi!");
       
+      // Hata oldu, eski haline çevir
       setMissions(prev =>
         prev.map(m => 
           m.id === mission.id 
@@ -204,12 +190,16 @@ const Dashboard = () => {
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('tr-TR');
+    return date.toLocaleDateString('tr-TR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
   const formatUserName = (user) => {
-    if (!user) return '';
-    return user.full_name || user.username;
+    if (!user) return 'İsimsiz';
+    return user.full_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username;
   };
 
   const getRoleBadgeClass = (role) => {
@@ -221,7 +211,15 @@ const Dashboard = () => {
     }
   };
 
-  // Mevcut görev sayısına göre başlık belirleme
+  const getRoleLabel = (role) => {
+    switch(role) {
+      case 'CEO': return 'CEO';
+      case 'MANAGER': return 'Yönetici';
+      case 'EMPLOYEE': return 'Çalışan';
+      default: return role;
+    }
+  };
+
   const getAssignmentTypeTitle = () => {
     const totalCount = filteredMissions.length;
     if (filters.assignmentType === 'assigned_by_me') {
@@ -231,76 +229,116 @@ const Dashboard = () => {
     }
   };
 
+  const getCompletedCount = (type) => {
+    const filtered = missions.filter(m => {
+      if (type === 'assigned_to_me') return m.can_complete;
+      if (type === 'assigned_by_me') return m.can_edit;
+      return true;
+    });
+    return {
+      total: filtered.length,
+      completed: filtered.filter(m => m.completed).length,
+      pending: filtered.filter(m => !m.completed).length
+    };
+  };
 
   return (
     <div className="modern-dashboard">
       {/* Header */}
       <header className="dashboard-header">
-        <h1>Görev Paneli</h1>
-        <div>
-          <button 
-            className="org-chart-btn" 
-            onClick={() => setShowOrgChart(!showOrgChart)}
-          >
-            👥 Organizasyon
-          </button>
-          
-          
-        </div>
+        <h1>🎯 Görev Paneli</h1>
+        <button 
+          className="org-chart-btn" 
+          onClick={() => setShowOrgChart(!showOrgChart)}
+        >
+          👥 Organizasyon
+        </button>
       </header>
       
-      {/* Görev Detay Modalı - Seçili görev varsa açılır */}
+      {/* Görev Detay Modalı */}
       {selectedMission && (
         <div className="modal-overlay" onClick={closeMissionModal}>
           <div className="mission-detail-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>📋 Görev Detayı</h2>
+              <h2>📋 Görev Detayı #{selectedMission.id}</h2>
               <button className="close-modal" onClick={closeMissionModal}>✕</button>
             </div>
             <div className="modal-content">
-              <p><strong>Açıklama:</strong> {selectedMission.description}</p>
-              <p><strong>Atanan Tarih:</strong> {formatDate(selectedMission.assigned_date)}</p>
-              <p><strong>Bitiş Tarihi:</strong> {formatDate(selectedMission.end_date)}</p>
-              <p><strong>Konum:</strong> {selectedMission.from_to || "Belirtilmemiş"}</p>
-              <p><strong>Durum:</strong> 
-                <span className={selectedMission.completed ? "completed-text" : "pending-text"}>
-                  {selectedMission.completed ? 'Tamamlandı' : 'Devam Ediyor'}
+              <div className="detail-section">
+                <label>📝 Açıklama:</label>
+                <p>{selectedMission.description || "Açıklama yok"}</p>
+              </div>
+
+              <div className="detail-row">
+                <div className="detail-section">
+                  <label>📅 Başlangıç:</label>
+                  <p>{formatDate(selectedMission.assigned_date)}</p>
+                </div>
+                <div className="detail-section">
+                  <label>🏁 Bitiş:</label>
+                  <p>{formatDate(selectedMission.end_date)}</p>
+                </div>
+              </div>
+
+              {selectedMission.from_to && (
+                <div className="detail-section">
+                  <label>📍 Konum/Rota:</label>
+                  <p>{selectedMission.from_to}</p>
+                </div>
+              )}
+
+              <div className="detail-section">
+                <label>📊 Durum:</label>
+                <span className={selectedMission.completed ? "status-completed" : "status-pending"}>
+                  {selectedMission.completed ? '✅ Tamamlandı' : '⏳ Devam Ediyor'}
                 </span>
-              </p>
-              <p><strong>Oluşturan:</strong> {formatUserName(selectedMission.created_by_info)}</p>
+              </div>
+
+              <div className="detail-section">
+                <label>👤 Oluşturan:</label>
+                <p>{formatUserName(selectedMission.created_by_info)}</p>
+              </div>
               
-              <div className="assigned-users-list">
-                <strong>Atananlar:</strong>
-                <ul>
+              <div className="detail-section">
+                <label>👥 Atananlar ({selectedMission.assigned_users?.length || 0}):</label>
+                <div className="assigned-users-grid">
                   {selectedMission.assigned_users?.map(user => (
-                    <li key={user.id}>
-                      {formatUserName(user)}
-                      <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
-                        {user.role}
+                    <div key={user.id} className="user-chip">
+                      <span className="user-avatar-small">
+                        {formatUserName(user).charAt(0).toUpperCase()}
                       </span>
-                    </li>
+                      <div className="user-chip-info">
+                        <span className="user-chip-name">{formatUserName(user)}</span>
+                        <span className={`role-badge-small ${getRoleBadgeClass(user.role)}`}>
+                          {getRoleLabel(user.role)}
+                        </span>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
 
               {selectedMission.attachments?.length > 0 && (
-                <div className="mission-attachments-modal">
-                  <strong>📎 Ekler:</strong>
-                  <ul className="attachment-list">
+                <div className="detail-section">
+                  <label>📎 Ekler ({selectedMission.attachments.length}):</label>
+                  <div className="attachment-list">
                     {selectedMission.attachments.map((file) => (
-                      <li key={file.id}>
-                        <a
-                          href={file.file}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="attachment-link"
-                          download
-                        >
-                          📄 {file.file.split("/").pop()}
-                        </a>
-                      </li>
+                      <a
+                        key={file.id}
+                        href={file.file}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="attachment-item"
+                        download
+                      >
+                        <span className="attachment-icon">📄</span>
+                        <span className="attachment-name">
+                          {file.file.split("/").pop()}
+                        </span>
+                        <span className="attachment-action">⬇️</span>
+                      </a>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
             </div>
@@ -310,7 +348,6 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-
 
       {/* Organization Chart Modal */}
       {showOrgChart && (
@@ -322,8 +359,8 @@ const Dashboard = () => {
             </div>
             
             <div className="org-chart-content">
-              {/* Organizasyon şeması içeriği buraya gelir */}
-               <div className="org-section">
+              {/* CEO Section */}
+              <div className="org-section">
                 <h3 className="org-title ceo-title">👑 CEO</h3>
                 <div className="org-grid">
                   {orgChart.CEO.length === 0 ? (
@@ -331,14 +368,14 @@ const Dashboard = () => {
                   ) : (
                     orgChart.CEO.map(user => (
                       <div key={user.id} className="org-card ceo-card">
-                        <div className="org-card-header">
-                          <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
-                            {user.role}
-                          </span>
+                        <div className="org-avatar">
+                          {formatUserName(user).charAt(0).toUpperCase()}
                         </div>
                         <h4>{formatUserName(user)}</h4>
                         <p className="user-email">{user.email}</p>
                         {user.unvan && <p className="user-unvan">🏷️ {user.unvan}</p>}
+                        {user.department && <p className="user-department">🏢 {user.department}</p>}
+                        {user.phone && <p className="user-phone">📞 {user.phone}</p>}
                       </div>
                     ))
                   )}
@@ -354,14 +391,14 @@ const Dashboard = () => {
                   ) : (
                     orgChart.MANAGER.map(user => (
                       <div key={user.id} className="org-card manager-card">
-                        <div className="org-card-header">
-                          <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
-                            {user.role}
-                          </span>
+                        <div className="org-avatar">
+                          {formatUserName(user).charAt(0).toUpperCase()}
                         </div>
                         <h4>{formatUserName(user)}</h4>
                         <p className="user-email">{user.email}</p>
                         {user.unvan && <p className="user-unvan">🏷️ {user.unvan}</p>}
+                        {user.department && <p className="user-department">🏢 {user.department}</p>}
+                        {user.phone && <p className="user-phone">📞 {user.phone}</p>}
                       </div>
                     ))
                   )}
@@ -377,14 +414,14 @@ const Dashboard = () => {
                   ) : (
                     orgChart.EMPLOYEE.map(user => (
                       <div key={user.id} className="org-card employee-card">
-                        <div className="org-card-header">
-                          <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
-                            {user.role}
-                          </span>
+                        <div className="org-avatar">
+                          {formatUserName(user).charAt(0).toUpperCase()}
                         </div>
                         <h4>{formatUserName(user)}</h4>
                         <p className="user-email">{user.email}</p>
                         {user.unvan && <p className="user-unvan">🏷️ {user.unvan}</p>}
+                        {user.department && <p className="user-department">🏢 {user.department}</p>}
+                        {user.phone && <p className="user-phone">📞 {user.phone}</p>}
                       </div>
                     ))
                   )}
@@ -395,7 +432,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Main Content - Artık sadece görev listesi var */}
+      {/* Main Content */}
       <main className="dashboard-main">
         <div className="task-list-view">
           
@@ -412,7 +449,7 @@ const Dashboard = () => {
 
             <div className="filter-grid">
               
-              {/* YENİ FİLTRE: Atama Türü */}
+              {/* Atama Türü Filtresi */}
               <div className="filter-group">
                 <label>Görev Türü</label>
                 <select 
@@ -420,11 +457,16 @@ const Dashboard = () => {
                   onChange={(e) => handleFilterChange('assignmentType', e.target.value)}
                   className="filter-select"
                 >
-                  <option value="assigned_to_me">Bana Atananlar</option>
-                  <option value="assigned_by_me">Benim Atadıklarım</option>
+                  <option value="assigned_to_me">
+                    Bana Atananlar ({getCompletedCount('assigned_to_me').total})
+                  </option>
+                  <option value="assigned_by_me">
+                    Benim Atadıklarım ({getCompletedCount('assigned_by_me').total})
+                  </option>
                 </select>
               </div>
 
+              {/* Durum Filtresi */}
               <div className="filter-group">
                 <label>Durum</label>
                 <select 
@@ -432,12 +474,13 @@ const Dashboard = () => {
                   onChange={(e) => handleFilterChange('status', e.target.value)}
                   className="filter-select"
                 >
-                  <option value="all">Tümü ({missions.length})</option>
-                  <option value="pending">Devam Eden ({missions.filter(m => !m.completed).length})</option>
-                  <option value="completed">Tamamlanan ({missions.filter(m => m.completed).length})</option>
+                  <option value="all">Tümü</option>
+                  <option value="pending">Devam Eden</option>
+                  <option value="completed">Tamamlanan</option>
                 </select>
               </div>
 
+              {/* Arama */}
               <div className="filter-group">
                 <label>Arama</label>
                 <input
@@ -449,6 +492,7 @@ const Dashboard = () => {
                 />
               </div>
 
+              {/* Atanan Kişi */}
               <div className="filter-group">
                 <label>Atanan Kişi</label>
                 <select
@@ -459,12 +503,13 @@ const Dashboard = () => {
                   <option value="all">Tüm Kullanıcılar</option>
                   {users.map(user => (
                     <option key={user.id} value={user.id}>
-                      {formatUserName(user) || user.username}
+                      {formatUserName(user)}
                     </option>
                   ))}
                 </select>
               </div>
 
+              {/* Tarih Filtreleri */}
               <div className="filter-group">
                 <label>Başlangıç Tarihi</label>
                 <input
@@ -488,7 +533,7 @@ const Dashboard = () => {
 
             <div className="filter-results">
               <span className="results-count">
-                {getAssignmentTypeTitle()} - {filteredMissions.length} görev gösteriliyor
+                {getAssignmentTypeTitle()}
               </span>
             </div>
           </div>
@@ -498,16 +543,25 @@ const Dashboard = () => {
             {loading ? (
               <div className="empty-state">
                 <div className="spinner">⏳</div>
-                Görevler yükleniyor...
+                <p>Görevler yükleniyor...</p>
               </div>
             ) : filteredMissions.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">
-                  {hasActiveFilters() || filters.assignmentType === 'assigned_by_me' ? '🔍' : '📭'}
+                  {hasActiveFilters() ? '🔍' : '📭'}
                 </div>
-                {filters.assignmentType === 'assigned_by_me' 
-                    ? 'Henüz kimseye görev atamamışsınız.'
-                    : 'Size atanmış aktif görev bulunmamaktadır.'}
+                <h3>
+                  {hasActiveFilters() 
+                    ? 'Filtreye uygun görev bulunamadı' 
+                    : filters.assignmentType === 'assigned_by_me'
+                      ? 'Henüz kimseye görev atamamışsınız'
+                      : 'Size atanmış aktif görev bulunmamaktadır'}
+                </h3>
+                {hasActiveFilters() && (
+                  <button onClick={clearFilters} className="clear-filters-btn">
+                    Filtreleri Temizle
+                  </button>
+                )}
               </div>
             ) : (
               filteredMissions.map((mission) => (
@@ -517,7 +571,7 @@ const Dashboard = () => {
                 >
                   <div className="mission-header">
                     
-                    {/* Tamamlama Butonu */}
+                    {/* Tamamlama Checkbox - Sadece atananlar görebilir */}
                     {mission.can_complete && (
                       <label className="task-checkbox-wrap">
                         <input
@@ -540,8 +594,11 @@ const Dashboard = () => {
                     </div>
                   </div>
                   
-                  <div className="mission-body" 
-                    onClick={() => handleMissionClick(mission)}>
+                  <div 
+                    className="mission-body" 
+                    onClick={() => handleMissionClick(mission)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <p className="mission-description">
                       {mission.description || "Açıklama yok"}
                     </p>
@@ -553,20 +610,30 @@ const Dashboard = () => {
                     )}
                     
                     {mission.attachments && mission.attachments.length > 0 && (
-                      <div className="mission-attachments">
-                        <strong>📎 Ekler ({mission.attachments.length}):</strong>
-                        {/* Ek listesi burada */}
+                      <div className="mission-attachments-preview">
+                        <span className="attachment-count">
+                          📎 {mission.attachments.length} ek dosya
+                        </span>
                       </div>
                     )}
 
-                    
-                    {mission.created_by_info && (
-                      <div className="mission-creator">
-                        <small>
-                          Oluşturan: <strong>{formatUserName(mission.created_by_info)}</strong>
-                        </small>
-                      </div>
-                    )}
+                    <div className="mission-footer">
+                      {mission.created_by_info && (
+                        <div className="mission-creator">
+                          <small>
+                            Oluşturan: <strong>{formatUserName(mission.created_by_info)}</strong>
+                          </small>
+                        </div>
+                      )}
+                      
+                      {mission.assigned_users && mission.assigned_users.length > 0 && (
+                        <div className="assigned-users-preview">
+                          <small>
+                            Atananlar: <strong>{mission.assigned_users.length} kişi</strong>
+                          </small>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
@@ -574,7 +641,6 @@ const Dashboard = () => {
           </div>
         </div>
       </main>
-    
     </div>
   );
 };
