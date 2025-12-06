@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../services/api";
 import "../styles/AddTask.css";
+import { useTheme } from '../contexts/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 const MISSIONS_ENDPOINT = "/api/missions/";
 const USERS_ENDPOINT = "/api/users/assignable_users/";
 
 const AddTask = () => {
+  const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const editingMission = location.state?.mission || null;
@@ -151,7 +154,7 @@ const AddTask = () => {
         <button className="back-btn" onClick={() => navigate('/dashboard')}>
           ← Geri Dön
         </button>
-        <h1>{editingMission ? ' Görevi Düzenle' : ' Yeni Görev Oluştur'}</h1>
+        <ThemeToggle />
       </header>
 
       <main className="add-task-container">
