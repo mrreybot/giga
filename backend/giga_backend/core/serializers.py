@@ -8,9 +8,13 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'unvan', 'role', 
-                  'first_name', 'last_name', 'full_name']
-        read_only_fields = ['id', 'full_name']
+        fields = [
+            'id', 'username', 'email', 'password', 'unvan', 'role', 
+            'first_name', 'last_name', 'full_name', 'department', 'phone',
+            'profile_photo', 'email_notifications', 'task_reminders',
+            'deadline_alerts', 'notification_email'
+        ]
+        read_only_fields = ['id', 'full_name', 'role']  # role sadece admin değiştirebilir
         extra_kwargs = {
             'password': {'write_only': True, 'required': False}
         }
@@ -27,14 +31,75 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         password = validated_data.pop('password', None)
+        # Role'u EMPLOYEE olarak zorla
+        validated_data['role'] = 'EMPLOYEE'
+        
         user = CustomUser.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
             password=password if password else 'temporary_password_123',
             unvan=validated_data.get('unvan', ''),
-            role=validated_data.get('role', 'EMPLOYEE'),
+            role='EMPLOYEE',
             first_name=validated_data.get('first_name', ''),
-            last_name=validated_data.get('last_name', '')
+            last_name=validated_data.get('last_name', ''),
+            department=validated_data.get('department', ''),
+            phone=validated_data.get('phone', '')
+        )
+        return user
+    
+    def update(self, instance, validated_data):
+        """Kullanıcı güncelleme - role ve password değiştirilemez"""
+        validated_data.pop('role', None)  # role değiştirilemez
+        validated_data.pop('password', None)  # password ayrı endpoint'ten değişir
+        return super().update(instance, validated_data)
+
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    """Sadece kayıt için kullanılan özel serializer"""
+    password = serializers.CharField(write_only=True, required=True, min_length=8)
+    email = serializers.EmailField(required=True)
+    first_name = serializers.CharField(required=True, max_length=150)
+    last_name = serializers.CharField(required=True, max_length=150)
+    department = serializers.CharField(required=False, allow_blank=True, max_length=100)
+    phone = serializers.CharField(required=False, allow_blank=True, max_length=20)
+    
+    class Meta:
+        model = CustomUser
+        fields = [
+            'username', 'email', 'password', 
+            'first_name', 'last_name', 
+            'department', 'phone'
+        ]
+    
+    def validate_email(self, value):
+        """Email doğrulama - @gmail.com kontrolü"""
+        if not value.endswith('@gmail.com'):
+            raise serializers.ValidationError("Lütfen geçerli bir Gmail adresi girin (@gmail.com)")
+        
+        # Email'in daha önce kullanılmadığını kontrol et
+        if CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Bu e-posta adresi zaten kullanılıyor.")
+        
+        return value
+    
+    def validate_username(self, value):
+        """Username'in unique olduğunu kontrol et"""
+        if CustomUser.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Bu kullanıcı adı zaten kullanılıyor.")
+        return value
+    
+    def create(self, validated_data):
+        """Yeni kullanıcı oluştur - Her zaman EMPLOYEE rolüyle"""
+        user = CustomUser.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            department=validated_data.get('department', ''),
+            phone=validated_data.get('phone', ''),
+            role='EMPLOYEE',  # Varsayılan rol - sadece admin değiştirebilir
+            notification_email=validated_data['email']  # Bildirim email'i olarak da set et
         )
         return user
 

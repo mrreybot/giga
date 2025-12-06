@@ -7,6 +7,7 @@ import ThemeToggle from '../components/ThemeToggle';
 
 const MISSIONS_ENDPOINT = "/api/missions/";
 const USERS_ENDPOINT = "/api/users/assignable_users/";
+const PROFILE_ENDPOINT = "/api/user/profile/";
 
 const AddTask = () => {
   const { isDarkMode } = useTheme();
@@ -17,6 +18,7 @@ const AddTask = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   
   const [formData, setFormData] = useState({
     description: '',
@@ -28,13 +30,14 @@ const AddTask = () => {
   });
 
   useEffect(() => {
+    fetchCurrentUser();
     fetchUsers();
     
     if (editingMission) {
       setFormData({
-        description: editingMission.description,
-        assigned_date: editingMission.assigned_date,
-        end_date: editingMission.end_date,
+        description: editingMission.description || '',
+        assigned_date: editingMission.assigned_date || '',
+        end_date: editingMission.end_date || '',
         from_to: editingMission.from_to || '',
         due_to: editingMission.assigned_users?.map(u => u.id) || [],
         attachments: []
@@ -42,15 +45,36 @@ const AddTask = () => {
     }
   }, [editingMission]);
 
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await api.get(PROFILE_ENDPOINT);
+      setCurrentUser(response.data);
+      
+      // Artık EMPLOYEE'ler de görev oluşturabilir, yetki kontrolü kaldırıldı
+    } catch (error) {
+      console.error("❌ Kullanıcı bilgisi alınamadı:", error);
+    }
+  };
+
   const fetchUsers = async () => {
     setLoading(true);
     try {
       const response = await api.get(USERS_ENDPOINT);
-      const userData = response.data.results || response.data;
-      setUsers(Array.isArray(userData) ? userData : []);
+      
+      // Backend'den array veya obje dönebilir
+      let userData = [];
+      
+      if (Array.isArray(response.data)) {
+        userData = response.data;
+      } else if (response.data && typeof response.data === 'object') {
+        userData = Object.values(response.data).flat();
+      }
+      
+      setUsers(userData);
     } catch (error) {
-      console.error("❌ Failed to fetch users:", error);
+      console.error("❌ Kullanıcılar yüklenemedi:", error);
       alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -73,9 +97,25 @@ const AddTask = () => {
     });
   };
 
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setFormData(prev => ({
+      ...prev,
+      attachments: files
+    }));
+  };
+
+  const removeFile = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      attachments: prev.attachments.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleSubmitMission = async (e) => {
     e.preventDefault();
     
+    // Validasyon
     if (!formData.description.trim()) {
       alert("Lütfen açıklama giriniz!");
       return;
@@ -89,6 +129,14 @@ const AddTask = () => {
       return;
     }
 
+    // Tarih kontrolü
+    const startDate = new Date(formData.assigned_date);
+    const endDate = new Date(formData.end_date);
+    if (endDate < startDate) {
+      alert("Bitiş tarihi başlangıç tarihinden önce olamaz!");
+      return;
+    }
+
     setSaving(true);
     
     try {
@@ -97,7 +145,7 @@ const AddTask = () => {
       submitData.append('assigned_date', formData.assigned_date);
       submitData.append('end_date', formData.end_date);
       
-      if (formData.from_to) {
+      if (formData.from_to && formData.from_to.trim()) {
         submitData.append('from_to', formData.from_to);
       }
       
@@ -113,30 +161,48 @@ const AddTask = () => {
         await api.patch(`${MISSIONS_ENDPOINT}${editingMission.id}/`, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        alert("Görev başarıyla güncellendi!");
+        alert(" Görev başarıyla güncellendi!");
       } else {
         await api.post(MISSIONS_ENDPOINT, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        alert("Görev başarıyla oluşturuldu!");
+        alert(" Görev başarıyla oluşturuldu!");
       }
       
       navigate('/dashboard');
       
     } catch (error) {
-      console.error("❌ Failed to save mission:", error);
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message ||
-                          error.message;
-      alert(`Görev kaydedilirken hata oluştu!\n${errorMessage}`);
+      console.error("❌ Görev kaydedilemedi:", error);
+      
+      let errorMessage = "Görev kaydedilirken hata oluştu!";
+      
+      if (error.response?.status === 403) {
+        errorMessage = error.response.data.detail || "Bu işlem için yetkiniz yok.";
+      } else if (error.response?.data) {
+        const errorData = error.response.data;
+        
+        if (typeof errorData === 'object') {
+          const errors = Object.entries(errorData)
+            .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+            .join('\n');
+          errorMessage += `\n\n${errors}`;
+        } else if (errorData.detail) {
+          errorMessage += `\n\n${errorData.detail}`;
+        }
+      }
+      
+      alert(errorMessage);
     } finally {
       setSaving(false);
     }
   };
 
   const formatUserName = (user) => {
-    if (!user) return '';
-    return user.full_name || user.username || `${user.first_name || ''} ${user.last_name || ''}`.trim();
+    if (!user) return 'İsimsiz Kullanıcı';
+    if (user.full_name) return user.full_name;
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+    if (fullName) return fullName;
+    return user.username || 'İsimsiz Kullanıcı';
   };
 
   const getRoleBadgeClass = (role) => {
@@ -145,6 +211,15 @@ const AddTask = () => {
       case 'MANAGER': return 'role-badge-manager';
       case 'EMPLOYEE': return 'role-badge-employee';
       default: return 'role-badge-default';
+    }
+  };
+
+  const getRoleLabel = (role) => {
+    switch(role) {
+      case 'CEO': return 'CEO';
+      case 'MANAGER': return 'Yönetici';
+      case 'EMPLOYEE': return 'Çalışan';
+      default: return role;
     }
   };
 
@@ -167,8 +242,9 @@ const AddTask = () => {
           )}
 
           <form className="task-form" onSubmit={handleSubmitMission}>
+            {/* GÖREV DETAYLARI */}
             <div className="form-section">
-              <h2 className="section-title"> Görev Detayları</h2>
+              <h2 className="section-title">📋 Görev Detayları</h2>
               
               <div className="form-group">
                 <label htmlFor="desc" className="form-label">
@@ -235,7 +311,7 @@ const AddTask = () => {
 
               <div className="form-group">
                 <label htmlFor="attachments" className="form-label">
-                  Dosya Ekle <span className="optional">(Opsiyonel)</span>
+                  📎 Dosya Ekle <span className="optional">(Opsiyonel)</span>
                 </label>
                 <div className="file-input-wrapper">
                   <input
@@ -243,12 +319,7 @@ const AddTask = () => {
                     id="attachments"
                     name="attachments"
                     multiple
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        attachments: Array.from(e.target.files)
-                      }))
-                    }
+                    onChange={handleFileChange}
                     className="file-input"
                   />
                   <label htmlFor="attachments" className="file-label">
@@ -270,12 +341,7 @@ const AddTask = () => {
                         <button
                           type="button"
                           className="remove-file"
-                          onClick={() => {
-                            setFormData(prev => ({
-                              ...prev,
-                              attachments: prev.attachments.filter((_, i) => i !== index)
-                            }));
-                          }}
+                          onClick={() => removeFile(index)}
                         >
                           ✕
                         </button>
@@ -286,9 +352,21 @@ const AddTask = () => {
               </div>
             </div>
 
+            {/* GÖREV ATAMA */}
             <div className="form-section">
               <div className="section-header">
-                <h2 className="section-title">Görev Atama </h2>
+                <h2 className="section-title">
+                  👥 Görev Atama
+                  {currentUser?.role === 'MANAGER' && (
+                    <span className="role-info"> (Sadece çalışanlara)</span>
+                  )}
+                  {currentUser?.role === 'EMPLOYEE' && (
+                    <span className="role-info"> (Sadece çalışanlara)</span>
+                  )}
+                  {currentUser?.role === 'CEO' && (
+                    <span className="role-info"> (Herkese)</span>
+                  )}
+                </h2>
                 <span className="selection-count">
                   {formData.due_to.length} kişi seçildi
                 </span>
@@ -327,11 +405,16 @@ const AddTask = () => {
                           <p className="user-email">{user.email}</p>
                           <div className="user-badges">
                             <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
-                              {user.role}
+                              {getRoleLabel(user.role)}
                             </span>
                             {user.unvan && (
                               <span className="unvan-badge">
                                 {user.unvan}
+                              </span>
+                            )}
+                            {user.department && (
+                              <span className="department-badge">
+                                {user.department}
                               </span>
                             )}
                           </div>
@@ -344,6 +427,7 @@ const AddTask = () => {
               )}
             </div>
 
+            {/* FORM BUTTONS */}
             <div className="form-actions">
               <button 
                 type="button"
@@ -360,17 +444,17 @@ const AddTask = () => {
               >
                 {saving ? (
                   <>
-                    <span className="btn-spinner">⏳</span>
+                    <span className="btn-spinner"></span>
                     Kaydediliyor...
                   </>
                 ) : editingMission ? (
                   <>
-                    <span className="btn-icon">💾</span>
+                    <span className="btn-icon"></span>
                     Değişiklikleri Kaydet
                   </>
                 ) : (
                   <>
-                    <span className="btn-icon">✅</span>
+                    <span className="btn-icon"></span>
                     Görevi Oluştur
                   </>
                 )}

@@ -431,7 +431,7 @@ const ProfilePage = () => {
                 </div>
 
                 <button type="submit" className="save-btn" disabled={saving}>
-                  {saving ? "Güncelleniyor..." : "🔒 Şifreyi Güncelle"}
+                  {saving ? "Güncelleniyor..." : " Şifreyi Güncelle"}
                 </button>
               </form>
             )}
@@ -456,7 +456,7 @@ const ProfilePage = () => {
                 <div className="notification-toggles">
                   <div className="toggle-item">
                     <div className="toggle-info">
-                      <strong>📧 E-posta Bildirimleri</strong>
+                      <strong> E-posta Bildirimleri</strong>
                       <p>Önemli güncellemeler için e-posta al</p>
                     </div>
                     <label className="toggle-switch">
@@ -472,7 +472,7 @@ const ProfilePage = () => {
 
                   <div className="toggle-item">
                     <div className="toggle-info">
-                      <strong>⏰ Görev Hatırlatıcıları</strong>
+                      <strong> Görev Hatırlatıcıları</strong>
                       <p>Bekleyen görevler için hatırlatma al</p>
                     </div>
                     <label className="toggle-switch">
@@ -504,7 +504,7 @@ const ProfilePage = () => {
                 </div>
 
                 <button type="submit" className="save-btn" disabled={saving}>
-                  {saving ? "Kaydediliyor..." : "💾 Ayarları Kaydet"}
+                  {saving ? "Kaydediliyor..." : " Ayarları Kaydet"}
                 </button>
               </form>
             )}

@@ -8,8 +8,19 @@ class CustomUser(AbstractUser):
         ('EMPLOYEE', 'Employee'),
     ]
     
-    unvan = models.CharField(max_length=100, blank=True, null=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='EMPLOYEE')
+    unvan = models.CharField(max_length=100, blank=True, null=True, verbose_name="Ünvan")
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='EMPLOYEE', verbose_name="Rol")
+    
+    # Yeni alanlar
+    department = models.CharField(max_length=100, blank=True, null=True, verbose_name="Departman")
+    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefon")
+    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True, verbose_name="Profil Fotoğrafı")
+    
+    # Bildirim ayarları
+    email_notifications = models.BooleanField(default=True, verbose_name="E-posta Bildirimleri")
+    task_reminders = models.BooleanField(default=True, verbose_name="Görev Hatırlatıcıları")
+    deadline_alerts = models.BooleanField(default=True, verbose_name="Termin Uyarıları")
+    notification_email = models.EmailField(blank=True, null=True, verbose_name="Bildirim E-posta")
 
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})" if self.role else self.username
