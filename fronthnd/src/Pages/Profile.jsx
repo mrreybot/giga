@@ -431,7 +431,7 @@ const ProfilePage = () => {
                 </div>
 
                 <button type="submit" className="save-btn" disabled={saving}>
-                  {saving ? "Güncelleniyor..." : "🔒 Şifreyi Güncelle"}
+                  {saving ? "Güncelleniyor..." : " Şifreyi Güncelle"}
                 </button>
               </form>
             )}

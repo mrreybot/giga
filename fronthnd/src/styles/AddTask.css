@@ -19,7 +19,7 @@
 .page-header {
   background-color: #1f2937; /* Gradient yok, düz kurumsal koyu renk */
   color: white;
-  padding: 1rem 35rem;
+  padding: 1rem 25rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
