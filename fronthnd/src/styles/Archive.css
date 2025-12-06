@@ -1,0 +1,235 @@
+/* Archive.css - Excel-like, professional, LIGHT-accent theme */
+
+/* Kök sarmalayıcı */
+.archive-wrapper {
+  min-height: 100vh;
+  background: #f9fafb; /* Hafif Beyaz arka plan */
+  padding: 28px;
+  color: #111827; /* Koyu Metin */
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial;
+  box-sizing: border-box;
+}
+
+/* Header */
+.archive-header {
+  max-width: 1200px;
+  margin: 0 auto 18px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.archive-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.archive-title h1 {
+  margin: 0;
+  font-size: 22px;
+  color: #1f2937; /* Koyu Gri Header rengi */
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.archive-sub {
+  margin: 0;
+  color: #6b7280; /* Açık Metin/Detaylar */
+  font-size: 13px;
+}
+
+/* Arama girişi + aksiyonlar */
+.archive-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.archive-search {
+  width: 280px;
+  min-width: 160px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb; /* Kenarlık */
+  background: #ffffff; /* Beyaz input arka planı */
+  color: #111827;
+  outline: none;
+  font-size: 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.archive-search::placeholder {
+  color: #9ca3af; /* Daha açık placeholder */
+}
+
+.archive-actions { display:flex; gap:8px; align-items:center; }
+
+/* Tablo sarmalayıcı */
+.table-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb; /* Kenarlık */
+  background: #ffffff;
+}
+
+/* Tablo temel */
+.archive-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1100px; /* küçük ekranlarda yatay kaydırmaya izin ver */
+}
+
+/* Header satırı - sticky */
+.archive-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  background: #f3f4f6; /* Çok açık gri header arka planı */
+  color: #1f2937; /* Koyu Gri/Siyah Metin */
+  padding: 12px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e5e7eb; /* Kenarlık */
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* bazı headerları ortala */
+.archive-table thead th.center { text-align:center; }
+
+/* Body satırları */
+.archive-table tbody tr {
+  transition: background 0.16s, transform 0.12s;
+}
+
+/* zebra */
+.archive-table tbody tr:nth-child(odd) {
+  background: #ffffff; /* Beyaz */
+}
+.archive-table tbody tr:nth-child(even) {
+  background: #f9fafb; /* Çok hafif gri */
+}
+
+.archive-table tbody tr:hover {
+  background: #eff6ff; /* Hafif Aksan Mavisi */
+  transform: none; /* Hafif temada kalkma efektini kaldırıyorum */
+}
+
+/* Hücreler */
+.archive-table td {
+  padding: 12px 10px;
+  border-right: 1px solid #f3f4f6; /* Açık hücre kenarlığı */
+  vertical-align: middle;
+  color: #111827;
+  font-size: 14px;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+/* son sütunda border-right yok */
+.archive-table td:last-child,
+.archive-table th:last-child {
+  border-right: none;
+}
+
+/* Index sütunu */
+.col-index { width: 56px; text-align: center; font-weight:700; color:#1e40af; } /* Aksan Rengi */
+
+/* Gönderen / kullanıcı blokları */
+.user-block { display:flex; flex-direction:column; gap:4px; }
+.user-email {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+  color:#1e40af; /* Aksan Rengi */
+  font-size:13px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  max-width: 200px;
+}
+.user-role {
+  font-size:11px;
+  color:#6b7280; /* Açık Metin */
+  text-transform:uppercase;
+  font-weight:700;
+}
+
+/* Atanmış kullanıcı listesi */
+.assigned-list { display:flex; flex-direction:column; gap:6px; max-width:260px; }
+.assigned-item { display:flex; gap:8px; align-items:center; }
+
+/* Lokasyon */
+.col-location { text-align:center; color:#d97706; /* Turuncu/Sarı (uygun bir renk) */ font-weight:700; text-transform:uppercase; }
+
+/* Açıklama - çok satırlı izin ver ama genişlik kısıtlı */
+.col-desc { max-width: 360px; white-space: normal; color:#111827; }
+
+/* Ekler listesi */
+.attach-list { display:flex; flex-direction:column; gap:6px; }
+.attach-link {
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:6px;
+  background:#1e40af; /* Aksan Rengi */
+  color:#fff;
+  font-weight:600;
+  text-decoration:none;
+  font-size:13px;
+}
+.attach-link:hover { background:#1d4ed8; } /* Daha koyu aksan */
+
+/* Tarihler */
+.col-date { text-align:center; color:#6b7280; /* Açık Metin */ font-size:13px; }
+
+/* Geri Yükle butonu */
+.restore-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:38px;
+  height:38px;
+  border-radius:8px;
+  border:1px solid #e5e7eb; /* Kenarlık */
+  background: transparent;
+  color:#6b7280;
+  cursor:pointer;
+  transition: all 0.2s;
+}
+.restore-btn:hover {
+  background:#ef4444; /* Kırmızı (silme/geri yükleme için uygun) */
+  color:#fff;
+  border-color: #ef4444;
+}
+
+/* Boş / yükleme durumu */
+.archive-empty, .archive-loading {
+  padding: 36px;
+  text-align:center;
+  color:#6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius:8px;
+  margin: 24px;
+}
+
+/* Responsive ayarlamalar */
+@media (max-width: 900px) {
+  .archive-table { min-width: 900px; }
+  .col-desc { max-width: 240px; }
+  .user-email { max-width: 140px; }
+}
+
+@media (max-width: 640px) {
+  .archive-header { padding-bottom: 8px; }
+  .archive-search { width: 100%; max-width: 100%; }
+  .archive-table { min-width: 800px; }
+}

@@ -214,6 +214,7 @@ const HomePage = () => {
               <p className="stat-number">{completedMissions}</p>
             </div>
           </div>
+          
 
           <div className="stat-card pending-card">
             
@@ -349,7 +350,7 @@ const HomePage = () => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h3>
-                  📅 {selectedDate.day} {monthNames[selectedDate.month]} {selectedDate.year}
+                  {selectedDate.day} {monthNames[selectedDate.month]} {selectedDate.year}
                 </h3>
                 <button className="close-btn" onClick={() => setSelectedDate(null)}>✕</button>
               </div>
@@ -368,7 +369,7 @@ const HomePage = () => {
                         
                         <div className="mission-card-body">
                           <p className="mission-dates">
-                            📅 {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
+                            {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
                           </p>
                           
                           {mission.from_to && (

@@ -51,7 +51,7 @@ const Sidebar = () => {
       icom: "🗄️",
       path:"/arsiv",
       description:"Geçmiş görevlerim"
-    }
+    },
   ];
 
   const isActive = (path) => {
@@ -126,7 +126,20 @@ const Sidebar = () => {
               </div>
             )}
           </button>
-
+            <button
+            className="nav-item settings-item"
+            onClick={() => navigate("/profil")}
+            title={isCollapsed ? "Profilim" : ''}
+          >
+            <span className="nav-icon"></span>
+            {!isCollapsed && (
+              <div className="nav-content">
+                <span className="nav-name">Profil</span>
+                <span className="nav-description"></span>
+              </div>
+            )}
+          </button>
+          
           <button
             className="nav-item logout-item"
             onClick={handleLogout}
@@ -140,28 +153,14 @@ const Sidebar = () => {
               </div>
             )}
           </button>
+
+          
         </div>
       </nav>
 
-      {/* User Info (Collapsed state) */}
-      {isCollapsed && (
-        <div className="sidebar-footer-collapsed">
-          <div className="user-avatar">👤</div>
-        </div>
-      )}
-
-      {/* User Info (Expanded state) */}
-      {!isCollapsed && (
-        <div className="sidebar-footer">
-          <div className="user-info">
-            <div className="user-avatar">👤</div>
-            <div className="user-details">
-              <p className="user-name">Merhaba!</p>
-              <p className="user-role">Tuna Berk</p>
-            </div>
-          </div>
-        </div>
-      )}
+      
+    
+      
     </div>
   );
 };

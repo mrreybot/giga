@@ -168,7 +168,7 @@ const AddTask = () => {
 
           <form className="task-form" onSubmit={handleSubmitMission}>
             <div className="form-section">
-              <h2 className="section-title">📝 Görev Detayları</h2>
+              <h2 className="section-title"> Görev Detayları</h2>
               
               <div className="form-group">
                 <label htmlFor="desc" className="form-label">
@@ -288,7 +288,7 @@ const AddTask = () => {
 
             <div className="form-section">
               <div className="section-header">
-                <h2 className="section-title">👥 Görev Atama</h2>
+                <h2 className="section-title">Görev Atama </h2>
                 <span className="selection-count">
                   {formData.due_to.length} kişi seçildi
                 </span>

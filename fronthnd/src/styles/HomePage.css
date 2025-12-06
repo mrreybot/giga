@@ -174,10 +174,10 @@
    KOCAMAN TAKVİM
    ============================================ */
 .calendar-section {
-  background: var(--card-bg);
-  border: 1px solid var(--border-primary);
-  border-radius: 6px;
-  padding: 2rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 1.5rem;
   margin-bottom: 2rem;
 }
 
