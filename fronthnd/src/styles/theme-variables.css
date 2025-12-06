@@ -1,0 +1,206 @@
+/* ===== GLOBAL THEME VARIABLES - COMPLETE ===== */
+
+:root {
+  /* === Background Colors === */
+  --bg-primary: #f9fafb;           /* Ana arka plan */
+  --bg-secondary: #ffffff;          /* Kartlar, paneller */
+  --bg-tertiary: #f3f4f6;          /* Header içi, subtle backgrounds */
+  
+  /* === Text Colors === */
+  --text-primary: #111827;          /* Ana metin */
+  --text-secondary: #6b7280;        /* İkincil metin, açıklamalar */
+  --text-tertiary: #9ca3af;         /* Placeholder, disabled */
+  
+  /* === Border Colors === */
+  --border-primary: #e5e7eb;        /* Ana kenarlıklar */
+  --border-secondary: #d1d5db;      /* İkincil kenarlıklar */
+  --border-tertiary: #f3f4f6;       /* Çok hafif kenarlıklar */
+  
+  /* === Accent/Primary Colors === */
+  --accent-primary: #1e40af;        /* Ana vurgu rengi (Navy Blue) */
+  --accent-secondary: #1e3a8a;      /* Hover states */
+  --accent-light: #eff6ff;          /* Çok açık mavi arka planlar */
+  --accent-lighter: #eef2ff;        /* Badge backgrounds */
+  
+  /* === Header === */
+  --header-bg: #1f2937;             /* Header arka planı */
+  --header-text: #f9fafb;           /* Header metin */
+  
+  /* === Card Colors === */
+  --card-bg: #ffffff;               /* Kart arka planı */
+  --card-hover: #f9fafb;            /* Kart hover */
+  
+  /* === Status Colors === */
+  --success: #10b981;               /* Başarı (yeşil) */
+  --success-light: #d1fae5;         /* Açık yeşil arka plan */
+  --success-dark: #059669;          /* Koyu yeşil */
+  
+  --warning: #f59e0b;               /* Uyarı (turuncu) */
+  --warning-light: #fef3c7;         /* Açık turuncu arka plan */
+  --warning-dark: #d97706;          /* Koyu turuncu */
+  
+  --danger: #ef4444;                /* Hata/Tehlike (kırmızı) */
+  --danger-light: #fee2e2;          /* Açık kırmızı arka plan */
+  --danger-dark: #b91c1c;           /* Koyu kırmızı */
+  
+  --info: #3b82f6;                  /* Bilgi (mavi) */
+  --info-light: #dbeafe;            /* Açık mavi arka plan */
+  --info-dark: #2563eb;             /* Koyu mavi */
+  
+  /* === Shadows === */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+  
+  /* === Input/Form Colors === */
+  --input-bg: #f9fafb;
+  --input-border: #e5e7eb;
+  --input-focus: #1e40af;
+  --input-text: #111827;
+  --input-placeholder: #9ca3af;
+  
+  /* === Button Colors === */
+  --btn-primary-bg: #1e40af;
+  --btn-primary-hover: #1e3a8a;
+  --btn-primary-text: #ffffff;
+  
+  --btn-secondary-bg: #f3f4f6;
+  --btn-secondary-hover: #e5e7eb;
+  --btn-secondary-text: #111827;
+  
+  --btn-danger-bg: #dc2626;
+  --btn-danger-hover: #b91c1c;
+  --btn-danger-text: #ffffff;
+  
+  /* === Role Badge Colors === */
+  --badge-ceo-bg: #fee2e2;
+  --badge-ceo-text: #ef4444;
+  
+  --badge-manager-bg: #fef3c7;
+  --badge-manager-text: #f59e0b;
+  
+  --badge-employee-bg: #d1fae5;
+  --badge-employee-text: #10b981;
+  
+  --badge-default-bg: #e0e7ff;
+  --badge-default-text: #374151;
+  
+  /* === Modal === */
+  --modal-overlay: rgba(0, 0, 0, 0.4);
+  --modal-bg: #ffffff;
+  
+  /* === Misc === */
+  --checkbox-bg: #e5e7eb;
+  --checkbox-checked: #1e40af;
+  --checkbox-border: #d1d5db;
+}
+
+/* ===== DARK MODE OVERRIDES ===== */
+body.dark-mode {
+  /* === Background Colors === */
+  --bg-primary: #0f172a;            /* Ana arka plan (çok koyu) */
+  --bg-secondary: #1e293b;          /* Kartlar, paneller */
+  --bg-tertiary: #334155;           /* Header içi, subtle backgrounds */
+  
+  /* === Text Colors === */
+  --text-primary: #f1f5f9;          /* Ana metin (açık) */
+  --text-secondary: #cbd5e1;        /* İkincil metin */
+  --text-tertiary: #94a3b8;         /* Placeholder, disabled */
+  
+  /* === Border Colors === */
+  --border-primary: #334155;        /* Ana kenarlıklar */
+  --border-secondary: #475569;      /* İkincil kenarlıklar */
+  --border-tertiary: #1e293b;       /* Çok hafif kenarlıklar */
+  
+  /* === Accent/Primary Colors === */
+  --accent-primary: #3b82f6;        /* Ana vurgu rengi (daha parlak mavi) */
+  --accent-secondary: #2563eb;      /* Hover states */
+  --accent-light: #1e3a8a;          /* Koyu modda daha koyu mavi */
+  --accent-lighter: #1e40af;        /* Badge backgrounds */
+  
+  /* === Header === */
+  --header-bg: #1e293b;             /* Header arka planı */
+  --header-text: #f1f5f9;           /* Header metin */
+  
+  /* === Card Colors === */
+  --card-bg: #1e293b;               /* Kart arka planı */
+  --card-hover: #334155;            /* Kart hover */
+  
+  /* === Status Colors === */
+  --success: #10b981;               /* Başarı (yeşil) - aynı */
+  --success-light: rgba(16, 185, 129, 0.15);  /* Transparan yeşil */
+  --success-dark: #34d399;          /* Daha parlak yeşil */
+  
+  --warning: #f59e0b;               /* Uyarı (turuncu) - aynı */
+  --warning-light: rgba(245, 158, 11, 0.15);  /* Transparan turuncu */
+  --warning-dark: #fbbf24;          /* Daha parlak turuncu */
+  
+  --danger: #ef4444;                /* Hata/Tehlike (kırmızı) - aynı */
+  --danger-light: rgba(239, 68, 68, 0.15);    /* Transparan kırmızı */
+  --danger-dark: #f87171;           /* Daha parlak kırmızı */
+  
+  --info: #60a5fa;                  /* Bilgi (mavi) - daha parlak */
+  --info-light: rgba(59, 130, 246, 0.15);     /* Transparan mavi */
+  --info-dark: #93c5fd;             /* Daha parlak mavi */
+  
+  /* === Shadows === */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+  
+  /* === Input/Form Colors === */
+  --input-bg: #0f172a;
+  --input-border: #475569;
+  --input-focus: #3b82f6;
+  --input-text: #f1f5f9;
+  --input-placeholder: #64748b;
+  
+  /* === Button Colors === */
+  --btn-primary-bg: #2563eb;
+  --btn-primary-hover: #1d4ed8;
+  --btn-primary-text: #ffffff;
+  
+  --btn-secondary-bg: #334155;
+  --btn-secondary-hover: #475569;
+  --btn-secondary-text: #f1f5f9;
+  
+  --btn-danger-bg: #dc2626;
+  --btn-danger-hover: #b91c1c;
+  --btn-danger-text: #ffffff;
+  
+  /* === Role Badge Colors === */
+  --badge-ceo-bg: rgba(239, 68, 68, 0.2);
+  --badge-ceo-text: #fca5a5;
+  
+  --badge-manager-bg: rgba(245, 158, 11, 0.2);
+  --badge-manager-text: #fcd34d;
+  
+  --badge-employee-bg: rgba(16, 185, 129, 0.2);
+  --badge-employee-text: #6ee7b7;
+  
+  --badge-default-bg: #334155;
+  --badge-default-text: #cbd5e1;
+  
+  /* === Modal === */
+  --modal-overlay: rgba(0, 0, 0, 0.6);
+  --modal-bg: #1e293b;
+  
+  /* === Misc === */
+  --checkbox-bg: #334155;
+  --checkbox-checked: #3b82f6;
+  --checkbox-border: #475569;
+}
+
+/* === Smooth Transitions === */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+/* Animasyonlar için transition'ı devre dışı bırak */
+*:where(.spinner, [class*="animate-"]) {
+  transition: none;
+}
