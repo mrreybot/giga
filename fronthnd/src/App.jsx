@@ -17,28 +17,19 @@ function App() {
     <ThemeProvider>
       <Router>
         <Routes>
-          {/* Login sayfası - Sidebar YOK */}
+
+          {/* Login sayfası - Sidebar yok */}
           <Route path="/" element={<LoginPage />} />
-          
-          {/* Diğer sayfalar - Sidebar VAR */}
-          <Route path="/arsiv" element={<Layout><Archive /></Layout>} />
-          <Route path="/add-task" element={<Layout><AddTask /></Layout>} />
+
+          {/* Sidebar'lı sayfalar */}
           <Route path="/home" element={<Layout><HomePage /></Layout>} />
           <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
           <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
-          <Route path="/settings" element={<Layout><div style={{padding: '2rem'}}>⚙️ Ayarlar sayfası yakında...</div></Layout>} />
-        
-        {/* Diğer sayfalar - Sidebar VAR */}
-        <Route path="/arsiv" element={<Layout><Archive /></Layout>} />
-        <Route path="/profil" element={<Layout><Profile /></Layout>} />
-        <Route path="/add-task" element={<Layout><AddTask /></Layout>} />
-        <Route path="/home" element={<Layout><HomePage /></Layout>} />
-        <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
-        <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
-        <Route path="/settings" element={<Layout><div style={{padding: '2rem'}}>⚙️ Ayarlar sayfası yakında...</div></Layout>} />
-       
-      </Routes>
-    </Router>
+          <Route path="/arsiv" element={<Layout><Archive /></Layout>} />
+          <Route path="/add-task" element={<Layout><AddTask /></Layout>} />
+          <Route path="/profil" element={<Layout><Profile /></Layout>} />
+          <Route path="/settings" element={<Layout><div style={{padding: '2rem'}}>⚙️ Ayarlar yakında...</div></Layout>} />
+
         </Routes>
       </Router>
     </ThemeProvider>
