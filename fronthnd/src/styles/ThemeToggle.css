@@ -1,0 +1,30 @@
+.theme-toggle {
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: transparent;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: rotate(15deg);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95) rotate(15deg);
+}
+
+/* Dark mode styles */
+.dark-mode .theme-toggle {
+  border-color: rgba(255, 255, 255, 0.15);
+}
