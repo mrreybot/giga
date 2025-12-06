@@ -7,6 +7,7 @@ import Statistics from "./Pages/Statistics";
 import Archive from "./Pages/ArchivePage";
 import AddTask from "./Pages/AddTask";
 import Profile from "./Pages/Profile";
+
 function App() {
   return (
     <Router>

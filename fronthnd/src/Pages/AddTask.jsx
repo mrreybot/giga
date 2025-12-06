@@ -158,12 +158,12 @@ const AddTask = () => {
         await api.patch(`${MISSIONS_ENDPOINT}${editingMission.id}/`, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        alert("✅ Görev başarıyla güncellendi!");
+        alert(" Görev başarıyla güncellendi!");
       } else {
         await api.post(MISSIONS_ENDPOINT, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        alert("✅ Görev başarıyla oluşturuldu!");
+        alert(" Görev başarıyla oluşturuldu!");
       }
       
       navigate('/dashboard');
@@ -226,7 +226,7 @@ const AddTask = () => {
         <button className="back-btn" onClick={() => navigate('/dashboard')}>
           ← Geri Dön
         </button>
-        <h1>{editingMission ? '✏️ Görevi Düzenle' : '➕ Yeni Görev Oluştur'}</h1>
+        <h1>{editingMission ? '✏️ Görevi Düzenle' : ' Yeni Görev Oluştur'}</h1>
         {currentUser && (
           <div className="user-role-badge">
             <span className={`role-badge ${getRoleBadgeClass(currentUser.role)}`}>
@@ -448,17 +448,17 @@ const AddTask = () => {
               >
                 {saving ? (
                   <>
-                    <span className="btn-spinner">⏳</span>
+                    <span className="btn-spinner"></span>
                     Kaydediliyor...
                   </>
                 ) : editingMission ? (
                   <>
-                    <span className="btn-icon">💾</span>
+                    <span className="btn-icon"></span>
                     Değişiklikleri Kaydet
                   </>
                 ) : (
                   <>
-                    <span className="btn-icon">✅</span>
+                    <span className="btn-icon"></span>
                     Görevi Oluştur
                   </>
                 )}
