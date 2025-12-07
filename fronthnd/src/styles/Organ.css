@@ -1,0 +1,232 @@
+/* ================================
+   Genel Yapı
+================================ */
+.organ-container {
+  padding: 30px;
+  max-width: 1450px;
+  margin: auto;
+  font-family: 'Inter', sans-serif;
+}
+
+.organ-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.organ-header h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+/* ================================
+   İSTATİSTİK KARTLARI
+================================ */
+.organ-stats {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 20px 30px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  text-align: center;
+  min-width: 150px;
+}
+
+.stat-number {
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ================================
+   LOADING DURUMU
+================================ */
+.loading-state {
+  text-align: center;
+  padding: 50px;
+}
+
+.spinner {
+  font-size: 45px;
+  margin-bottom: 10px;
+}
+
+/* ================================
+   BÖLÜM BAŞLIKLARI
+================================ */
+.org-section {
+  margin-top: 50px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.section-header h2 {
+  font-size: 22px;
+}
+
+.section-count {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Renkler */
+.ceo-header { background: #1e40af; }
+.manager-header { background: #2563eb; }
+.employee-header { background: #3b82f6; }
+
+/* ================================
+   GRID YAPISI
+================================ */
+.org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+/* ================================
+   KARTLAR
+================================ */
+.org-card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+  transition: all .25s ease;
+}
+
+.org-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* ================================
+   KART BAŞLIK
+================================ */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Avatar */
+.org-avatar {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Avatar renkleri role göre */
+.ceo-avatar { background: #1e3a8a; }
+.manager-avatar { background: #2563eb; }
+.employee-avatar { background: #3b82f6; }
+
+/* Role Badge */
+.role-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.ceo-badge { background: #1e40af; }
+.manager-badge { background: #2563eb; }
+.employee-badge { background: #3b82f6; }
+
+/* ================================
+   KART BODY / TEXT
+================================ */
+.card-body {
+  margin-top: 15px;
+}
+
+.user-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+/* INFO LIST */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.info-item {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  align-items: center;
+}
+
+.info-icon {
+  font-size: 16px;
+}
+
+/* ================================
+   EMPTY STATE
+================================ */
+.empty-role {
+  text-align: center;
+  background: #f3f4f6;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+.empty-icon {
+  font-size: 45px;
+  display: block;
+  margin-bottom: 8px;
+  color: #9ca3af;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+  .organ-container {
+    padding: 20px;
+  }
+
+  .organ-header h1 {
+    font-size: 26px;
+  }
+
+  .stat-card {
+    padding: 15px 20px;
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+  }
+}
