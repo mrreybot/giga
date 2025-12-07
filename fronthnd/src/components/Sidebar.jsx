@@ -52,6 +52,14 @@ const Sidebar = () => {
       path:"/arsiv",
       description:"Geçmiş görevlerim"
     },
+
+    {
+      id:6,
+      name:"Şirket'im",
+      icom:"",
+      path:"/org",
+      description:"Organizasyon"
+    }
   ];
 
   const isActive = (path) => {
