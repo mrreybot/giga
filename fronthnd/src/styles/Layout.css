@@ -3,35 +3,28 @@
   ============================================ */
 .app-layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  /* ARKA PLAN BURADA KALMALI */
   background: #f1f5f9ff; 
-  width: 100vw; /* Tüm Görüntü Alanını (Viewport) Kapla */
+  width: 100vw;
   margin: 0;
   padding: 0;
 }
 
 .main-content {
-  /* BURAYI DİKKAT EDEREK DÜZENLE */
-  flex: 1; /* Menüden kalan tüm alanı kapla */
-  /* margin-left: 280px; Bu kuralı silmeliyiz, çünkü menü solda fixed olmalı */
+  flex: 1;
+  /* Navbar yüksekliği kadar üstten boşluk */
+  padding-top: 70px;
   
-  /* Menü genişliğine karşılık gelen boşluğu padding ile verelim */
-  padding-left: 280px; 
+  /* İçerik padding'i */
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
   
-  /* Arka plan rengini burada sil, app-layout'tan miras alsın */
-  background: unset; 
-  
-  transition: padding-left 0.3s ease; /* Transition'ı padding'e taşı */
+  background: #f1f5f9ff;
   min-height: 100vh;
   overflow-x: hidden;
-}
-
-/* SIDEBAR.COLLAPSED KURALI (Margin'den Padding'e Geçiş) */
-.sidebar.collapsed ~ .main-content,
-.app-layout:has(.sidebar.collapsed) .main-content {
-  /* Menü daralınca padding de daralsın */
-  padding-left: 80px;
+  transition: all 0.3s ease;
 }
 
 /* ============================================
@@ -39,12 +32,16 @@
   ============================================ */
 @media (max-width: 768px) {
   .main-content {
-    /* Mobilde menü yoksa, padding de olmasın */
-    padding-left: 0; 
+    padding-top: 60px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
   }
 }
 
-/* YENİ: Vücudu da garantiye al */
+/* Body garantisi */
 html, body {
-  background-color: #f1f5f9ff !important; 
+  background-color: #f1f5f9ff !important;
+  margin: 0;
+  padding: 0;
 }
