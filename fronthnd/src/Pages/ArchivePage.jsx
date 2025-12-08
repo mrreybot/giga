@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import "../styles/Archive.css";
- // make sure relative path matches
+
 
 const Archive = () => {
   const [archivedMissions, setArchivedMissions] = useState([]);
@@ -16,7 +16,7 @@ const Archive = () => {
 
   useEffect(() => {
     fetchArchivedMissions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
 
   const fetchArchivedMissions = async () => {

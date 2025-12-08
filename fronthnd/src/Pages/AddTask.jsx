@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../services/api";
 import "../styles/AddTask.css";
-import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 
 const MISSIONS_ENDPOINT = "/api/missions/";
@@ -10,7 +9,6 @@ const USERS_ENDPOINT = "/api/users/assignable_users/";
 const PROFILE_ENDPOINT = "/api/user/profile/";
 
 const AddTask = () => {
-  const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const editingMission = location.state?.mission || null;
@@ -52,7 +50,7 @@ const AddTask = () => {
       
       // Artık EMPLOYEE'ler de görev oluşturabilir, yetki kontrolü kaldırıldı
     } catch (error) {
-      console.error("❌ Kullanıcı bilgisi alınamadı:", error);
+      console.error(" Kullanıcı bilgisi alınamadı:", error);
     }
   };
 
@@ -226,10 +224,6 @@ const AddTask = () => {
   return (
     <div className="add-task-page">
       <header className="page-header">
-        <button className="back-btn" onClick={() => navigate('/dashboard')}>
-          ← Geri Dön
-        </button>
-        <ThemeToggle />
       </header>
 
       <main className="add-task-container">
@@ -244,7 +238,7 @@ const AddTask = () => {
           <form className="task-form" onSubmit={handleSubmitMission}>
             {/* GÖREV DETAYLARI */}
             <div className="form-section">
-              <h2 className="section-title">📋 Görev Detayları</h2>
+              <h2 className="section-title">Görev Detayları</h2>
               
               <div className="form-group">
                 <label htmlFor="desc" className="form-label">
@@ -311,7 +305,7 @@ const AddTask = () => {
 
               <div className="form-group">
                 <label htmlFor="attachments" className="form-label">
-                  📎 Dosya Ekle <span className="optional">(Opsiyonel)</span>
+                   Dosya Ekle <span className="optional">(Opsiyonel)</span>
                 </label>
                 <div className="file-input-wrapper">
                   <input
@@ -356,15 +350,15 @@ const AddTask = () => {
             <div className="form-section">
               <div className="section-header">
                 <h2 className="section-title">
-                  👥 Görev Atama
+                  Görev Atama
                   {currentUser?.role === 'MANAGER' && (
-                    <span className="role-info"> (Sadece çalışanlara)</span>
+                    <span className="role-info"> </span>
                   )}
                   {currentUser?.role === 'EMPLOYEE' && (
-                    <span className="role-info"> (Sadece çalışanlara)</span>
+                    <span className="role-info"> </span>
                   )}
                   {currentUser?.role === 'CEO' && (
-                    <span className="role-info"> (Herkese)</span>
+                    <span className="role-info"> </span>
                   )}
                 </h2>
                 <span className="selection-count">
@@ -379,7 +373,7 @@ const AddTask = () => {
                 </div>
               ) : users.length === 0 ? (
                 <div className="no-users">
-                  <p>⚠️ Atanabilir kullanıcı bulunamadı</p>
+                  <p> Atanabilir kullanıcı bulunamadı</p>
                 </div>
               ) : (
                 <div className="users-grid">
@@ -396,7 +390,11 @@ const AddTask = () => {
                       />
                       <div className="user-card-content">
                         <div className="user-avatar">
-                          {formatUserName(user).charAt(0).toUpperCase()}
+                         {user.profile_photo ? (
+                          <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
+                             ) : (
+                          formatUserName(user).charAt(0).toUpperCase()
+                            )}
                         </div>
                         <div className="user-details">
                           <h4 className="user-name">
@@ -407,16 +405,6 @@ const AddTask = () => {
                             <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
                               {getRoleLabel(user.role)}
                             </span>
-                            {user.unvan && (
-                              <span className="unvan-badge">
-                                {user.unvan}
-                              </span>
-                            )}
-                            {user.department && (
-                              <span className="department-badge">
-                                {user.department}
-                              </span>
-                            )}
                           </div>
                         </div>
                         <div className="check-indicator">✓</div>

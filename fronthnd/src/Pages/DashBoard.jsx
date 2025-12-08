@@ -21,7 +21,7 @@ const Dashboard = () => {
     selectedUser: 'all',
     dateFrom: '',
     dateTo: '',
-    assignmentType: 'assigned_to_me' // Bana Atananlar / Benim Atadıklarım
+    assignmentType: 'assigned_to_me'
   });
 
   useEffect(() => {
@@ -223,9 +223,9 @@ const Dashboard = () => {
   const getAssignmentTypeTitle = () => {
     const totalCount = filteredMissions.length;
     if (filters.assignmentType === 'assigned_by_me') {
-      return `📌 Benim Atadığım Görevler (${totalCount})`;
+      return ` Benim Atadığım Görevler (${totalCount})`;
     } else {
-      return `📋 Bana Atanan Görevler (${totalCount})`;
+      return `Bana Atanan Görevler (${totalCount})`;
     }
   };
 
@@ -246,13 +246,6 @@ const Dashboard = () => {
     <div className="modern-dashboard">
       {/* Header */}
       <header className="dashboard-header">
-        <h1>Görev Paneli</h1>
-        <button 
-          className="org-chart-btn" 
-          onClick={() => setShowOrgChart(!showOrgChart)}
-        >
-           Organizasyon
-        </button>
       </header>
       
       {/* Görev Detay Modalı */}
@@ -260,22 +253,22 @@ const Dashboard = () => {
         <div className="modal-overlay" onClick={closeMissionModal}>
           <div className="mission-detail-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>📋 Görev Detayı #{selectedMission.id}</h2>
+              <h2> Görev Detayı #{selectedMission.id}</h2>
               <button className="close-modal" onClick={closeMissionModal}>✕</button>
             </div>
             <div className="modal-content">
               <div className="detail-section">
-                <label>📝 Açıklama:</label>
+                <label>Açıklama:</label>
                 <p>{selectedMission.description || "Açıklama yok"}</p>
               </div>
 
               <div className="detail-row">
                 <div className="detail-section">
-                  <label>📅 Başlangıç:</label>
+                  <label>Başlangıç:</label>
                   <p>{formatDate(selectedMission.assigned_date)}</p>
                 </div>
                 <div className="detail-section">
-                  <label>🏁 Bitiş:</label>
+                  <label> Bitiş:</label>
                   <p>{formatDate(selectedMission.end_date)}</p>
                 </div>
               </div>
@@ -288,7 +281,7 @@ const Dashboard = () => {
               )}
 
               <div className="detail-section">
-                <label>📊 Durum:</label>
+                <label> Durum:</label>
                 <span className={selectedMission.completed ? "status-completed" : "status-pending"}>
                   {selectedMission.completed ? ' Tamamlandı' : ' Devam Ediyor'}
                 </span>
@@ -439,7 +432,7 @@ const Dashboard = () => {
           {/* Filtre Paneli */}
           <div className="filter-panel">
             <div className="filter-header">
-              <h3>🔍 Filtrele</h3>
+              <h3> Filtrele</h3>
               {hasActiveFilters() && (
                 <button className="clear-filters-btn" onClick={clearFilters}>
                   ✕ Filtreleri Temizle

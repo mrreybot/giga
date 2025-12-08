@@ -55,9 +55,9 @@
 
 /* ===== MAIN CONTAINER ===== */
 .add-task-container {
-  max-width: 900px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem;
 }
 
 .task-form-wrapper {
@@ -296,46 +296,79 @@
 .no-users {
   padding: 2.5rem;
   text-align: center;
-  background: #f9fafb;
-  border-radius: 6px;
+  background: white;
+  border-radius: 16px;
   border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .loading-users .spinner {
-  font-size: 2rem;
-  color: #1e40af;
+  font-size: 3rem;
+  color: #3b82f6;
   margin-bottom: 1rem;
   animation: spin 2s linear infinite;
 }
 
-.users-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Biraz daha kompakt */
-  gap: 1rem;
+.loading-users p {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
 }
 
-/* ===== USER CARD (Sadeleştirilmiş) ===== */
+.no-users p {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* ===== USER CARD (Statistics Tarzı Modern Tasarım) ===== */
 .user-card {
   position: relative;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 16px;
   border: 1px solid #e5e7eb;
   background: white;
-  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
   overflow: hidden;
 }
 
-.user-card:hover {
-  border-color: #9ca3af;
-  background-color: #f9fafb;
-  transform: translateY(-1px);
+.user-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 
-/* Seçili Kart Stili - Aksan Rengi */
+.user-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.user-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Seçili Kart Stili */
 .user-card.selected {
-  border-color: #1e40af;
-  background-color: #eff6ff; /* Çok açık mavi */
-  box-shadow: 0 0 0 1px #1e40af;
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+}
+
+.user-card.selected::before {
+  transform: scaleX(1);
 }
 
 .user-checkbox {
@@ -346,30 +379,48 @@
 
 .user-card-content {
   display: flex;
-  gap: 0.75rem;
-  padding: 1rem;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+}
+
+/* Avatar ve Info Header */
+.user-card-content > div:first-child {
+  display: flex;
   align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background-color: #e5e7eb; /* Düz gri */
-  color: #4b5563;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   flex-shrink: 0;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  overflow: hidden; /* ✅ EKLE */
+  position: relative; /* ✅ EKLE */
 }
-
+.user-avatar .avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 .user-card.selected .user-avatar {
-  background-color: #1e40af;
-  color: white;
-  transform: none;
+  background: linear-gradient(135deg, #1e40af, #6d28d9);
+  transform: scale(1.05);
 }
 
 .user-details {
@@ -378,18 +429,18 @@
 }
 
 .user-name {
-  margin: 0 0 0.15rem 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #111827;
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .user-email {
-  margin: 0 0 0.4rem 0;
-  font-size: 0.75rem;
+  margin: 0 0 8px 0;
+  font-size: 13px;
   color: #6b7280;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -398,70 +449,75 @@
 
 .user-badges {
   display: flex;
-  gap: 0.4rem;
+  gap: 8px;
   flex-wrap: wrap;
+  margin-top: 8px;
 }
 
-/* Badge'ler - Düz Renkler */
+/* Badge'ler - Sade ve Minimal */
 .role-badge {
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
   font-weight: 600;
   display: inline-block;
-  letter-spacing: 0.02em;
-}
-
-.role-badge-ceo {
-  background-color: #1e40af;
-  color: white;
-}
-
-.role-badge-manager {
-  background-color: #059669; /* Yeşil */
-  color: white;
-}
-
-.role-badge-employee {
-  background-color: #f59e0b; /* Turuncu */
-  color: white;
-}
-
-.role-badge-default {
-  background-color: #e5e7eb;
-  color: #4b5563;
-}
-
-.unvan-badge {
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   background-color: #f3f4f6;
   color: #4b5563;
   border: 1px solid #e5e7eb;
 }
 
+.role-badge-ceo {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.role-badge-manager {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.role-badge-employee {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.role-badge-default {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+
+
+
 .check-indicator {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: #1e40af;
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 18px;
+  font-weight: 700;
   opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.2s;
+  transform: scale(0.5);
+  transition: all 0.3s ease;
   flex-shrink: 0;
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 
 .user-card.selected .check-indicator {
   opacity: 1;
   transform: scale(1);
 }
-
 /* ===== FORM ACTIONS (Sade Butonlar) ===== */
 .form-actions {
   display: flex;
