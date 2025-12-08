@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../services/constant";
 import "../styles/Login.css";
-import "../styles/Register.css"; 
+import "../styles/Register.css";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -219,9 +219,10 @@ const LoginPage = () => {
             </span>
           </p>
         </div>
-      )}
+      )}   
     </div>
   );
 };
 
 export default LoginPage;
+

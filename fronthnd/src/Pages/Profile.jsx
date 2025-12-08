@@ -8,9 +8,8 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState("profile"); // profile, security, notifications
+  const [activeTab, setActiveTab] = useState("profile");
   
-  // Profil bilgileri
   const [profileData, setProfileData] = useState({
     first_name: "",
     last_name: "",
@@ -22,14 +21,12 @@ const ProfilePage = () => {
     profile_photo: null
   });
 
-  // Güvenlik bilgileri
   const [securityData, setSecurityData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""
   });
 
-  // Bildirim ayarları
   const [notificationSettings, setNotificationSettings] = useState({
     email_notifications: true,
     task_reminders: true,
@@ -47,6 +44,8 @@ const ProfilePage = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await api.get("/api/user/profile/");
+      console.log("📥 Profile data received:", response.data);
+      
       setProfileData({
         first_name: response.data.first_name || "",
         last_name: response.data.last_name || "",
@@ -67,11 +66,12 @@ const ProfilePage = () => {
 
       if (response.data.profile_photo) {
         setPreviewImage(response.data.profile_photo);
+        console.log("🖼️ Profile photo URL:", response.data.profile_photo);
       }
       
       setLoading(false);
     } catch (error) {
-      console.error("Profil yüklenemedi:", error);
+      console.error("❌ Profil yüklenemedi:", error);
       setLoading(false);
     }
   };
@@ -103,6 +103,8 @@ const ProfilePage = () => {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      console.log("📸 Photo selected:", file.name, "Size:", file.size, "Type:", file.type);
+      
       if (file.size > 5 * 1024 * 1024) {
         alert("Dosya boyutu 5MB'dan küçük olmalıdır!");
         return;
@@ -112,6 +114,7 @@ const ProfilePage = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
+        console.log("✅ Preview image set");
       };
       reader.readAsDataURL(file);
     }
@@ -131,18 +134,29 @@ const ProfilePage = () => {
       
       if (photoFile) {
         formData.append("profile_photo", photoFile);
+        console.log("✅ Photo added to FormData:", photoFile.name);
       }
 
-      await api.patch("/api/user/profile/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      });
+      // Debug: FormData içeriğini göster
+      console.log("📤 Sending FormData:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ':', pair[1]);
+      }
 
+      // ❌ Content-Type KALDIRILDI - api.js otomatik ekleyecek
+      const response = await api.patch("/api/user/profile/", formData);
+
+      console.log("✅ Profile updated:", response.data);
       alert("Profil başarıyla güncellendi!");
+      
+      // Fotoğraf state'ini temizle
+      setPhotoFile(null);
+      
+      // Profili yeniden yükle
       fetchUserProfile();
     } catch (error) {
-      console.error("Profil güncellenemedi:", error);
+      console.error("❌ Profil güncellenemedi:", error);
+      console.error("Response data:", error.response?.data);
       alert("Profil güncellenirken bir hata oluştu!");
     } finally {
       setSaving(false);
@@ -220,7 +234,6 @@ const ProfilePage = () => {
       </div>
 
       <div className="profile-content">
-        {/* Sol panel - Profil kartı */}
         <div className="profile-sidebar">
           <div className="profile-card">
             <div className="profile-photo-section">
@@ -262,7 +275,6 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* Sağ panel - Tabs */}
         <div className="profile-main">
           <div className="profile-tabs">
             <button
@@ -286,7 +298,6 @@ const ProfilePage = () => {
           </div>
 
           <div className="tab-content">
-            {/* Profil Bilgileri Tab */}
             {activeTab === "profile" && (
               <form onSubmit={handleProfileUpdate} className="profile-form">
                 <h3>Kişisel Bilgiler</h3>
@@ -378,7 +389,6 @@ const ProfilePage = () => {
               </form>
             )}
 
-            {/* Güvenlik Tab */}
             {activeTab === "security" && (
               <form onSubmit={handlePasswordUpdate} className="profile-form">
                 <h3>Şifre Değiştir</h3>
@@ -436,7 +446,6 @@ const ProfilePage = () => {
               </form>
             )}
 
-            {/* Bildirimler Tab */}
             {activeTab === "notifications" && (
               <form onSubmit={handleNotificationUpdate} className="profile-form">
                 <h3>Bildirim Tercihleri</h3>

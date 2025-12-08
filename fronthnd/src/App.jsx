@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./Pages/LoginPage";
 import HomePage from "./Pages/HomePage";
 import Dashboard from "./Pages/DashBoard";
@@ -7,6 +7,7 @@ import Statistics from "./Pages/Statistics";
 import Archive from "./Pages/ArchivePage";
 import AddTask from "./Pages/AddTask";
 import Profile from "./Pages/Profile";
+import Organ from "./Pages/Organ";
 import './styles/theme-variables.css';
 import { ThemeProvider } from './contexts/ThemeContext';
 import './styles/dark-theme.css';
@@ -23,6 +24,7 @@ function App() {
 
           {/* Sidebar'lı sayfalar */}
           <Route path="/home" element={<Layout><HomePage /></Layout>} />
+          <Route path="/org" element={<Layout><Organ /></Layout>} />
           <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
           <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
           <Route path="/arsiv" element={<Layout><Archive /></Layout>} />

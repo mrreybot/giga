@@ -330,6 +330,18 @@
   font-size: 24px;
   font-weight: 700;
   flex-shrink: 0;
+  overflow: hidden; /* ✅ EKLE */
+  position: relative; /* ✅ EKLE */
+}
+
+.user-avatar-large .avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .user-info {

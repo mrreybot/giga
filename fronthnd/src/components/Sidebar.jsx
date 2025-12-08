@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ACCESS_TOKEN } from "../services/constant";
 import "../styles/Sidebar.css";
@@ -6,7 +6,6 @@ import "../styles/Sidebar.css";
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem(ACCESS_TOKEN);
@@ -22,12 +21,12 @@ const Sidebar = () => {
       description: "Dashboard ve istatistikler"
     },
     {
-    id: 2,
-    name: "Görevlerim",
-    icon: "",
-    path: "/dashboard", 
-    description: "Yaklaşan görevler",
-    state: { scrollToUpcoming: true } 
+      id: 2,
+      name: "Görevlerim",
+      icon: "",
+      path: "/dashboard", 
+      description: "Yaklaşan görevler",
+      state: { scrollToUpcoming: true } 
     },
     {
       id: 3,
@@ -44,14 +43,20 @@ const Sidebar = () => {
       path: "/statistics",
       description: "Performans ve raporlar"
     },
-
     {
       id: 5,
       name: "Arşivim",
-      icom: "🗄️",
-      path:"/arsiv",
-      description:"Geçmiş görevlerim"
+      icon: "",
+      path: "/arsiv",
+      description: "Geçmiş görevlerim"
     },
+    {
+      id: 6,
+      name: "Şirket'im",
+      icon: "",
+      path: "/org",
+      description: "Organizasyon"
+    }
   ];
 
   const isActive = (path) => {
@@ -67,89 +72,51 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      {/* Logo & Toggle */}
-      <div className="sidebar-header">
-        <div className="logo-section">
-          {!isCollapsed && (
-            <div className="logo-content">
-              <h2 className="logo-text">Atasan A.Ş</h2>
-            </div>
-          )}
+    <nav className="sidebar">
+      {/* Logo Section */}
+      <div className="sidebar-brand">
+        <div className="logo-content">
+          <span className="logo-icon"></span>
+          <h2 className="logo-text">Atasan A.Ş</h2>
         </div>
-        <button 
-          className="toggle-btn" 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          title={isCollapsed ? "Menüyü Aç" : "Menüyü Kapat"}
-        >
-          {isCollapsed ? "→" : "←"}
-        </button>
       </div>
 
       {/* Navigation Menu */}
-      <nav className="sidebar-nav">
-        <div className="nav-section">
-          {!isCollapsed && <p className="nav-label">MENÜ</p>}
-          
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
-              onClick={() => handleNavigation(item)}
-              title={isCollapsed ? item.name : ''}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              {!isCollapsed && (
-                <div className="nav-content">
-                  <span className="nav-name">{item.name}</span>
-                  <span className="nav-description">{item.description}</span>
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Settings & Logout */}
-        <div className="nav-section bottom-section">
-          {!isCollapsed && <p className="nav-label">DİĞER</p>}
-          
-          
-            <button
-            className="nav-item settings-item"
-            onClick={() => navigate("/profil")}
-            title={isCollapsed ? "Profilim" : ''}
-          >
-            <span className="nav-icon"></span>
-            {!isCollapsed && (
-              <div className="nav-content">
-                <span className="nav-name">Profil</span>
-                <span className="nav-description"></span>
-              </div>
-            )}
-          </button>
-          
+      <div className="sidebar-menu">
+        {menuItems.map((item) => (
           <button
-            className="nav-item logout-item"
-            onClick={handleLogout}
-            title={isCollapsed ? "Çıkış Yap" : ''}
+            key={item.id}
+            className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+            onClick={() => handleNavigation(item)}
+            title={item.description}
           >
-            <span className="nav-icon"></span>
-            {!isCollapsed && (
-              <div className="nav-content">
-                <span className="nav-name">Çıkış Yap</span>
-                <span className="nav-description">Oturumu kapat</span>
-              </div>
-            )}
+            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-name">{item.name}</span>
           </button>
+        ))}
+      </div>
 
-          
-        </div>
-      </nav>
-
-      
-    
-      
-    </div>
+      {/* Right Section (Profile & Logout) */}
+      <div className="sidebar-actions">
+        <button
+          className="nav-item profile-item"
+          onClick={() => navigate("/profil")}
+          title="Profilim"
+        >
+          <span className="nav-icon"></span>
+          <span className="nav-name">Ayarlar</span>
+        </button>
+        
+        <button
+          className="nav-item logout-item"
+          onClick={handleLogout}
+          title="Çıkış Yap"
+        >
+          <span className="nav-icon"></span>
+          <span className="nav-name">Çıkış</span>
+        </button>
+      </div>
+    </nav>
   );
 };
 
