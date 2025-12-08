@@ -6,22 +6,23 @@
 }
 
 html, body {
-    overflow-x: hidden;
-    background-color: #efefe8 !important;
+    background-color: #f1f5f9ff !important;
     width: 100%;
+    justify-content: center;
 }
 
 .login-container {
+  overflow-x: hidden;
   display: flex;
   overflow : hidden;
   flex-direction: row-reverse; /* Kolonların yerini değiştirir */
   height: 100vh;
-  width: 150%;
-  background: #efefe8;
+  width: 100%;
+  background: #f1f5f9ff;
   position: relative; 
-  justify-content: space-between;
+  justify-content: center;
   /* 💎 ARKA PLAN EKLEME */
-  background-color: #efefe8 !important;
+  background-color: #f1f5f9ff !important;
 }
 
 .login-card {
@@ -33,7 +34,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #efefe8 !important;
+  background-color: #f1f5f9ff !important;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
   animation: fadeInSlide 0.6s ease-out;
 }
@@ -66,7 +67,9 @@ form input {
   padding: 12px;
   margin-top: 5px;
   border-radius: 8px;
-  border: 1px solid #444;
+  color: #444;
+  border: 1px solid #fff;
+  background-color: #fff;
   font-size: 15px;
   outline: none;
   transition: 0.2s;
@@ -74,7 +77,7 @@ form input {
 
 form input:focus {
   border-color: #444;
-  box-shadow: 0 0 6px #444444;
+  box-shadow: 0 0 6px #4a57ff;
 }
 
 .login-btn {
@@ -85,7 +88,7 @@ form input:focus {
   border-radius: 8px;
   background: #4a57ff;
   border: none;
-  color: #efefe8;
+  color: #f1f5f9ff;
   font-size: 17px;
   cursor: pointer;
   transition: 0.25s;
@@ -109,80 +112,6 @@ form input:focus {
   color: #4a57ff;
   cursor: pointer;
   font-weight: 500;
-}
-
-.login-side {
-    width: 15%; /* Başlangıç genişliği */
-    
-    /* 🛠️ DÜZELTME: Padding'i buradan siliyoruz veya 0 yapıyoruz */
-    padding: 0; 
-    
-    /* Animasyon listesine padding'i de ekliyoruz */
-    transition: width 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                padding 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
-    overflow: hidden; 
-    position: relative;
-    background: linear-gradient(-90deg, #4a57ff, #7647ff);
-    font-family: 'Montserrat', sans-serif;
-    color: #efefe8;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    will-change: width, padding;
-    transform: translateZ(0);
-}
-
-.login-side:hover {
-    width: 30%; 
-    padding: 69px; 
-}
-
-.collapsed-title {
-    /* Konumlandırma */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-90deg);
-    
-    /* Animasyon */
-    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-    
-    /* Font ve Stil */
-    font-family: 'Montserrat', sans-serif;
-    font-size: 50px; /* Dar alana sığması için fontu biraz küçülttüm */
-    font-weight: 900;
-    
-    /* 🛠️ DÜZELTME: Yazının kırılmasını kesinlikle engeller */
-    white-space: nowrap; 
-    width: auto;
-    
-    color: #efefe8;
-    z-index: 10;
-}
-
-/* Hover durumu aynen kalabilir, sadece font boyutunu kontrol edin */
-.login-side:hover .collapsed-title {
-    transform: translate(0, 0) rotate(0deg);
-    transition-delay: .25s;
-    top: 169px;
-    left: 60px;
-    font-size: 50px;
-}
-
-/* 2. PARAGRAF ANİMASYONU (Sloganların Gelişi) */
-.login-side p {
-    transform: translateX(-50px); /* Hafif soldan gelsin */
-    opacity: 0;
-    transition: all 0.4s ease-in-out;
-}
-
-.login-side:hover p {
-    transform: translateX(0);
-    color: #efefe8;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 15px;
-    opacity: 1;
-    transition-delay: 0.5s; /* Başlık oturduktan sonra gelsin */
 }
 
 /* 📱 Mobile uyum */

@@ -7,9 +7,7 @@ const apiUrl = 'http://127.0.0.1:8000/'
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  }
+  // ❌ Content-Type'ı burada KALDIR! FormData için axios otomatik ayarlayacak
 });
 
 console.log("🌐 API Base URL:", api.defaults.baseURL);
@@ -41,7 +39,7 @@ const refreshAccessToken = async () => {
     localStorage.removeItem(REFRESH_TOKEN);
     
     // Login sayfasına yönlendir
-    window.location.href = '/login';
+    window.location.href = '/';
     
     throw error;
   }
@@ -62,7 +60,17 @@ api.interceptors.request.use(
       console.warn("⚠️  No token in localStorage");
     }
     
-    console.log("📋 Headers:", config.headers);
+    // ✅ FormData için Content-Type'ı KALDIRMA (axios otomatik ekleyecek)
+    // Eğer data FormData ise, Content-Type'ı siliyoruz
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+      console.log("📦 FormData detected - Content-Type removed (axios will set it automatically)");
+    } else {
+      // Normal JSON istekleri için
+      config.headers['Content-Type'] = 'application/json';
+    }
+    
+    console.log("📋 Final Headers:", config.headers);
     
     return config;
   },

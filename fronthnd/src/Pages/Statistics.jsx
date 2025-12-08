@@ -448,7 +448,7 @@ const Statistics = () => {
               {/* Kullanıcı Karşılaştırması */}
               {canViewEmployees && (
                 <div className="chart-card large">
-                  <h3>👥 Kullanıcı Performans Karşılaştırması</h3>
+                  <h3> Kullanıcı Performans Karşılaştırması</h3>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={getUserComparison()}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -677,7 +677,12 @@ const Statistics = () => {
                       >
                         <div className="user-header">
                           <div className="user-avatar-large">
-                            {formatUserName(user).charAt(0).toUpperCase()}
+                             {/* BU KISMI DEĞİŞTİRİN */}
+                                {user.profile_photo ? (
+                                  <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
+                                ) : (
+                                  formatUserName(user).charAt(0).toUpperCase()
+                                )}
                           </div>
                           <div className="user-info">
                             <h3>{formatUserName(user)}</h3>
