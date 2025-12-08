@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../services/constant";
 import "../styles/Login.css";
+import "../styles/Register.css"; 
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -219,17 +220,6 @@ const LoginPage = () => {
           </p>
         </div>
       )}
-
-      {/* SAĞ TARAF GRADIENT ALAN */}
-      <div className="login-side">
-        <div className="sidebar-content">
-          <span className="collapsed-title">Görev Yönetimi</span>
-          <p>Şirketinizi tek bir platformdan kontrol edin</p>
-          <p>Her tıklamada düzen, her adımda ilerleme</p>
-          <p>Her şey yerli yerinde.</p>
-          <p>Değerinize değer katın.</p>
-        </div>
-      </div>
     </div>
   );
 };
