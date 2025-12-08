@@ -189,7 +189,6 @@ const HomePage = () => {
       {/* Header */}
       <header className="home-header">
         <div className="header-content">
-          <h1> Hoşgeldiniz</h1>
           <div className="header-actions">
             
           </div>

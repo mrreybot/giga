@@ -36,7 +36,7 @@ const Organ = () => {
   return (
     <div className="organ-container">
       <header className="organ-header">
-        <h1>🏢 Organizasyon Yapısı</h1>
+        <h1> Organizasyon Yapısı</h1>
         <div className="organ-stats">
           <div className="stat-card">
             <span className="stat-number">{getTotalUsers()}</span>
@@ -82,7 +82,11 @@ const Organ = () => {
                     <div key={user.id} className="org-card ceo-card">
                       <div className="card-header">
                         <div className="org-avatar ceo-avatar">
-                          {formatUserName(user).charAt(0).toUpperCase()}
+                          {user.profile_photo ? (
+                              <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
+                            ) : (
+                              formatUserName(user).charAt(0).toUpperCase()
+                            )}
                         </div>
                         <div className="role-badge ceo-badge">CEO</div>
                       </div>
@@ -138,7 +142,11 @@ const Organ = () => {
                     <div key={user.id} className="org-card manager-card">
                       <div className="card-header">
                         <div className="org-avatar manager-avatar">
-                          {formatUserName(user).charAt(0).toUpperCase()}
+                          {user.profile_photo ? (
+                            <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
+                          ) : (
+                            formatUserName(user).charAt(0).toUpperCase()
+                          )}
                         </div>
                         <div className="role-badge manager-badge">Yönetici</div>
                       </div>
@@ -194,7 +202,11 @@ const Organ = () => {
                     <div key={user.id} className="org-card employee-card">
                       <div className="card-header">
                         <div className="org-avatar employee-avatar">
-                          {formatUserName(user).charAt(0).toUpperCase()}
+                          {user.profile_photo ? (
+                              <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
+                            ) : (
+                              formatUserName(user).charAt(0).toUpperCase()
+                            )}
                         </div>
                         <div className="role-badge employee-badge">Çalışan</div>
                       </div>
