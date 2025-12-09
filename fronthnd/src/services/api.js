@@ -2,7 +2,7 @@ import axios from "axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constant.js";
 
 // Production URL (opsiyonel)
-const apiUrl = 'https://giga-gcju.onrender.com' 
+const apiUrl = 'https://giga-gcju.onrender.com/' 
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
