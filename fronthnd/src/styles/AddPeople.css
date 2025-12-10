@@ -217,13 +217,13 @@
 }
 
 .btn-primary {
-  background: #4a57ff;
+  background: #0010f3;
   color: #f1f5f9ff;
   box-shadow: 0 2px 8px rgba(74, 87, 255, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #3847d2;
+  background: #0017e4;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(74, 87, 255, 0.4);
 }

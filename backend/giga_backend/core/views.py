@@ -2,7 +2,7 @@ from rest_framework import generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from .models import Mission
@@ -42,7 +42,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     """Kullanıcının kendi profilini görüntüleme ve güncelleme"""
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser,JSONParser]
     
     def get_object(self):
         return self.request.user
@@ -55,6 +55,74 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         self.perform_update(serializer)
         
         return Response(serializer.data)
+
+
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Kullanıcı detay, güncelleme ve silme - Sadece CEO erişebilir"""
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+    parser_classes = [MultiPartParser, FormParser,JSONParser]
+    
+    def get_object(self):
+        """URL'den gelen ID'ye göre kullanıcı getir"""
+        user_id = self.kwargs.get('pk')
+        try:
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return None
+    
+    def update(self, request, *args, **kwargs):
+        """Kullanıcı güncelleme - Sadece CEO yapabilir"""
+        if request.user.role != 'CEO':
+            return Response(
+                {"detail": "Sadece CEO kullanıcı bilgilerini güncelleyebilir."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        instance = self.get_object()
+        if not instance:
+            return Response(
+                {"detail": "Kullanıcı bulunamadı."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        partial = kwargs.pop('partial', True)  # PATCH için partial=True
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        """Kullanıcı silme - Sadece CEO yapabilir"""
+        if request.user.role != 'CEO':
+            return Response(
+                {"detail": "Sadece CEO kullanıcı silebilir."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        instance = self.get_object()
+        if not instance:
+            return Response(
+                {"detail": "Kullanıcı bulunamadı."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Kendi hesabını silmeye çalışıyorsa engelle
+        if instance.id == request.user.id:
+            return Response(
+                {"detail": "Kendi hesabınızı silemezsiniz."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        username = instance.username
+        self.perform_destroy(instance)
+        
+        return Response(
+            {"message": f"Kullanıcı '{username}' başarıyla silindi."},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class ChangePasswordView(generics.GenericAPIView):

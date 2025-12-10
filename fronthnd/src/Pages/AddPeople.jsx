@@ -22,7 +22,7 @@ const AddPeople = () => {
   // Kullanıcının departmanını kontrol et
   useEffect(() => {
     const checkUserDepartment = async () => {
-      try {
+      
         console.log("🔍 Checking user authorization...");
         
         // Önce token'ın var olduğundan emin ol - constant'tan import edilen değeri kullan
@@ -44,38 +44,11 @@ const AddPeople = () => {
         const dept = response.data.department || "";
         
         console.log("👤 User department:", dept);
-        setUserDepartment(dept);
-        
-        // Eğer İnsan Kaynakları değilse, yetkisiz sayfasına yönlendir
-        if (dept !== "İnsan Kaynakları") {
-          console.warn("⚠️ Unauthorized access attempt");
-          alert("Bu sayfaya erişim yetkiniz yok! Sadece İnsan Kaynakları departmanı erişebilir.");
-          navigate("/home");
-        } else {
-          console.log("✅ Authorization check passed");
-        }
-      } catch (error) {
-        console.error("❌ Authorization check failed:", error);
-        console.error("Error details:", {
-          status: error.response?.status,
-          data: error.response?.data,
-          message: error.message
-        });
-        
-        // Eğer 401 Unauthorized hatası ise login'e yönlendir
-        if (error.response?.status === 401) {
-          alert("Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.");
-          localStorage.removeItem(ACCESS_TOKEN);
-          localStorage.removeItem(REFRESH_TOKEN);
-          navigate("/");
-        } else {
-          // Diğer hatalar için ana sayfaya yönlendir
-          alert("Yetki kontrolü yapılamadı! Lütfen daha sonra tekrar deneyin.");
-          navigate("/home");
-        }
-      } finally {
+        setUserDepartment(dept);      
         setCheckingAuth(false);
-      }
+
+
+      
     };
 
     checkUserDepartment();

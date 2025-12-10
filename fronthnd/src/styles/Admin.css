@@ -1,313 +1,177 @@
-/* ============================================
-   ADMIN PANEL - Modern & Clean Design
-   ============================================ */
+/* Modern, Kurumsal ve Sade (Siyah/Beyaz/Gri Tema) Admin Paneli Tasarımı */
 
-:root {
-  /* Background Colors */
-  --bg-primary: #f9fafb;
-  --bg-secondary: #f3f4f6;
-  --bg-tertiary: #e5e7eb;
-  
-  /* Card Colors */
-  --card-bg: #ffffff;
-  --card-hover: #f9fafb;
-  
-  /* Text Colors */
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-tertiary: #9ca3af;
-  
-  /* Border Colors */
-  --border-primary: #e5e7eb;
-  --border-secondary: #d1d5db;
-  
-  /* Accent Colors */
-  --accent-primary: #3b82f6;
-  --accent-secondary: #2563eb;
-  --accent-light: #dbeafe;
-  --accent-lighter: #eff6ff;
-  
-  /* Success Colors */
-  --success: #10b981;
-  --success-dark: #047857;
-  --success-light: #d1fae5;
-  
-  /* Warning Colors */
-  --warning: #f59e0b;
-  --warning-dark: #d97706;
-  --warning-light: #fef3c7;
-  
-  /* Danger Colors */
-  --danger: #ef4444;
-  --danger-dark: #dc2626;
-  --danger-light: #fed7d7;
-  
-  /* Info Colors */
-  --info-light: #dbeafe;
-  --info-dark: #1e40af;
-}
-
-/* ============================================
-   CONTAINER
-   ============================================ */
+/* Admin Container */
 .admin-container {
   min-height: 100vh;
-  background: var(--bg-primary);
+  /* Açık gri arka plan - nötr tonlar */
+  background: #f4f4f4;
   padding: 2rem;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
-/* ============================================
-   HEADER
-   ============================================ */
-.admin-header {
-  background: var(--card-bg);
-  border: 1px solid var(--border-primary);
-  border-radius: 6px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.header-left h1 {
-  margin: 0;
-  font-size: 1.875rem;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.header-left .subtitle {
-  margin: 0.5rem 0 0 0;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-/* ============================================
-   HEADER STATS
-   ============================================ */
-.header-stats {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.stat-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  background: var(--accent-primary);
-  border-radius: 6px;
-  color: white;
-  min-width: 120px;
-  border: 1px solid var(--accent-secondary);
-  transition: all 0.15s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 0.8rem;
-  margin-top: 0.5rem;
-  opacity: 0.95;
-  font-weight: 500;
-}
-
-/* ============================================
-   TABS
-   ============================================ */
-.admin-tabs {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-}
-
-.tab-button {
-  padding: 0.75rem 1.5rem;
-  background: var(--card-bg);
-  border: 1px solid var(--border-primary);
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.tab-button:hover {
-  background: var(--card-hover);
-  border-color: var(--accent-primary);
-}
-
-.tab-button.active {
-  background: var(--accent-primary);
-  color: white;
-  border-color: var(--accent-primary);
-}
-
-/* ============================================
-   MAIN CONTENT
-   ============================================ */
-.admin-main {
-  background: var(--card-bg);
-  border: 1px solid var(--border-primary);
-  border-radius: 6px;
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  min-height: 500px;
-}
-
-/* ============================================
-   LOADING STATE
-   ============================================ */
+/* Loading State */
 .loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  min-height: 400px;
+  gap: 1rem;
 }
 
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid var(--border-primary);
-  border-top-color: var(--accent-primary);
+  border: 4px solid #dddddd; /* Açık gri taban */
+  border-top: 4px solid #333333; /* Koyu gri/siyah dönen kısım */
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.loading-state p {
-  margin-top: 1rem;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
+/* Main Content */
+.admin-main {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* ============================================
-   SECTION HEADER
-   ============================================ */
+/* Users Section */
+.users-section {
+  background: white;
+  border-radius: 8px; /* Köşe yuvarlatması azaltıldı */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Yumuşak gölge */
+  padding: 2rem;
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem; /* Boşluk azaltıldı */
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px solid #cccccc; /* Daha ince, orta gri çizgi */
 }
 
 .section-header h2 {
+  font-size: 1.7rem;
+  color: #222222; /* Koyu başlık rengi */
   margin: 0;
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* ============================================
-   BUTTONS
-   ============================================ */
+/* Buttons */
 .btn-primary {
-  padding: 0.625rem 1.25rem;
-  background: var(--accent-primary);
+  /* Koyu gri/siyah ana buton rengi */
+  background: #333333; 
   color: white;
-  border: 1px solid var(--accent-primary);
+  border: none;
+  padding: 0.7rem 1.4rem; /* Biraz daha küçük dolgu */
   border-radius: 6px;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
-  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary:hover {
-  background: var(--accent-secondary);
-  border-color: var(--accent-secondary);
+  background: #111111;
   transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary {
-  padding: 0.625rem 1.25rem;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-secondary);
+  /* Orta gri ikincil buton rengi */
+  background: #6c757d; 
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
   border-radius: 6px;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
-  font-size: 0.875rem;
+  transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
-  background: var(--border-secondary);
-  border-color: var(--text-tertiary);
+  background: #5a6268;
+  transform: translateY(-1px);
 }
 
-/* ============================================
-   TABLE
-   ============================================ */
+.btn-icon {
+  background: none;
+  border: 1px solid transparent; /* Kenarlık eklendi */
+  color: #666666; /* İkon rengi */
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-edit:hover {
+  background: #e6e6e6; /* Açık gri hover */
+  color: #333333;
+  transform: scale(1.05);
+}
+
+.btn-delete:hover {
+  background: #fde8e8; /* Hafif kırmızı hover */
+  color: #dc3545; /* Kırmızı renk */
+  transform: scale(1.05);
+}
+
+/* Table */
 .table-container {
   overflow-x: auto;
+  margin-top: 1.2rem;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  background: white;
 }
 
 .admin-table thead {
-  background: var(--bg-secondary);
+  /* Koyu gri tablo başlığı */
+  background: #444444;
+  color: white;
 }
 
 .admin-table th {
-  padding: 0.875rem 1rem;
+  padding: 0.9rem 1rem;
   text-align: left;
   font-weight: 600;
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--border-primary);
+  font-size: 0.9rem; /* Başlık fontu küçültüldü */
   white-space: nowrap;
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
 }
 
 .admin-table td {
-  padding: 0.875rem 1rem;
-  border-bottom: 1px solid var(--border-primary);
-  color: var(--text-primary);
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #eeeeee; /* Çok açık gri çizgi */
+  font-size: 0.9rem;
 }
 
 .admin-table tbody tr {
-  transition: background-color 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .admin-table tbody tr:hover {
-  background: var(--card-hover);
+  background: #f9f9f9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* ============================================
-   USER CELL
-   ============================================ */
+.admin-table tbody tr.inactive-row {
+  opacity: 0.7;
+  background: #fafafa;
+}
+
+/* Username Cell */
 .username-cell {
   display: flex;
   align-items: center;
@@ -315,181 +179,128 @@
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
+  width: 35px; /* Küçültüldü */
+  height: 35px; /* Küçültüldü */
+  border-radius: 50%;
   object-fit: cover;
-  border: 1px solid var(--border-primary);
+  border: 2px solid #999999; /* Orta gri kenarlık */
 }
 
 .user-avatar-placeholder {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  background: var(--accent-primary);
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  /* Gri/Siyah gradyan placeholder */
+  background: linear-gradient(135deg, #555555 0%, #333333 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border: 1px solid var(--accent-secondary);
+  font-weight: bold;
+  font-size: 1rem; /* Font küçültüldü */
 }
 
-/* ============================================
-   BADGES
-   ============================================ */
+/* Role Badge */
 .role-badge {
   display: inline-block;
-  padding: 0.375rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  padding: 0.3rem 0.6rem; /* Küçültüldü */
+  border-radius: 16px;
+  font-size: 0.75rem; /* Küçültüldü */
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
 }
 
+/* Rol Renkleri - Nötr ve Kurumsal */
 .badge-ceo {
-  background: var(--danger-light);
-  color: var(--danger-dark);
-  border: 1px solid var(--danger);
+  background: #222222; /* Siyah/Koyu Gri */
+  color: white;
 }
 
 .badge-manager {
-  background: var(--info-light);
-  color: var(--info-dark);
-  border: 1px solid var(--accent-primary);
+  background: #666666; /* Orta Gri */
+  color: white;
 }
 
 .badge-employee {
-  background: var(--success-light);
-  color: var(--success-dark);
-  border: 1px solid var(--success);
+  background: #bbbbbb; /* Açık Gri */
+  color: #333333;
 }
 
 .badge-default {
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-secondary);
+  background: #e0e0e0;
+  color: #666;
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 0.375rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border: 1px solid;
+/* Status Toggle */
+.status-toggle {
+  padding: 0.4rem 0.8rem; /* Küçültüldü */
+  border: none;
+  border-radius: 16px;
+  font-size: 0.8rem; /* Küçültüldü */
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
-.status-badge.active {
-  background: var(--success-light);
-  color: var(--success-dark);
-  border-color: var(--success);
+.status-toggle.active {
+  background: #28a745; /* Yeşil - Aktif */
+  color: white;
 }
 
-.status-badge.inactive {
-  background: var(--danger-light);
-  color: var(--danger-dark);
-  border-color: var(--danger);
+.status-toggle.active:hover {
+  background: #1e7e34;
+  transform: scale(1.05);
 }
 
-.status-badge.completed {
-  background: var(--success-light);
-  color: var(--success-dark);
-  border-color: var(--success);
+.status-toggle.inactive {
+  background: #dc3545; /* Kırmızı - Pasif */
+  color: white;
 }
 
-.status-badge.pending {
-  background: var(--warning-light);
-  color: var(--warning-dark);
-  border-color: var(--warning);
+.status-toggle.inactive:hover {
+  background: #c82333;
+  transform: scale(1.05);
 }
 
-.status-badge:hover {
-  opacity: 0.8;
-  transform: translateY(-1px);
-}
-
-/* ============================================
-   ACTION BUTTONS
-   ============================================ */
+/* Actions Cell */
 .actions-cell {
   display: flex;
-  gap: 0.5rem;
-}
-
-.btn-icon {
-  padding: 0.5rem;
-  background: var(--card-bg);
-  border: 1px solid var(--border-primary);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1.125rem;
-  transition: all 0.15s ease;
-  width: 36px;
-  height: 36px;
-  display: flex;
+  gap: 0.4rem; /* Boşluk azaltıldı */
   align-items: center;
-  justify-content: center;
-  color: var(--text-primary);
 }
 
-.btn-icon:hover {
-  transform: translateY(-2px);
+/* No Data */
+.no-data {
+  text-align: center;
+  padding: 2rem !important; /* Dolgu azaltıldı */
 }
 
-.btn-edit:hover {
-  background: var(--info-light);
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  color: #666;
 }
 
-.btn-delete:hover {
-  background: var(--danger-light);
-  border-color: var(--danger);
-  color: var(--danger);
+.no-data-icon {
+  font-size: 2.5rem; /* Küçültüldü */
 }
 
-/* ============================================
-   MISC
-   ============================================ */
-.description-cell {
-  max-width: 300px;
-  color: var(--text-secondary);
-}
-
-.assigned-user {
-  display: inline-block;
-  padding: 0.25rem 0.625rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: 4px;
-  font-size: 0.75rem;
-  margin-right: 0.25rem;
-  margin-bottom: 0.25rem;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-/* ============================================
-   MODAL
-   ============================================ */
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5); /* Daha koyu arka plan */
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
-  padding: 2rem;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
@@ -498,111 +309,185 @@
 }
 
 .modal-content {
-  background: var(--card-bg);
-  border: 1px solid var(--border-primary);
-  border-radius: 6px;
-  max-width: 600px;
-  width: 100%;
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px; /* Modal genişliği azaltıldı */
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  animation: modalSlide 0.2s ease;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
 }
 
-@keyframes modalSlide {
+@keyframes slideUp {
   from {
+    transform: translateY(30px);
     opacity: 0;
-    transform: translateY(-20px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
 .modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1.2rem 1.5rem; /* Dolgu ayarlandı */
+  border-bottom: 1px solid #cccccc;
+  /* Koyu gri/siyah modal başlık */
+  background: #333333;
+  color: white;
+  border-radius: 8px 8px 0 0;
 }
 
-.modal-header h3 {
+.modal-header h2 {
   margin: 0;
-  font-size: 1.25rem;
-  color: var(--text-primary);
-  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
 }
 
 .modal-body {
-  padding: 1.5rem;
+  padding: 1.5rem; /* Dolgu azaltıldı */
 }
 
 .modal-footer {
-  padding: 1.5rem;
-  border-top: 1px solid var(--border-primary);
   display: flex;
   justify-content: flex-end;
-  gap: 0.75rem;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  background: #f8f8f8; /* Çok açık gri altlık */
+  border-radius: 0 0 8px 8px;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
+/* Form Groups */
+.form-group {
+  margin-bottom: 1rem; /* Boşluk azaltıldı */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #333333;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.6rem; /* Dolgu azaltıldı */
+  border: 1px solid #cccccc; /* Orta gri kenarlık */
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #333333; /* Siyah odaklanma kenarlığı */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1); /* Siyah-beyaz gölge */
+}
+
+.form-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .admin-table {
+    font-size: 0.85rem;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 0.7rem;
+  }
+}
+
 @media (max-width: 768px) {
   .admin-container {
     padding: 1rem;
   }
-
-  .admin-header {
-    padding: 1.5rem;
-  }
-
-  .header-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .header-stats {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .stat-card {
-    min-width: auto;
-    flex: 1;
-  }
-
-  .admin-tabs {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-  }
-
-  .tab-button {
-    white-space: nowrap;
-  }
-
-  .admin-main {
-    padding: 1.5rem;
-  }
-
+  
   .section-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    gap: 0.75rem;
+    align-items: stretch;
   }
-
+  
+  .section-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-container {
+    overflow-x: scroll;
+  }
+  
   .admin-table {
-    font-size: 0.8125rem;
+    font-size: 0.8rem;
+  }
+  
+  .actions-cell {
+    flex-direction: row; /* Mobil görünümde yan yana tutuldu */
+    justify-content: flex-start;
   }
 
+  .btn-primary, .btn-secondary {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
   .admin-table th,
   .admin-table td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
   }
-
-  .actions-cell {
-    flex-direction: column;
+  
+  .user-avatar,
+  .user-avatar-placeholder {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+  
+  .role-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
   }
 }

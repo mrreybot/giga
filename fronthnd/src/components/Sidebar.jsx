@@ -57,17 +57,9 @@ const Sidebar = () => {
       path: "/org",
       description: "Organizasyon"
     },
-    
     {
-      id:7,
-      name:"Kullanıcı Ekle",
-      icon:"",
-      path:"/addpeople",
-      description:"kullanıcı ekleme "
-    },
-    {
-      id :8,
-      name:"admin",
+      id :7,
+      name:"Admin",
       icon:"",
       path:"/admin",
       description:"admin sayfası"
