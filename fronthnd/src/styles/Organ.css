@@ -1,290 +1,466 @@
-/* ================================
-   Genel Yapı
-================================ */
+/* Organ.css */
+
 .organ-container {
-  padding: 30px;
-  max-width: 1450px;
-  margin: auto;
-  font-family: 'Inter', sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  overflow-x: auto;
 }
 
-.organ-header {
-  text-align: center;
-  margin-bottom: 40px;
+.org-chart-wrapper {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 1200px;
 }
 
-.organ-header h1 {
-  font-size: 32px;
-  margin-bottom: 20px;
-  color: #1f2937;
-  font-weight: 700;
-}
-
-/* ================================
-   İSTATİSTİK KARTLARI
-================================ */
-.organ-stats {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.stat-card {
-  background: #ffffff;
-  padding: 20px 30px;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-  text-align: center;
-  min-width: 150px;
-}
-
-.stat-number {
-  display: block;
-  font-size: 32px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-/* ================================
-   LOADING DURUMU
-================================ */
 .loading-state {
   text-align: center;
-  padding: 50px;
+  padding: 60px 20px;
 }
 
 .spinner {
-  font-size: 45px;
-  margin-bottom: 10px;
+  font-size: 48px;
+  animation: spin 2s linear infinite;
 }
 
-/* ================================
-   BÖLÜM BAŞLIKLARI
-================================ */
-.org-section {
-  margin-top: 50px;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  color: white;
-}
-
-.section-header h2 {
-  font-size: 22px;
-}
-
-.section-count {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-/* Renkler */
-.ceo-header { background: #1e40af; }
-.manager-header { background: #2563eb; }
-.employee-header { background: #3b82f6; }
-
-/* ================================
-   GRID YAPISI
-================================ */
-.org-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 25px;
-}
-
-/* ================================
-   KARTLAR
-================================ */
-.org-card {
-  background: white;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 5px 18px rgba(0,0,0,0.08);
-  transition: all .25s ease;
-}
-
-.org-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-}
-
-/* ================================
-   KART BAŞLIK
-================================ */
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-:root {
-  /* Background Colors */
-  --bg-primary: #f9fafb;
-  --bg-secondary: #f3f4f6;
-  --bg-tertiary: #e5e7eb;
-  
-  /* Card Colors */
-  --card-bg: #ffffff;
-  --card-hover: #f9fafb;
-  
-  /* Text Colors */
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-tertiary: #9ca3af;
-  
-  /* Border Colors */
-  --border-primary: #e5e7eb;
-  --border-secondary: #d1d5db;
-  
-  /* Accent Colors */
-  --accent-primary: #3b82f6;
-  --accent-secondary: #2563eb;
-  --accent-light: #dbeafe;
-  --accent-lighter: #eff6ff;
-  
-  /* Success Colors */
-  --success: #10b981;
-  --success-dark: #047857;
-  --success-light: #d1fae5;
-  
-  /* Warning Colors */
-  --warning: #f59e0b;
-  --warning-dark: #d97706;
-  --warning-light: #fef3c7;
-  
-  /* Danger Colors */
-  --danger: #ef4444;
-  --danger-dark: #dc2626;
-  
-  /* Info Colors */
-  --info-light: #dbeafe;
-  --info-dark: #1e40af;
-  
-  /* Modal Colors */
-  --modal-overlay: rgba(0, 0, 0, 0.5);
-  --modal-bg: #ffffff;
-}
-/* Avatar */
-.org-avatar {
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  font-size: 22px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  overflow: hidden; /* ✅ EKLE */
-  position: relative; /* ✅ EKLE */
-}
-
-.org-avatar .avatar-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-/* Avatar renkleri role göre */
-.ceo-avatar { background: #1e3a8a; }
-.manager-avatar { background: #2563eb; }
-.employee-avatar { background: #3b82f6; }
-
-/* Role Badge */
-.role-badge {
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: white;
-}
-
-.ceo-badge { background: #1e40af; }
-.manager-badge { background: #2563eb; }
-.employee-badge { background: #3b82f6; }
-
-/* ================================
-   KART BODY / TEXT
-================================ */
-.card-body {
-  margin-top: 15px;
-}
-
-.user-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 12px;
-}
-
-/* INFO LIST */
-.user-info {
+/* Org Tree Styles */
+.org-tree {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-}
-
-.info-item {
-  display: flex;
-  gap: 8px;
-  font-size: 14px;
-  color: #374151;
   align-items: center;
+  gap: 0;
 }
 
-.info-icon {
+.org-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Vertical Lines */
+.vertical-line {
+  width: 2px;
+  height: 40px;
+  background: #cbd5e0;
+}
+
+.vertical-line-manager {
+  width: 2px;
+  height: 30px;
+  background: #cbd5e0;
+}
+
+.vertical-line-dept {
+  width: 2px;
+  height: 20px;
+  background: #cbd5e0;
+}
+
+.vertical-line-emp {
+  width: 2px;
+  height: 15px;
+  background: #cbd5e0;
+}
+
+.horizontal-line {
+  height: 2px;
+  width: 100%;
+  background: #cbd5e0;
+  margin: 20px 0;
+}
+
+/* Node Styles */
+.org-node {
+  background: white;
+  border-radius: 8px;
+  padding: 16px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-width: 200px;
+}
+
+.org-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.node-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  color: #4a5568;
+}
+
+.node-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Board Level */
+.board-node {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 20px 40px;
+}
+
+/* CEO Level */
+.ceo-node {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  min-width: 300px;
+}
+
+.ceo-node .node-title {
+  color: white;
+  font-size: 12px;
+}
+
+.ceo-node .node-name {
+  color: white;
   font-size: 16px;
 }
 
-/* ================================
-   EMPTY STATE
-================================ */
-.empty-role {
+/* Special Units */
+.special-units {
+  display: flex;
+  gap: 40px;
+  margin: 20px 0;
+}
+
+.special-node {
+  background: #e2e8f0;
+  min-width: 180px;
+}
+
+/* Managers */
+.managers-container {
+  display: flex;
+  gap: 100px;
+  margin-top: 20px;
+}
+
+.manager-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.manager-node {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+  min-width: 250px;
+}
+
+.manager-node .node-title {
+  color: white;
+}
+
+.manager-node .node-name {
+  color: white;
+  font-size: 15px;
+}
+
+/* Departments */
+.departments-container {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.departments-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.department-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dept-node {
+  background: #edf2f7;
+  border: 2px solid #cbd5e0;
+  min-width: 160px;
+  font-size: 11px;
+  padding: 12px 16px;
+}
+
+.dept-node .node-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2d3748;
+  line-height: 1.3;
+}
+
+/* Employees */
+.employees-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.employee-node {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  min-width: 150px;
+  padding: 10px 16px;
+  font-size: 12px;
+}
+
+.employee-node .node-name {
+  font-size: 12px;
+  color: #4a5568;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #a0aec0;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #f7fafc;
+  color: #2d3748;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-avatar {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.modal-name {
   text-align: center;
-  background: #f3f4f6;
-  padding: 25px;
-  border-radius: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 12px 0;
 }
 
-.empty-icon {
-  font-size: 45px;
-  display: block;
-  margin-bottom: 8px;
-  color: #9ca3af;
+.modal-role-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 auto 24px;
+  text-align: center;
 }
 
-/* ================================
-   RESPONSIVE
-================================ */
+.modal-info {
+  margin: 24px 0;
+}
+
+.modal-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.modal-info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.modal-preferences {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.modal-preferences h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 16px 0;
+}
+
+.preferences-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pref-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+.pref-item span:first-child {
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.pref-item .active {
+  color: #48bb78;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.pref-item .inactive {
+  color: #fc8181;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .departments-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .managers-container {
+    gap: 60px;
+  }
+}
+
 @media (max-width: 768px) {
-  .organ-container {
+  .org-chart-wrapper {
     padding: 20px;
+    min-width: auto;
   }
-
-  .organ-header h1 {
-    font-size: 26px;
+  
+  .departments-grid {
+    grid-template-columns: 1fr;
   }
-
-  .stat-card {
-    padding: 15px 20px;
-  }
-
-  .section-header h2 {
-    font-size: 18px;
+  
+  .managers-container {
+    flex-direction: column;
+    gap: 40px;
   }
 }
