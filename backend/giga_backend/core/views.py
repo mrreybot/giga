@@ -7,7 +7,9 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from .models import Mission
 from .serializers import CustomUserSerializer, MissionSerializer, UserRegisterSerializer
-
+from django.utils import timezone
+from .models import MissionFeedback
+from .serializers import MissionFeedbackSerializer
 User = get_user_model()
 
 
@@ -160,7 +162,29 @@ class ChangePasswordView(generics.GenericAPIView):
 class MissionViewSet(viewsets.ModelViewSet):
     serializer_class = MissionSerializer
     permission_classes = [IsAuthenticated]
-    
+    @action(detail=True, methods=['patch'], url_path='toggle_complete')
+    def toggle_complete(self, request, pk=None):
+        """
+        Görevi completed <-> uncompleted yapar.
+        Hem oluşturucu hem assigned kullanıcı kullanabilir.
+        """
+        mission = self.get_object()
+        user = request.user
+
+        # Sadece görevi görüntüleyebilen kullanıcılar tamamlayabilir/geri alabilir
+        if not mission.can_complete(user):
+            return Response(
+                {"detail": "Bu görevi tamamlama/geri alma yetkiniz yok."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Toggle işlemi
+        mission.completed = not mission.completed
+        mission.save()
+
+        serializer = self.get_serializer(mission, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def get_queryset(self):
         """Kullanıcının görebildiği görevleri getir"""
         user = self.request.user
@@ -197,7 +221,7 @@ class MissionViewSet(viewsets.ModelViewSet):
             
             
             elif user.role == 'MANAGER':
-                invalid_users = assigned_users.exclude(role='EMPLOYEE')
+                invalid_users = assigned_users.exclude(role__in=['EMPLOYEE', 'MANAGER'])
                 if invalid_users.exists():
                     invalid_names = [u.username for u in invalid_users]
                     return Response(
@@ -310,22 +334,48 @@ class MissionViewSet(viewsets.ModelViewSet):
         
         return super().partial_update(request, *args, **kwargs)
     
-    @action(detail=True, methods=['patch'])
-    def toggle_complete(self, request, pk=None):
-        """Görevi tamamla/tamamlanmadı olarak işaretle"""
+    @action(detail=True, methods=['post'])
+    def complete_with_feedback(self, request, pk=None):
+        """
+        Görevi tamamla ve opsiyonel yorum ekle.
+        Body: { "comment": "İstersen yorum" }
+        """
         mission = self.get_object()
-        
-        if not mission.can_complete(request.user):
-            return Response(
-                {"detail": "Bu görevi tamamlama yetkiniz yok. Sadece size atanan görevleri tamamlayabilirsiniz."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        mission.completed = not mission.completed
+        user = request.user
+
+        # Sadece atanan kullanıcı tamamlayabilir
+        if not mission.can_complete(user):
+            return Response({"detail": "Bu görevi tamamlama yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+
+        comment = (request.data.get('comment') or '').strip()
+
+        if comment:
+            MissionFeedback.objects.create(mission=mission, user=user, comment=comment)
+
+        # completed toggle yerine **tamamla** (senin modelde toggle var; burada tamamla olarak ayarlıyorum)
+        mission.completed = True
         mission.save()
-        
-        serializer = self.get_serializer(mission)
-        return Response(serializer.data)
+
+        serializer = self.get_serializer(mission, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['post'])
+    def add_feedback(self, request, pk=None):
+        """Sadece yorum ekle (tamamlamayı etkilemez)."""
+        mission = self.get_object()
+        user = request.user
+
+        # Yalnızca görevi görebilenler yorum yazsın (isAssigned veya creator)
+        if not mission.can_view(user):
+            return Response({"detail": "Bu görevi görüntüleme/yorum yazma yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+
+        comment = request.data.get('comment', '').strip()
+        if not comment:
+            return Response({"detail": "Yorum boş olamaz."}, status=status.HTTP_400_BAD_REQUEST)
+
+        fb = MissionFeedback.objects.create(mission=mission, user=user, comment=comment)
+        serializer = MissionFeedbackSerializer(fb, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # ============ ASSIGNABLE USERS (ROLE-BASED FILTERING) ============
@@ -342,9 +392,13 @@ class AssignableUsersView(generics.ListAPIView):
         if user.role == 'CEO':
             return User.objects.all().order_by('role', 'username')
         
-        # ✅ MANAGER ve EMPLOYEE: Sadece EMPLOYEE'leri görebilir
-        elif user.role in ['MANAGER', 'EMPLOYEE']:
-            return User.objects.filter(role='EMPLOYEE').order_by('username')
+        elif user.role == 'MANAGER':
+         return User.objects.filter(role__in=['MANAGER', 'EMPLOYEE']).order_by('role', 'username')
+
+        elif user.role == 'EMPLOYEE':
+         return User.objects.filter(role='EMPLOYEE').order_by('username')
+
+        
         
         else:
             return User.objects.none()

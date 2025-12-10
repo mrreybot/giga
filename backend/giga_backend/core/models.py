@@ -98,3 +98,26 @@ class Mission(models.Model):
         """Kullanıcı bu görevi tamamlayabilir mi?"""
         # Sadece görev kendisine atanmışsa complete edebilir
         return self.due_to.filter(id=user.id).exists()
+    
+class MissionFeedback(models.Model):
+    mission = models.ForeignKey(
+        'Mission',
+        on_delete=models.CASCADE,
+        related_name='feedbacks'
+    )
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='mission_feedbacks'
+    )
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        user_name = f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username
+        return f"Feedback #{self.id} by {user_name} on Mission {self.mission.id}"
+
+
+    def __str__(self):
+        user_name = f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username
+        return f"Feedback #{self.id} by {user_name} on Mission {self.mission.id}"

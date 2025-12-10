@@ -14,7 +14,10 @@ const Dashboard = () => {
  
   const [selectedMission, setSelectedMission] = useState(null);
   const [showOrgChart, setShowOrgChart] = useState(false);
-  
+  const [feedbackText, setFeedbackText] = useState("");
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [completingMission, setCompletingMission] = useState(null);
+
   const [filters, setFilters] = useState({
     status: 'all', 
     searchText: '',
@@ -154,37 +157,9 @@ const Dashboard = () => {
     setSelectedMission(null);
   };
 
-  // === TOGGLE COMPLETE ===
-  const toggleComplete = async (mission) => {
-    // Optimistic update
-    setMissions(prev =>
-      prev.map(m =>
-        m.id === mission.id ? { ...m, completed: !m.completed, isUpdating: true } : m
-      )
-    );
+  
 
-    try {
-      await api.patch(`${MISSIONS_ENDPOINT}${mission.id}/toggle_complete/`);
-      
-      // İşlem başarılı, isUpdating'i kaldır
-      setMissions(prev => 
-        prev.map(m => (m.id === mission.id ? { ...m, isUpdating: false } : m))
-      );
-      
-    } catch (error) {
-      console.error("❌ Görev durumu güncellenemedi:", error);
-      alert(error.response?.data?.detail || "Görev durumu güncellenemedi!");
-      
-      // Hata oldu, eski haline çevir
-      setMissions(prev =>
-        prev.map(m => 
-          m.id === mission.id 
-            ? { ...m, completed: mission.completed, isUpdating: false } 
-            : m
-        )
-      );
-    }
-  };
+  
 
   // === HELPERS ===
   const formatDate = (dateString) => {
@@ -566,16 +541,19 @@ const Dashboard = () => {
                     
                     {/* Tamamlama Checkbox - Sadece atananlar görebilir */}
                     {mission.can_complete && (
-                      <label className="task-checkbox-wrap">
-                        <input
-                          type="checkbox"
-                          checked={!!mission.completed}
-                          onChange={() => toggleComplete(mission)}
-                          disabled={mission.isUpdating}
-                        />
-                        <span className="checkbox-ui" />
-                      </label>
-                    )}
+                        <button
+                          className="btn-complete"
+                          onClick={(e) => {
+                            e.stopPropagation(); // modal'ın açılmasını engelleme
+                            setCompletingMission(mission);
+                            setFeedbackText("");
+                            setShowCompleteModal(true);
+                          }}
+                        >
+                          ✓ Tamamla (Yorumla)
+                        </button>
+                      )}
+
                     
                     <div className="mission-dates">
                       <span className="date-badge">
@@ -626,6 +604,50 @@ const Dashboard = () => {
                           </small>
                         </div>
                       )}
+
+
+                      {showCompleteModal && completingMission && (
+                        <div className="modal-overlay" onClick={() => setShowCompleteModal(false)}>
+                          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                            <h3>Görevi Tamamla — #{completingMission.id}</h3>
+
+                            <textarea
+                              placeholder="Kısa bir yorum bırak (opsiyonel)"
+                              value={feedbackText}
+                              onChange={(e) => setFeedbackText(e.target.value)}
+                              rows={5}
+                              className="modal-textarea"
+                            />
+
+                            <div className="modal-actions">
+                              <button className="btn btn-cancel" onClick={() => setShowCompleteModal(false)}>İptal</button>
+
+                              <button
+                                className="btn btn-submit"
+                                onClick={async () => {
+                                  try {
+                                    // disable buton veya spinner istersen state ekle
+                                    const payload = { comment: feedbackText };
+                                    const res = await api.post(`/api/missions/${completingMission.id}/complete_with_feedback/`, payload);
+                                    
+                                    // Başarılıysa local state'i güncelle
+                                    setMissions(prev => prev.map(m => m.id === completingMission.id ? res.data : m));
+                                    setShowCompleteModal(false);
+                                    setCompletingMission(null);
+                                    setFeedbackText("");
+                                  } catch (err) {
+                                    console.error("Tamamlama hatası:", err);
+                                    alert(err.response?.data?.detail || "Tamamlama sırasında hata oluştu");
+                                  }
+                                }}
+                              >
+                                Yorum ile Tamamla
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                    )}
+
                     </div>
                   </div>
                 </div>
