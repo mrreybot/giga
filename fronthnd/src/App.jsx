@@ -8,14 +8,11 @@ import Archive from "./Pages/ArchivePage";
 import AddTask from "./Pages/AddTask";
 import Profile from "./Pages/Profile";
 import Organ from "./Pages/Organ";
-import './styles/theme-variables.css';
-import { ThemeProvider } from './contexts/ThemeContext';
-import './styles/dark-theme.css';
-import './styles/ThemeToggle.css';
+import People from "./Pages/AddPeople";
+import Admin from "./Pages/Admin";
 
 function App() {
   return (
-    <ThemeProvider>
       <Router>
         <Routes>
 
@@ -27,14 +24,15 @@ function App() {
           <Route path="/org" element={<Layout><Organ /></Layout>} />
           <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
           <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
+          <Route path="/admin" element={<Layout><Admin /></Layout>} />
           <Route path="/arsiv" element={<Layout><Archive /></Layout>} />
           <Route path="/add-task" element={<Layout><AddTask /></Layout>} />
           <Route path="/profil" element={<Layout><Profile /></Layout>} />
           <Route path="/settings" element={<Layout><div style={{padding: '2rem'}}>⚙️ Ayarlar yakında...</div></Layout>} />
+           <Route path="/addpeople" element={<Layout><People /></Layout>} />
 
         </Routes>
       </Router>
-    </ThemeProvider>
   );
 }
 

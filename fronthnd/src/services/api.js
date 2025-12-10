@@ -7,7 +7,6 @@ const apiUrl = 'http://127.0.0.1:8000/'
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
   timeout: 10000,
-  // ❌ Content-Type'ı burada KALDIR! FormData için axios otomatik ayarlayacak
 });
 
 console.log("🌐 API Base URL:", api.defaults.baseURL);

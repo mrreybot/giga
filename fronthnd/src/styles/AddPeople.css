@@ -1,0 +1,377 @@
+/* Modern, Ferah ve Login ile Uyumlu AddPeople Tasarımı */
+
+.add-people-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: #f1f5f9ff !important;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.add-people-card {
+  background: #f1f5f9ff;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+  padding: 50px;
+  width: 100%;
+  max-width: 680px;
+  animation: fadeInSlide 0.6s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: #4a57ff;
+  border-radius: 16px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(74, 87, 255, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.icon-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.icon-wrapper svg {
+  color: #f1f5f9ff;
+  width: 32px;
+  height: 32px;
+}
+
+.card-header h2 {
+  font-family: 'Montserrat', sans-serif;
+  color: #444;
+  font-weight: 900;
+  font-size: 50px;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  margin-bottom: 30px;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* Success Banner */
+.success-banner {
+  background: #4a57ff;
+  color: #f1f5f9ff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  animation: slideDown 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(74, 87, 255, 0.3);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form Styling */
+.add-people-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #444;
+  font-weight: 500;
+}
+
+.required {
+  color: #ef4444;
+  font-size: 1rem;
+  margin-left: 2px;
+}
+
+.form-group input,
+.form-group select {
+  font-family: 'Montserrat', sans-serif;
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border-radius: 8px;
+  color: #444;
+  border: 1px solid #fff;
+  background-color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23444' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 35px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #444;
+  box-shadow: 0 0 6px #4a57ff;
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  background: #e2e8f0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-group input::placeholder {
+  color: #999;
+}
+
+.form-group select option {
+  padding: 10px;
+  background-color: #fff;
+  color: #444;
+}
+
+.helper-text {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+  font-style: normal;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+}
+
+.btn-primary {
+  background: #4a57ff;
+  color: #f1f5f9ff;
+  box-shadow: 0 2px 8px rgba(74, 87, 255, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #3847d2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 87, 255, 0.4);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #4a57ff;
+  color: #4a57ff;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(241, 245, 249, 0.3);
+  border-top-color: #f1f5f9ff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading Screen */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+
+.loading-spinner .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(74, 87, 255, 0.2);
+  border-top-color: #4a57ff;
+}
+
+.loading-spinner p {
+  font-family: 'Montserrat', sans-serif;
+  color: #444;
+  font-size: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .add-people-container {
+    padding: 1rem;
+  }
+
+  .add-people-card {
+    padding: 30px;
+    border-radius: 12px;
+  }
+
+  .card-header h2 {
+    font-size: 40px;
+  }
+
+  .icon-wrapper {
+    width: 56px;
+    height: 56px;
+  }
+
+  .icon-wrapper svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .button-group {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-people-card {
+    padding: 25px;
+  }
+
+  .card-header h2 {
+    font-size: 35px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .form-group input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 10px;
+    font-size: 15px;
+  }
+}
+
+/* Çıkış animasyonu */
+.add-people-card.fade-out {
+  animation: fadeOutSlide 0.4s ease-in forwards;
+}
+
+@keyframes fadeOutSlide {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}

@@ -1,7 +1,53 @@
 /* ============================================
    ANA SAYFA - HOMEPAGE STYLES (Modern Office)
    ============================================ */
-
+:root {
+  /* Background Colors */
+  --bg-primary: #f9fafb;
+  --bg-secondary: #f3f4f6;
+  --bg-tertiary: #e5e7eb;
+  
+  /* Card Colors */
+  --card-bg: #ffffff;
+  --card-hover: #f9fafb;
+  
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  
+  /* Border Colors */
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+  
+  /* Accent Colors */
+  --accent-primary: #3b82f6;
+  --accent-secondary: #2563eb;
+  --accent-light: #dbeafe;
+  --accent-lighter: #eff6ff;
+  
+  /* Success Colors */
+  --success: #10b981;
+  --success-dark: #047857;
+  --success-light: #d1fae5;
+  
+  /* Warning Colors */
+  --warning: #f59e0b;
+  --warning-dark: #d97706;
+  --warning-light: #fef3c7;
+  
+  /* Danger Colors */
+  --danger: #ef4444;
+  --danger-dark: #dc2626;
+  
+  /* Info Colors */
+  --info-light: #dbeafe;
+  --info-dark: #1e40af;
+  
+  /* Modal Colors */
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --modal-bg: #ffffff;
+}
 .home-page {
   min-height: 100vh;
   background: var(--bg-primary);

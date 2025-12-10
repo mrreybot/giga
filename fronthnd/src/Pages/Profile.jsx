@@ -347,17 +347,21 @@ const ProfilePage = () => {
                       onChange={handleInputChange}
                       placeholder="Ör: Yazılım Geliştirici"
                     />
-                  </div>
-                  
+                  </div>     
                   <div className="form-group">
                     <label>Departman</label>
-                    <input
-                      type="text"
+                    <select
                       name="department"
                       value={profileData.department}
                       onChange={handleInputChange}
-                      placeholder="Ör: IT"
-                    />
+                    >
+                      <option value="">Departman Seçiniz</option>
+                      <option value="Depozito Yönetim Sistemi">Depozito Yönetim Sistemi</option>
+                      <option value="Geri Kazanım ve Üretici">Geri Kazanım ve Üretici</option>
+                      <option value="Çevre Koruma">Çevre Koruma</option>
+                      <option value="Bilgi Teknolojileri">Bilgi Teknolojileri</option>
+                      <option value="İnsan Kaynakları">İnsan Kaynakları</option>
+                    </select>
                   </div>
                 </div>
 

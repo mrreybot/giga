@@ -177,13 +177,19 @@ const LoginPage = () => {
             {/* Departman ve Telefon - Yan yana */}
             <div className="form-row">
               <div className="form-group">
-                <label>Departman</label>
-                <input
-                  type="text"
-                  placeholder="Ör: IT, İnsan Kaynakları"
+                <label>Departman *</label>
+                <select
                   value={regDepartment}
                   onChange={(e) => setRegDepartment(e.target.value)}
-                />
+                  required
+                >
+                  <option value="">Departman Seçiniz</option>
+                  <option value="Depozito Yönetim Sistemi">Depozito Yönetim Sistemi</option>
+                  <option value="Geri Kazanım ve Üretici">Geri Kazanım ve Üretici</option>
+                  <option value="Çevre Koruma">Çevre Koruma</option>
+                  <option value="Bilgi Teknolojileri">Bilgi Teknolojileri</option>
+                  <option value ="İnsan Kaynakları">İnsan Kaynakları</option>
+                </select>
               </div>
 
               <div className="form-group">
@@ -225,4 +231,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-

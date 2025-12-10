@@ -68,7 +68,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = [
             'username', 'email', 'password', 
             'first_name', 'last_name', 
-            'department', 'phone'
+            'department', 'phone','role'
         ]
     
     def validate_email(self, value):
@@ -98,8 +98,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             last_name=validated_data['last_name'],
             department=validated_data.get('department', ''),
             phone=validated_data.get('phone', ''),
-            role='EMPLOYEE',  # Varsayılan rol - sadece admin değiştirebilir
-            notification_email=validated_data['email']  # Bildirim email'i olarak da set et
+            role=validated_data.get('role', 'EMPLOYEE'),
+            notification_email=validated_data['email'] 
         )
         return user
 

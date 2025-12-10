@@ -56,7 +56,23 @@ const Sidebar = () => {
       icon: "",
       path: "/org",
       description: "Organizasyon"
+    },
+    
+    {
+      id:7,
+      name:"Kullanıcı Ekle",
+      icon:"",
+      path:"/addpeople",
+      description:"kullanıcı ekleme "
+    },
+    {
+      id :8,
+      name:"admin",
+      icon:"",
+      path:"/admin",
+      description:"admin sayfası"
     }
+    
   ];
 
   const isActive = (path) => {
@@ -77,7 +93,7 @@ const Sidebar = () => {
       <div className="sidebar-brand">
         <div className="logo-content">
           <span className="logo-icon"></span>
-          <h2 className="logo-text">Atasan A.Ş</h2>
+          <h2 className="logo-text">Çevre Ajansı</h2>
         </div>
       </div>
 

@@ -5,15 +5,20 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
+    icon: path.join(__dirname, "icon.icns"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
 
-  // React build dosyalarını aç
-  win.loadFile(path.join(__dirname, "../fronthnd/dist/index.html"));
-
-  // win.webContents.openDevTools(); // İstersen aç
+  // Development modunda localhost'u aç
+  if (process.env.NODE_ENV === 'development') {
+    win.loadURL('http://localhost:5173');
+    win.webContents.openDevTools();
+  } else {
+    // Production modunda build'i aç
+    win.loadFile(path.join(__dirname, "../fronthnd/dist/index.html"));
+  }
 }
 
 app.whenReady().then(() => {

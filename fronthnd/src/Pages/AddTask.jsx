@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../services/api";
 import "../styles/AddTask.css";
-import ThemeToggle from '../components/ThemeToggle';
 
 const MISSIONS_ENDPOINT = "/api/missions/";
 const USERS_ENDPOINT = "/api/users/assignable_users/";
