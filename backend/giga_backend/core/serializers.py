@@ -72,15 +72,16 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         ]
     
     def validate_email(self, value):
-        """Email doğrulama - @gmail.com kontrolü"""
-        if not value.endswith('@gmail.com'):
-            raise serializers.ValidationError("Lütfen geçerli bir Gmail adresi girin (@gmail.com)")
-        
-        # Email'in daha önce kullanılmadığını kontrol et
+        if not value.endswith('@tuca.gov.tr'):
+            raise serializers.ValidationError("Lütfen geçerli bir TUCA e-posta adresi girin (@tuca.gov.tr)")
         if CustomUser.objects.filter(email=value).exists():
             raise serializers.ValidationError("Bu e-posta adresi zaten kullanılıyor.")
         
         return value
+    
+    def validate_email(self, value):
+        """Email doğrulama - @tuca.gov.tr kontrolü"""
+        
     
     def validate_username(self, value):
         """Username'in unique olduğunu kontrol et"""

@@ -42,9 +42,9 @@ const LoginPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     
-    // E-posta doğrulama - @gmail.com kontrolü
-    if (!regEmail.endsWith("@gmail.com")) {
-      alert("Lütfen geçerli bir Gmail adresi girin (@gmail.com)");
+
+    if (!regEmail.endsWith("@tuca.gov.tr")) {
+      alert("Lütfen geçerli bir TUCA e-posta adresi girin (@tuca.gov.tr)");
       return;
     }
 
@@ -105,7 +105,7 @@ const LoginPage = () => {
             <label>Email</label>
             <input
               type="email"
-              placeholder="example@gmail.com"
+              placeholder="example@tuca.gov.tr"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -168,7 +168,7 @@ const LoginPage = () => {
             <label>Email *</label>
             <input
               type="email"
-              placeholder="example@gmail.com"
+              placeholder="example@tuca.gov.tr"
               value={regEmail}
               onChange={(e) => setRegEmail(e.target.value)}
               required

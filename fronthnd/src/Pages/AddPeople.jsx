@@ -85,8 +85,8 @@ const AddPeople = () => {
     e.preventDefault();
     
     // E-posta doğrulama
-    if (!email.endsWith("@gmail.com")) {
-      alert("Lütfen geçerli bir Gmail adresi girin (@gmail.com)");
+    if (!email.endsWith("@tuca.gov.tr")) {
+      alert("Lütfen geçerli bir tuca adresi girin (@tuca.gov.tr)");
       return;
     }
 
@@ -235,7 +235,7 @@ const AddPeople = () => {
             </label>
             <input
               type="email"
-              placeholder="example@gmail.com"
+              placeholder="example@tuca.gov.tr"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
