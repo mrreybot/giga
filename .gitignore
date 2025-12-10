@@ -26,6 +26,13 @@ env/
 .DS_Store
 Thumbs.db
 
+node_modules/
+dist/
+out/
+build/
+*.dmg
+*.zip
+*.app
 
 # SQLite database
 *.sqlite3
