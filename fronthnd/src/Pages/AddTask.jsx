@@ -13,23 +13,30 @@ const AddTask = () => {
   const editingMission = location.state?.mission || null;
 
   const [users, setUsers] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     description: '',
     assigned_date: '',
     end_date: '',
     from_to: '',
     due_to: [],
-    attachments: []
+    attachments: [],
+    project: '',
+    priority: 'MEDIUM',
+    department: ''
   });
 
   useEffect(() => {
     fetchCurrentUser();
+    fetchCurrentUser();
     fetchUsers();
-    
+    fetchProjects();
+
     if (editingMission) {
       setFormData({
         description: editingMission.description || '',
@@ -37,7 +44,10 @@ const AddTask = () => {
         end_date: editingMission.end_date || '',
         from_to: editingMission.from_to || '',
         due_to: editingMission.assigned_users?.map(u => u.id) || [],
-        attachments: []
+        attachments: [],
+        project: editingMission.project || '',
+        priority: editingMission.priority || 'MEDIUM',
+        department: editingMission.department || ''
       });
     }
   }, [editingMission]);
@@ -46,10 +56,21 @@ const AddTask = () => {
     try {
       const response = await api.get(PROFILE_ENDPOINT);
       setCurrentUser(response.data);
-      
+
       // Artık EMPLOYEE'ler de görev oluşturabilir, yetki kontrolü kaldırıldı
     } catch (error) {
       console.error(" Kullanıcı bilgisi alınamadı:", error);
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const res = await api.get('/api/projects/');
+      // Pagination check
+      const projectList = res.data.results || (Array.isArray(res.data) ? res.data : []);
+      setProjects(projectList);
+    } catch (error) {
+      console.error("Projeler yüklenemedi:", error);
     }
   };
 
@@ -57,17 +78,21 @@ const AddTask = () => {
     setLoading(true);
     try {
       const response = await api.get(USERS_ENDPOINT);
-      
+
       // Backend'den array veya obje dönebilir
       let userData = [];
-      
+
       if (Array.isArray(response.data)) {
         userData = response.data;
       } else if (response.data && typeof response.data === 'object') {
         userData = Object.values(response.data).flat();
       }
-      
+
       setUsers(userData);
+
+      // Extract unique departments from users
+      const uniqueDepts = [...new Set(userData.map(u => u.department).filter(d => d))];
+      setDepartments(uniqueDepts);
     } catch (error) {
       console.error("❌ Kullanıcılar yüklenemedi:", error);
       alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
@@ -111,7 +136,7 @@ const AddTask = () => {
 
   const handleSubmitMission = async (e) => {
     e.preventDefault();
-    
+
     // Validasyon
     if (!formData.description.trim()) {
       alert("Lütfen açıklama giriniz!");
@@ -135,25 +160,34 @@ const AddTask = () => {
     }
 
     setSaving(true);
-    
+
     try {
       const submitData = new FormData();
       submitData.append('description', formData.description);
       submitData.append('assigned_date', formData.assigned_date);
       submitData.append('end_date', formData.end_date);
-      
+
       if (formData.from_to && formData.from_to.trim()) {
         submitData.append('from_to', formData.from_to);
       }
-      
+
+      if (formData.project) {
+        submitData.append('project', formData.project);
+      }
+
+      submitData.append('priority', formData.priority);
+      if (formData.department) {
+        submitData.append('department', formData.department);
+      }
+
       formData.due_to.forEach(userId => {
         submitData.append('due_to', userId);
       });
-      
+
       formData.attachments.forEach(file => {
         submitData.append('new_attachments', file);
       });
-      
+
       if (editingMission) {
         await api.patch(`${MISSIONS_ENDPOINT}${editingMission.id}/`, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
@@ -165,19 +199,19 @@ const AddTask = () => {
         });
         alert(" Görev başarıyla oluşturuldu!");
       }
-      
+
       navigate('/dashboard');
-      
+
     } catch (error) {
       console.error("❌ Görev kaydedilemedi:", error);
-      
+
       let errorMessage = "Görev kaydedilirken hata oluştu!";
-      
+
       if (error.response?.status === 403) {
         errorMessage = error.response.data.detail || "Bu işlem için yetkiniz yok.";
       } else if (error.response?.data) {
         const errorData = error.response.data;
-        
+
         if (typeof errorData === 'object') {
           const errors = Object.entries(errorData)
             .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
@@ -187,7 +221,7 @@ const AddTask = () => {
           errorMessage += `\n\n${errorData.detail}`;
         }
       }
-      
+
       alert(errorMessage);
     } finally {
       setSaving(false);
@@ -203,7 +237,7 @@ const AddTask = () => {
   };
 
   const getRoleBadgeClass = (role) => {
-    switch(role) {
+    switch (role) {
       case 'CEO': return 'role-badge-ceo';
       case 'MANAGER': return 'role-badge-manager';
       case 'EMPLOYEE': return 'role-badge-employee';
@@ -212,7 +246,7 @@ const AddTask = () => {
   };
 
   const getRoleLabel = (role) => {
-    switch(role) {
+    switch (role) {
       case 'CEO': return 'CEO';
       case 'MANAGER': return 'Yönetici';
       case 'EMPLOYEE': return 'Çalışan';
@@ -238,15 +272,15 @@ const AddTask = () => {
             {/* GÖREV DETAYLARI */}
             <div className="form-section">
               <h2 className="section-title">Görev Detayları</h2>
-              
+
               <div className="form-group">
                 <label htmlFor="desc" className="form-label">
                   Görev Açıklaması <span className="required">*</span>
                 </label>
-                <textarea 
+                <textarea
                   id="desc"
                   name="description"
-                  rows="5" 
+                  rows="5"
                   placeholder="Görevin detaylarını açıklayın..."
                   value={formData.description}
                   onChange={handleInputChange}
@@ -260,8 +294,8 @@ const AddTask = () => {
                   <label htmlFor="assigned_date" className="form-label">
                     Başlangıç Tarihi <span className="required">*</span>
                   </label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     id="assigned_date"
                     name="assigned_date"
                     value={formData.assigned_date}
@@ -274,8 +308,8 @@ const AddTask = () => {
                   <label htmlFor="end_date" className="form-label">
                     Bitiş Tarihi <span className="required">*</span>
                   </label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     id="end_date"
                     name="end_date"
                     value={formData.end_date}
@@ -291,8 +325,8 @@ const AddTask = () => {
                 <label htmlFor="from_to" className="form-label">
                   Konum / Rota <span className="optional">(Opsiyonel)</span>
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   id="from_to"
                   name="from_to"
                   placeholder="Örn: Ankara → İstanbul"
@@ -303,8 +337,67 @@ const AddTask = () => {
               </div>
 
               <div className="form-group">
+                <label htmlFor="project" className="form-label">
+                  Proje <span className="optional">(Opsiyonel)</span>
+                </label>
+                <select
+                  id="project"
+                  name="project"
+                  value={formData.project}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  style={{ background: '#1a1a2e', color: 'white' }}
+                >
+                  <option value="">Proje Seçiniz (Yok)</option>
+                  {projects.map(proj => (
+                    <option key={proj.id} value={proj.id}>{proj.title}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="priority" className="form-label">
+                    Öncelik Seviyesi <span className="optional">(Opsiyonel)</span>
+                  </label>
+                  <select
+                    id="priority"
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    style={{ background: '#1a1a2e', color: 'white' }}
+                  >
+                    <option value="LOW">Düşük</option>
+                    <option value="MEDIUM">Orta</option>
+                    <option value="HIGH">Yüksek</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="department" className="form-label">
+                    İlgilenen Departman <span className="optional">(Opsiyonel)</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="department"
+                    name="department"
+                    list="department-options"
+                    placeholder="Örn: İnsan Kaynakları"
+                    value={formData.department}
+                    onChange={handleInputChange}
+                    className="form-input"
+                  />
+                  <datalist id="department-options">
+                    {departments.map((dept, index) => (
+                      <option key={index} value={dept} />
+                    ))}
+                  </datalist>
+                </div>
+              </div>
+
+              <div className="form-group">
                 <label htmlFor="attachments" className="form-label">
-                   Dosya Ekle <span className="optional">(Opsiyonel)</span>
+                  Dosya Ekle <span className="optional">(Opsiyonel)</span>
                 </label>
                 <div className="file-input-wrapper">
                   <input
@@ -318,13 +411,13 @@ const AddTask = () => {
                   <label htmlFor="attachments" className="file-label">
                     <span className="file-icon">📎</span>
                     <span className="file-text">
-                      {formData.attachments.length > 0 
+                      {formData.attachments.length > 0
                         ? `${formData.attachments.length} dosya seçildi`
                         : 'Dosya seçin veya sürükleyin'}
                     </span>
                   </label>
                 </div>
-                
+
                 {formData.attachments.length > 0 && (
                   <div className="selected-files">
                     {formData.attachments.map((file, index) => (
@@ -377,8 +470,8 @@ const AddTask = () => {
               ) : (
                 <div className="users-grid">
                   {users.map(user => (
-                    <label 
-                      key={user.id} 
+                    <label
+                      key={user.id}
                       className={`user-card ${formData.due_to.includes(user.id) ? 'selected' : ''}`}
                     >
                       <input
@@ -389,11 +482,11 @@ const AddTask = () => {
                       />
                       <div className="user-card-content">
                         <div className="user-avatar">
-                         {user.profile_photo ? (
-                          <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
-                             ) : (
-                          formatUserName(user).charAt(0).toUpperCase()
-                            )}
+                          {user.profile_photo ? (
+                            <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
+                          ) : (
+                            formatUserName(user).charAt(0).toUpperCase()
+                          )}
                         </div>
                         <div className="user-details">
                           <h4 className="user-name">
@@ -416,7 +509,7 @@ const AddTask = () => {
 
             {/* FORM BUTTONS */}
             <div className="form-actions">
-              <button 
+              <button
                 type="button"
                 className="btn btn-cancel"
                 onClick={() => navigate('/dashboard')}
@@ -424,8 +517,8 @@ const AddTask = () => {
               >
                 ✕ İptal
               </button>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-submit"
                 disabled={saving || formData.due_to.length === 0}
               >

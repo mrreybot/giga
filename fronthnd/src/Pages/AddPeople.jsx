@@ -16,39 +16,39 @@ const AddPeople = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [userDepartment, setUserDepartment] = useState("");
   const [checkingAuth, setCheckingAuth] = useState(true);
-  
+
   const navigate = useNavigate();
 
   // Kullanıcının departmanını kontrol et
   useEffect(() => {
     const checkUserDepartment = async () => {
-      
-        console.log("🔍 Checking user authorization...");
-        
-        // Önce token'ın var olduğundan emin ol - constant'tan import edilen değeri kullan
-        const token = localStorage.getItem(ACCESS_TOKEN);
-        console.log("🔑 Token check:", token ? "Token exists" : "No token found");
-        
-        if (!token) {
-          console.warn("⚠️ No token found, redirecting to login");
-          navigate("/");
-          return;
-        }
 
-        // Backend'inizdeki UserProfileView endpoint'i
-        const response = await api.get("/api/user/profile/");
-        
-        console.log("✅ User data received:", response.data);
-        
-        // Backend'den gelen departman bilgisi
-        const dept = response.data.department || "";
-        
-        console.log("👤 User department:", dept);
-        setUserDepartment(dept);      
-        setCheckingAuth(false);
+      console.log("🔍 Checking user authorization...");
+
+      // Önce token'ın var olduğundan emin ol - constant'tan import edilen değeri kullan
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      console.log("🔑 Token check:", token ? "Token exists" : "No token found");
+
+      if (!token) {
+        console.warn("⚠️ No token found, redirecting to login");
+        navigate("/");
+        return;
+      }
+
+      // Backend'inizdeki UserProfileView endpoint'i
+      const response = await api.get("/api/user/profile/");
+
+      console.log("✅ User data received:", response.data);
+
+      // Backend'den gelen departman bilgisi
+      const dept = response.data.department || "";
+
+      console.log("👤 User department:", dept);
+      setUserDepartment(dept);
+      setCheckingAuth(false);
 
 
-      
+
     };
 
     checkUserDepartment();
@@ -56,7 +56,7 @@ const AddPeople = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // E-posta doğrulama
     if (!email.endsWith("@tuca.gov.tr")) {
       alert("Lütfen geçerli bir tuca adresi girin (@tuca.gov.tr)");
@@ -71,11 +71,11 @@ const AddPeople = () => {
 
     setLoading(true);
     setSuccessMessage("");
-    
+
     try {
       console.log("📤 Adding new user...");
-      
-      await api.post("/api/user/register/", { 
+
+      await api.post("/api/user/register/", {
         username: email,
         password: password,
         first_name: firstName,
@@ -85,8 +85,8 @@ const AddPeople = () => {
         phone: phone,
         role: role
       });
-      
-      
+
+
       // Başarılı kayıt sonrası formu temizle
       setSuccessMessage("");
       setFirstName("");
@@ -96,21 +96,21 @@ const AddPeople = () => {
       setDepartment("");
       setPhone("");
       setRole("");
-      
+
       // 3 saniye sonra mesajı kaldır
       setTimeout(() => setSuccessMessage(""), 3000);
-      
+
     } catch (error) {
       console.error("❌ Add user failed:", error.response?.data);
-      
+
       if (error.response?.data) {
         const errors = error.response.data;
         let errorMessage = "Kullanıcı eklenemedi:\n";
-        
+
         Object.keys(errors).forEach(key => {
           errorMessage += `${key}: ${errors[key]}\n`;
         });
-        
+
         alert(errorMessage);
       } else {
         alert("Kullanıcı eklenirken bir hata oluştu!");
@@ -229,6 +229,7 @@ const AddPeople = () => {
                 disabled={loading}
               >
                 <option value="">Departman Seçiniz</option>
+                <option value="Yönetim">Yönetim</option>
                 <option value="Depozito Yönetim Sistemi">Depozito Yönetim Sistemi</option>
                 <option value="Geri Kazanım ve Üretici">Geri Kazanım ve Üretici</option>
                 <option value="Çevre Koruma">Çevre Koruma</option>
@@ -288,16 +289,16 @@ const AddPeople = () => {
 
           {/* Butonlar */}
           <div className="button-group">
-            <button 
-              type="button" 
-              className="btn-secondary" 
+            <button
+              type="button"
+              className="btn-secondary"
               onClick={handleReset}
               disabled={loading}
             >
               Temizle
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn-primary"
               disabled={loading}
             >

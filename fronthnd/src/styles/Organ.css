@@ -1,290 +1,412 @@
-/* ================================
-   Genel Yapı
-================================ */
+/* Organ.css */
+
 .organ-container {
-  padding: 30px;
-  max-width: 1450px;
-  margin: auto;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 40px;
+  overflow-x: auto;
   font-family: 'Inter', sans-serif;
 }
 
-.organ-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.organ-header h1 {
-  font-size: 32px;
-  margin-bottom: 20px;
-  color: #1f2937;
-  font-weight: 700;
-}
-
-/* ================================
-   İSTATİSTİK KARTLARI
-================================ */
-.organ-stats {
+.org-structure {
+  background: white;
+  border-radius: 20px;
+  padding: 60px 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  min-width: fit-content;
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.stat-card {
-  background: #ffffff;
-  padding: 20px 30px;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-  text-align: center;
-  min-width: 150px;
-}
-
-.stat-number {
-  display: block;
-  font-size: 32px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-/* ================================
-   LOADING DURUMU
-================================ */
-.loading-state {
-  text-align: center;
-  padding: 50px;
-}
-
-.spinner {
-  font-size: 45px;
-  margin-bottom: 10px;
-}
-
-/* ================================
-   BÖLÜM BAŞLIKLARI
-================================ */
-.org-section {
-  margin-top: 50px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 12px 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  color: white;
 }
 
-.section-header h2 {
-  font-size: 22px;
+.org-tree-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
-.section-count {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-/* Renkler */
-.ceo-header { background: #1e40af; }
-.manager-header { background: #2563eb; }
-.employee-header { background: #3b82f6; }
-
-/* ================================
-   GRID YAPISI
-================================ */
-.org-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 25px;
-}
-
-/* ================================
-   KARTLAR
-================================ */
+/* CARDS COMMON */
 .org-card {
   background: white;
-  border-radius: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   padding: 20px;
-  box-shadow: 0 5px 18px rgba(0,0,0,0.08);
-  transition: all .25s ease;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
 .org-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
-/* ================================
-   KART BAŞLIK
-================================ */
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.card-role {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #718096;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
 }
-:root {
-  /* Background Colors */
-  --bg-primary: #f9fafb;
-  --bg-secondary: #f3f4f6;
-  --bg-tertiary: #e5e7eb;
-  
-  /* Card Colors */
-  --card-bg: #ffffff;
-  --card-hover: #f9fafb;
-  
-  /* Text Colors */
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-tertiary: #9ca3af;
-  
-  /* Border Colors */
-  --border-primary: #e5e7eb;
-  --border-secondary: #d1d5db;
-  
-  /* Accent Colors */
-  --accent-primary: #3b82f6;
-  --accent-secondary: #2563eb;
-  --accent-light: #dbeafe;
-  --accent-lighter: #eff6ff;
-  
-  /* Success Colors */
-  --success: #10b981;
-  --success-dark: #047857;
-  --success-light: #d1fae5;
-  
-  /* Warning Colors */
-  --warning: #f59e0b;
-  --warning-dark: #d97706;
-  --warning-light: #fef3c7;
-  
-  /* Danger Colors */
-  --danger: #ef4444;
-  --danger-dark: #dc2626;
-  
-  /* Info Colors */
-  --info-light: #dbeafe;
-  --info-dark: #1e40af;
-  
-  /* Modal Colors */
-  --modal-overlay: rgba(0, 0, 0, 0.5);
-  --modal-bg: #ffffff;
-}
-/* Avatar */
-.org-avatar {
-  width: 55px;
-  height: 55px;
+
+.card-avatar {
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  font-size: 22px;
-  font-weight: bold;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  overflow: hidden; /* ✅ EKLE */
-  position: relative; /* ✅ EKLE */
+  font-size: 24px;
+  font-weight: bold;
+  overflow: hidden;
+  border: 3px solid white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.org-avatar .avatar-image {
+.card-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
-/* Avatar renkleri role göre */
-.ceo-avatar { background: #1e3a8a; }
-.manager-avatar { background: #2563eb; }
-.employee-avatar { background: #3b82f6; }
-
-/* Role Badge */
-.role-badge {
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+.card-name {
+  font-size: 14px;
   font-weight: 600;
-  color: white;
+  color: #2d3748;
 }
 
-.ceo-badge { background: #1e40af; }
-.manager-badge { background: #2563eb; }
-.employee-badge { background: #3b82f6; }
-
-/* ================================
-   KART BODY / TEXT
-================================ */
-.card-body {
-  margin-top: 15px;
-}
-
-.user-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 12px;
-}
-
-/* INFO LIST */
-.user-info {
+/* CEO LEVEL */
+.level-ceo-container {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  align-items: center;
+  margin-bottom: 0;
 }
 
-.info-item {
+.ceo-card {
+  min-width: 250px;
+  background: linear-gradient(to bottom right, #ffffff, #f7fafc);
+  border-top: 4px solid #764ba2;
+}
+
+.vertical-line-central {
+  width: 2px;
+  height: 40px;
+  background-color: #cbd5e0;
+}
+
+/* DEPARTMENTS LEVEL */
+.level-depts-container {
   display: flex;
-  gap: 8px;
-  font-size: 14px;
-  color: #374151;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.connector-line-horizontal {
+  height: 2px;
+  background-color: #cbd5e0;
+  width: 80%;
+  /* Adjust based on grid width approximation */
+  margin-bottom: 20px;
+  /* Space before dept cards comes from vertical connectors of depts */
+  display: none;
+  /* We use a Different approach for horizontal line, CSS Grid makes it tricky to draw a perfect line across exact centers easily without fixed widths. 
+                   Let's use a pseudo-element on the grid container or just rely on visual spacing for now if simple. 
+                   Improved: Let's use a flex row for depts-grid to make lines easier? No, grid is requested for table-like. 
+                   Let's stick to a robust way: A simple horizontal bar above the depts. */
+}
+
+/* Redoing the connector strategy */
+.level-depts-container {
+  position: relative;
+  padding-top: 20px;
+}
+
+/* The horizontal line bridging all departments */
+.level-depts-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50px;
+  /* Approximate offset to cover first to last dept center */
+  right: 50px;
+  height: 2px;
+  background: #cbd5e0;
+  display: block;
+  /* Logic needs refinement in JS to be perfect, but CSS approximation: */
+  /* Better: Use flex/grid centering. */
+}
+
+/* Hacky but effective pure CSS tree lines for flex items */
+/* Actually, let's just make the depts-grid have a border top? No. */
+/* Let's keep it simple: CEO -> Line down -> Horizontal Line -> Lines down to each Dept */
+
+.level-depts-container::before {
+  /* Reset */
+  display: none;
+}
+
+/* Real implementation of lines */
+.level-depts-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  /* This container contains the grid of departments */
+}
+
+.depts-grid {
+  display: flex;
+  /* Changed from grid to flex to better manage the "tree" look and horizontal alignment */
+  flex-wrap: nowrap;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+}
+
+/* Line above all depts */
+.depts-grid::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  /* Line height from CEO is 40px total, this is at 20px mark? No. */
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: #cbd5e0;
+  /* We need to connect to CEO line. CEO line ends at top of depts-grid roughly? */
+}
+
+/* Let's fix the vertical line central from CEO */
+.vertical-line-central {
+  height: 30px;
+  /* Distance from CEO card to the horizontal bar */
+}
+
+/* Now the horizontal bar */
+.level-ceo-container {
+  position: relative;
+}
+
+.level-ceo-container::after {
+  /* This isn't flexible enough. */
+}
+
+/* New Strategy: */
+.depts-grid {
+  display: flex;
+  gap: 30px;
+  padding-top: 20px;
+  /* Space for the vertical connectors */
+  position: relative;
+}
+
+/* Horizontal line spanning the children */
+.depts-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 150px);
+  /* 100% minus the half width of outer cards roughly */
+  height: 2px;
+  background: #cbd5e0;
+}
+
+/* Add a vertical line from the center of the horizontal line up to the CEO (handled by CEO's vertical line effectively meeting this if positioned right) */
+/* Actually, CEO vertical line comes down. This horizontal line is at top of depts-grid. */
+
+.dept-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+  position: relative;
+}
+
+/* Vertical line connecting horizontal bar to dept card */
+.dept-column::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  /* Connects to the horizontal line at 0 relative to grid padding */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 20px;
+  background: #cbd5e0;
+}
+
+/* Department Card */
+.dept-header-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+.dept-title {
+  background: #f7fafc;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a5568;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.director-card {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 15px;
+  width: 100%;
+}
+
+.director-card:hover {
+  transform: none;
+  box-shadow: none;
+  background: #fafbff;
+}
+
+.empty-director {
+  padding: 20px;
+  color: #a0aec0;
+  font-size: 12px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Employees Section */
+.vertical-line-short {
+  width: 2px;
+  height: 15px;
+  background: #cbd5e0;
+}
+
+.employees-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.info-icon {
-  font-size: 16px;
+.employee-toggle-btn {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
+  z-index: 2;
+  margin-bottom: 5px;
 }
 
-/* ================================
-   EMPTY STATE
-================================ */
-.empty-role {
-  text-align: center;
-  background: #f3f4f6;
-  padding: 25px;
-  border-radius: 12px;
+.employee-toggle-btn:hover {
+  background: #edf2f7;
+  border-color: #a0aec0;
 }
 
-.empty-icon {
-  font-size: 45px;
-  display: block;
-  margin-bottom: 8px;
-  color: #9ca3af;
+.employee-list {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  margin-top: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  animation: slideDown 0.3s ease-out;
 }
 
-/* ================================
-   RESPONSIVE
-================================ */
-@media (max-width: 768px) {
-  .organ-container {
-    padding: 20px;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 
-  .organ-header h1 {
-    font-size: 26px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.employee-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f7fafc;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.employee-item:last-child {
+  border-bottom: none;
+}
+
+.employee-item:hover {
+  background: #f7fafc;
+}
+
+.emp-avatar-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #4a5568;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.emp-name {
+  font-size: 12px;
+  color: #2d3748;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .depts-grid {
+    flex-wrap: wrap;
+    width: 100%;
   }
 
-  .stat-card {
-    padding: 15px 20px;
+  .depts-grid::before {
+    display: none;
+    /* Hide horizontal connector on mobile/wrap */
   }
 
-  .section-header h2 {
-    font-size: 18px;
+  .dept-column::before {
+    display: none;
+  }
+
+  .vertical-line-central {
+    display: none;
   }
 }

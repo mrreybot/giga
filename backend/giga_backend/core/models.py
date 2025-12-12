@@ -55,6 +55,32 @@ class Mission(models.Model):
         related_name="assigned_missions",
         blank=True
     )
+
+    # Yeni Alanlar
+    PRIORITY_CHOICES = [
+        ('LOW', 'Düşük'),
+        ('MEDIUM', 'Orta'),
+        ('HIGH', 'Yüksek'),
+    ]
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='MEDIUM', verbose_name="Öncelik")
+    department = models.CharField(max_length=100, blank=True, null=True, verbose_name="İlgilenen Departman")
+
+    STATUS_CHOICES = [
+        ('PENDING', 'Yapılacak'),
+        ('IN_PROGRESS', 'Devam Ediyor'),
+        ('COMPLETED', 'Tamamlandı'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', verbose_name="Durum")
+
+    # Proje (Optional)
+    project = models.ForeignKey(
+        'Project',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='missions',
+        verbose_name="Proje"
+    )
     
     # Görevi oluşturan kullanıcı
     created_by = models.ForeignKey(
@@ -68,6 +94,16 @@ class Mission(models.Model):
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.status == 'COMPLETED':
+            self.completed = True
+        elif self.completed and self.status != 'COMPLETED':
+             # Fallback if only completed is set
+             self.status = 'COMPLETED'
+        else:
+            self.completed = False
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Mission {self.id}: {self.description[:50] if self.description else 'No description'}"
@@ -96,8 +132,17 @@ class Mission(models.Model):
     
     def can_complete(self, user):
         """Kullanıcı bu görevi tamamlayabilir mi?"""
-        # Sadece görev kendisine atanmışsa complete edebilir
-        return self.due_to.filter(id=user.id).exists()
+        # 1. Görev kendisine atanmışsa
+        if self.due_to.filter(id=user.id).exists():
+            return True
+        # 2. Görevi oluşturan kişiyse
+        if self.created_by == user:
+            return True
+        # 3. Proje yöneticisiyse
+        if self.project and self.project.members.filter(user=user, role='ADMIN').exists():
+            return True
+            
+        return False
     
 class MissionFeedback(models.Model):
     mission = models.ForeignKey(
@@ -118,6 +163,76 @@ class MissionFeedback(models.Model):
         return f"Feedback #{self.id} by {user_name} on Mission {self.mission.id}"
 
 
+class Project(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Proje Adı")
+    description = models.TextField(blank=True, null=True, verbose_name="Açıklama")
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='created_projects')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
-        user_name = f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username
-        return f"Feedback #{self.id} by {user_name} on Mission {self.mission.id}"
+        return self.title
+
+class ProjectMember(models.Model):
+    ROLE_CHOICES = [
+        ('ADMIN', 'Yönetici'),
+        ('MEMBER', 'Üye'),
+    ]
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='members')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='project_memberships')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='MEMBER')
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('project', 'user')
+
+class ProjectInvite(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Bekliyor'),
+        ('ACCEPTED', 'Kabul Edildi'),
+        ('REJECTED', 'Reddedildi'),
+    ]
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='invites')
+    invited_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='project_invites', null=True, blank=True)
+    email = models.EmailField(blank=True, null=True, verbose_name="Davet Edilen E-posta") # Eğer user yoksa
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    invited_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_invites')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.project.title} - {self.email or self.invited_user.username}"
+
+
+class ProjectComment(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='project_comments')
+    content = models.TextField(verbose_name="Yorum")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.project.title}"
+
+
+class Notification(models.Model):
+    TYPE_CHOICES = [
+        ('MISSION_ASSIGN', 'Görev Ataması'),
+        ('PROJECT_INVITE', 'Proje Daveti'),
+        ('PROJECT_COMMENT', 'Yeni Yorum'),
+        ('MISSION_COMPLETE', 'Görev Tamamlandı'),
+    ]
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    message = models.TextField()
+    related_id = models.IntegerField(null=True, blank=True) # ID of related object (Mission, Project, etc.)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.type}"

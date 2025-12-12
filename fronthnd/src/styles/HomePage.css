@@ -6,48 +6,49 @@
   --bg-primary: #f9fafb;
   --bg-secondary: #f3f4f6;
   --bg-tertiary: #e5e7eb;
-  
+
   /* Card Colors */
   --card-bg: #ffffff;
   --card-hover: #f9fafb;
-  
+
   /* Text Colors */
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --text-tertiary: #9ca3af;
-  
+
   /* Border Colors */
   --border-primary: #e5e7eb;
   --border-secondary: #d1d5db;
-  
+
   /* Accent Colors */
   --accent-primary: #3b82f6;
   --accent-secondary: #2563eb;
   --accent-light: #dbeafe;
   --accent-lighter: #eff6ff;
-  
+
   /* Success Colors */
   --success: #10b981;
   --success-dark: #047857;
   --success-light: #d1fae5;
-  
+
   /* Warning Colors */
   --warning: #f59e0b;
   --warning-dark: #d97706;
   --warning-light: #fef3c7;
-  
+
   /* Danger Colors */
   --danger: #ef4444;
   --danger-dark: #dc2626;
-  
+
   /* Info Colors */
   --info-light: #dbeafe;
   --info-dark: #1e40af;
-  
+
   /* Modal Colors */
   --modal-overlay: rgba(0, 0, 0, 0.5);
   --modal-bg: #ffffff;
 }
+
 .home-page {
   min-height: 100vh;
   background: var(--bg-primary);
@@ -87,7 +88,9 @@
   align-items: center;
 }
 
-.nav-btn, .refresh-btn, .logout-btn {
+.nav-btn,
+.refresh-btn,
+.logout-btn {
   padding: 0.5rem 1rem;
   border: 1px solid var(--border-secondary);
   border-radius: 4px;
@@ -299,8 +302,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Gün İsimleri */
@@ -370,6 +378,11 @@
   margin-bottom: 0.5rem;
 }
 
+.weekend-day {
+  color: #ef4444;
+  /* Red color for weekends */
+}
+
 /* Görev İşaretleyicileri */
 .mission-indicators {
   display: flex;
@@ -405,7 +418,9 @@
   transform: translateY(-1px);
 }
 
-.start-flag, .end-flag, .middle-dot {
+.start-flag,
+.end-flag,
+.middle-dot {
   font-size: 0.75rem;
 }
 
@@ -463,6 +478,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -520,8 +536,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .selected-date-modal .modal-content {
@@ -540,6 +561,7 @@
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -793,7 +815,7 @@
   .calendar-day {
     min-height: 100px;
   }
-  
+
   .day-number {
     font-size: 1rem;
   }
@@ -803,47 +825,47 @@
   .home-header {
     padding: 1rem;
   }
-  
+
   .header-content {
     flex-direction: column;
-        gap: 1rem;
+    gap: 1rem;
   }
-  
+
   .header-actions {
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .calendar-section {
     padding: 1.25rem;
   }
-  
+
   .calendar-title h2 {
     font-size: 1.25rem;
   }
-  
+
   .calendar-day {
     min-height: 90px;
     padding: 0.5rem;
   }
-  
+
   .day-number {
     font-size: 0.875rem;
   }
-  
+
   .mission-indicator {
     font-size: 0.625rem;
     padding: 2px 4px;
   }
-  
+
   .upcoming-card {
     flex-direction: column;
   }
-  
+
   .upcoming-date {
     width: 100%;
     flex-direction: row;

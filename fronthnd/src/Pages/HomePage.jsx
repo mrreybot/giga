@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { ACCESS_TOKEN } from "../services/constant";
 import "../styles/HomePage.css";
@@ -8,6 +8,7 @@ const MISSIONS_ENDPOINT = "/api/missions/";
 
 const HomePage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const upcomingMissionsRef = useRef(null);
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ const HomePage = () => {
   useEffect(() => {
     if (location.state?.scrollToUpcoming && upcomingMissionsRef.current) {
       setTimeout(() => {
-        upcomingMissionsRef.current.scrollIntoView({ 
+        upcomingMissionsRef.current.scrollIntoView({
           behavior: 'smooth',
           block: 'start'
         });
@@ -70,6 +71,7 @@ const HomePage = () => {
   // Belirli bir tarihteki görevleri bul
   const getMissionsForDate = (day, month, year) => {
     return missions.filter(mission => {
+      if (!mission) return false;
       const startDate = new Date(mission.assigned_date);
       const endDate = new Date(mission.end_date);
       const checkDate = new Date(year, month, day);
@@ -171,6 +173,12 @@ const HomePage = () => {
     );
   };
 
+  const isWeekend = (day, month, year) => {
+    const date = new Date(year, month, day);
+    const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+    return dayOfWeek === 0 || dayOfWeek === 6;
+  };
+
   const calendarDays = generateCalendarDays();
   const monthNames = [
     "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
@@ -180,7 +188,7 @@ const HomePage = () => {
 
   // İstatistikler
   const totalMissions = missions.length;
-  const completedMissions = missions.filter(m => m.completed).length;
+  const completedMissions = missions.filter(m => m && m.completed).length;
   const pendingMissions = totalMissions - completedMissions;
   const completionRate = totalMissions > 0 ? ((completedMissions / totalMissions) * 100).toFixed(0) : 0;
 
@@ -190,7 +198,7 @@ const HomePage = () => {
       <header className="home-header">
         <div className="header-content">
           <div className="header-actions">
-            
+
           </div>
         </div>
       </header>
@@ -198,25 +206,22 @@ const HomePage = () => {
       <div className="home-container">
         {/* İstatistik Kartları */}
         <div className="stats-grid">
-          <div className="stat-card total-card">
-            
+          <div className="stat-card total-card" onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer' }}>
             <div className="stat-info">
               <h3>Toplam Görev</h3>
               <p className="stat-number">{totalMissions}</p>
             </div>
           </div>
 
-          <div className="stat-card completed-card">
-            
+          <div className="stat-card completed-card" onClick={() => navigate('/dashboard', { state: { filterStatus: 'completed' } })} style={{ cursor: 'pointer' }}>
             <div className="stat-info">
               <h3>Tamamlanan</h3>
               <p className="stat-number">{completedMissions}</p>
             </div>
           </div>
-          
 
-          <div className="stat-card pending-card">
-            
+
+          <div className="stat-card pending-card" onClick={() => navigate('/dashboard', { state: { filterStatus: 'pending' } })} style={{ cursor: 'pointer' }}>
             <div className="stat-info">
               <h3>Devam Eden</h3>
               <p className="stat-number">{pendingMissions}</p>
@@ -224,7 +229,6 @@ const HomePage = () => {
           </div>
 
           <div className="stat-card rate-card">
-            
             <div className="stat-info">
               <h3>Tamamlanma Oranı</h3>
               <p className="stat-number">{completionRate}%</p>
@@ -268,23 +272,24 @@ const HomePage = () => {
                 <div className="calendar-grid">
                   {calendarDays.map((dateObj, index) => {
                     const dayMissions = getMissionsForDate(dateObj.day, dateObj.month, dateObj.year);
-                    const hasStartMission = dayMissions.some(m => 
+                    const hasStartMission = dayMissions.some(m =>
                       isMissionStartDate(dateObj.day, dateObj.month, dateObj.year, m)
                     );
-                    const hasEndMission = dayMissions.some(m => 
+                    const hasEndMission = dayMissions.some(m =>
                       isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, m)
                     );
 
                     return (
                       <div
                         key={index}
-                        className={`calendar-day ${!dateObj.isCurrentMonth ? 'other-month' : ''} ${
-                          isToday(dateObj.day, dateObj.month, dateObj.year) ? 'today' : ''
-                        } ${dayMissions.length > 0 ? 'has-missions' : ''}`}
+                        className={`calendar-day ${!dateObj.isCurrentMonth ? 'other-month' : ''} ${isToday(dateObj.day, dateObj.month, dateObj.year) ? 'today' : ''
+                          } ${dayMissions.length > 0 ? 'has-missions' : ''}`}
                         onClick={() => setSelectedDate(dateObj)}
                       >
-                        <div className="day-number">{dateObj.day}</div>
-                        
+                        <div className={`day-number ${isWeekend(dateObj.day, dateObj.month, dateObj.year) ? 'weekend-day' : ''}`}>
+                          {dateObj.day}
+                        </div>
+
                         {/* Görev İşaretleyicileri */}
                         {dayMissions.length > 0 && (
                           <div className="mission-indicators">
@@ -303,9 +308,9 @@ const HomePage = () => {
                                   <span className="end-flag">🏁</span>
                                 )}
                                 {!isMissionStartDate(dateObj.day, dateObj.month, dateObj.year, mission) &&
-                                 !isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, mission) && (
-                                  <span className="middle-dot">●</span>
-                                )}
+                                  !isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, mission) && (
+                                    <span className="middle-dot">●</span>
+                                  )}
                               </div>
                             ))}
                             {dayMissions.length > 3 && (
@@ -365,16 +370,16 @@ const HomePage = () => {
                           <h4>{mission.description}</h4>
                           {mission.completed && <span className="completed-badge">✓ Tamamlandı</span>}
                         </div>
-                        
+
                         <div className="mission-card-body">
                           <p className="mission-dates">
                             {formatDate(mission.assigned_date)} - {formatDate(mission.end_date)}
                           </p>
-                          
+
                           {mission.from_to && (
                             <p className="mission-location">📍 {mission.from_to}</p>
                           )}
-                          
+
                           {mission.assigned_users && mission.assigned_users.length > 0 && (
                             <div className="mission-users">
                               <strong>👤 Atanan:</strong>
@@ -385,11 +390,11 @@ const HomePage = () => {
                               ))}
                             </div>
                           )}
-                          
+
                           {isMissionStartDate(selectedDate.day, selectedDate.month, selectedDate.year, mission) && (
                             <span className="date-marker start-marker">🚩 Başlangıç Tarihi</span>
                           )}
-                          
+
                           {isMissionEndDate(selectedDate.day, selectedDate.month, selectedDate.year, mission) && (
                             <span className="date-marker end-marker">🏁 Bitiş Tarihi</span>
                           )}
@@ -408,7 +413,7 @@ const HomePage = () => {
           <h2>Yaklaşan Görevler</h2>
           <div className="upcoming-list">
             {missions
-              .filter(m => !m.completed && new Date(m.end_date) >= new Date())
+              .filter(m => m && !m.completed && new Date(m.end_date) >= new Date())
               .sort((a, b) => new Date(a.end_date) - new Date(b.end_date))
               .slice(0, 5)
               .map(mission => (
@@ -430,8 +435,8 @@ const HomePage = () => {
                   </div>
                 </div>
               ))}
-            
-            {missions.filter(m => !m.completed && new Date(m.end_date) >= new Date()).length === 0 && (
+
+            {missions.filter(m => m && !m.completed && new Date(m.end_date) >= new Date()).length === 0 && (
               <p className="no-upcoming">Yaklaşan görev bulunmamaktadır.</p>
             )}
           </div>

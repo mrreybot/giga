@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Mission, MissionAttachment, MissionFeedback, Project, ProjectMember, ProjectInvite, ProjectComment, Notification
+from .models import CustomUser, Mission, MissionAttachment, MissionFeedback, Project, ProjectMember, ProjectInvite
 
 
 # =======================
@@ -104,65 +104,6 @@ class MissionFeedbackSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'comment', 'created_at']
         read_only_fields = ['id', 'user', 'created_at']
 
-# =======================
-# PROJECT SERIALIZERS
-# =======================
-class ProjectMemberSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer(read_only=True)
-    
-    class Meta:
-        model = ProjectMember
-        fields = ['id', 'user', 'role', 'joined_at']
-
-class ProjectInviteSerializer(serializers.ModelSerializer):
-    invited_by_name = serializers.CharField(source='invited_by.username', read_only=True)
-    project_name = serializers.CharField(source='project.title', read_only=True)
-
-    class Meta:
-        model = ProjectInvite
-        fields = ['id', 'project', 'project_name', 'email', 'status', 'invited_by', 'invited_by_name', 'created_at']
-        read_only_fields = ['id', 'invited_by', 'created_at', 'status', 'project_name']
-
-class ProjectCommentSerializer(serializers.ModelSerializer):
-    user_details = CustomUserSerializer(source='user', read_only=True)
-
-    class Meta:
-        model = ProjectComment
-        fields = ['id', 'project', 'user', 'user_details', 'content', 'created_at']
-        read_only_fields = ['id', 'user', 'created_at', 'project']
-
-class ProjectSerializer(serializers.ModelSerializer):
-    members = ProjectMemberSerializer(many=True, read_only=True)
-    created_by_details = CustomUserSerializer(source='created_by', read_only=True)
-    comments = ProjectCommentSerializer(many=True, read_only=True)
-    is_member = serializers.SerializerMethodField()
-    my_role = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Project
-        fields = ['id', 'title', 'description', 'created_by', 'created_by_details', 'created_at', 'updated_at', 'members', 'comments', 'is_member', 'my_role']
-        read_only_fields = ['id', 'created_by', 'created_at', 'updated_at']
-
-    def get_is_member(self, obj):
-        request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            return obj.members.filter(user=request.user).exists()
-        return False
-    
-    def get_my_role(self, obj):
-        request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            member = obj.members.filter(user=request.user).first()
-            return member.role if member else None
-        return None
-
-    def create(self, validated_data):
-        user = self.context['request'].user
-        project = Project.objects.create(created_by=user, **validated_data)
-        # Oluşturan kişiyi admin olarak ekle
-        ProjectMember.objects.create(project=project, user=user, role='ADMIN')
-        return project
-
 
 # =======================
 # MISSION
@@ -179,7 +120,6 @@ class MissionSerializer(serializers.ModelSerializer):
 
     due_to_details = CustomUserSerializer(source='due_to', many=True, read_only=True)
     created_by_details = CustomUserSerializer(source='created_by', read_only=True)
-    project_title = serializers.CharField(source='project.title', read_only=True)
 
     due_to = serializers.PrimaryKeyRelatedField(
         queryset=CustomUser.objects.all(),
@@ -188,7 +128,6 @@ class MissionSerializer(serializers.ModelSerializer):
         required=False
     )
 
-    can_view = serializers.SerializerMethodField()
     can_edit = serializers.SerializerMethodField()
     can_complete = serializers.SerializerMethodField()
 
@@ -200,14 +139,10 @@ class MissionSerializer(serializers.ModelSerializer):
             'attachments', 'feedbacks',
             'created_by', 'created_by_details',
             'completed', 'created_at', 'updated_at',
-            'new_attachments', 'can_view', 'can_edit', 'can_complete',
-            'project', 'project_title', 'priority', 'department', 'status'
+            'new_attachments', 'can_edit', 'can_complete',
+            'project'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'created_by']
-
-    def get_can_view(self, obj):
-        request = self.context.get('request')
-        return obj.can_view(request.user) if request else False
 
     def get_can_edit(self, obj):
         request = self.context.get('request')
@@ -252,18 +187,6 @@ class MissionSerializer(serializers.ModelSerializer):
 
         rep['assigned_users'] = rep.pop('due_to_details', [])
         rep['created_by_info'] = rep.pop('created_by_details', None)
+        rep.pop('due_to', None)
+
         return rep
-
-# =======================
-# NOTIFICATION SERIALIZER
-# =======================
-class NotificationSerializer(serializers.ModelSerializer):
-    created_at_formatted = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = Notification
-        fields = ['id', 'user', 'type', 'message', 'related_id', 'is_read', 'created_at', 'created_at_formatted']
-        read_only_fields = ['id', 'user', 'created_at', 'type', 'message', 'related_id']
-
-    def get_created_at_formatted(self, obj):
-        return obj.created_at.strftime("%d.%m.%Y %H:%M")

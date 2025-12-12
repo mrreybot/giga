@@ -16,7 +16,7 @@ const Archive = () => {
 
   useEffect(() => {
     fetchArchivedMissions();
-    
+
   }, []);
 
   const fetchArchivedMissions = async () => {
@@ -27,11 +27,11 @@ const Archive = () => {
       const missions = Array.isArray(response.data?.results)
         ? response.data.results
         : Array.isArray(response.data)
-        ? response.data
-        : [];
+          ? response.data
+          : [];
 
       const completed = missions
-        .filter((m) => m.completed === true)
+        .filter((m) => m && m.completed === true)
         .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
 
       setArchivedMissions(completed);
@@ -57,10 +57,10 @@ const Archive = () => {
   const formatDate = (dateString) =>
     dateString
       ? new Date(dateString).toLocaleDateString("tr-TR", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
       : "-";
 
   const formatUserBlock = (user) => {

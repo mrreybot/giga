@@ -49,7 +49,7 @@ const Statistics = () => {
   const [missions, setMissions] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  
+
 
   useEffect(() => {
     fetchData();
@@ -70,7 +70,7 @@ const Statistics = () => {
       setCurrentUser(profileRes.data);
       // Görev verisinin results içinde array olarak gelmesi beklenir
       setMissions(Array.isArray(missionsRes.data.results) ? missionsRes.data.results : []);
-      
+
       // Kullanıcı verisinin işlenmesi
       let userData = [];
       if (Array.isArray(usersRes.data)) {
@@ -102,7 +102,7 @@ const Statistics = () => {
    * Rol etiketini Türkçe'ye çevirir.
    */
   const getRoleLabel = (role) => {
-    switch(role) {
+    switch (role) {
       case 'CEO': return 'CEO';
       case 'MANAGER': return 'Yönetici';
       case 'EMPLOYEE': return 'Çalışan';
@@ -115,8 +115,8 @@ const Statistics = () => {
    */
   const getFilteredMissions = (userId = null) => {
     if (!userId) return missions;
-    return missions.filter(m => 
-      m.assigned_users?.some(u => u.id === userId) || m.assigner?.id === userId // Hem atanmış hem de atayan kişi olarak görevleri dahil edebiliriz
+    return missions.filter(m =>
+      m && (m.assigned_users?.some(u => u.id === userId) || m.assigner?.id === userId)
     );
   };
 
@@ -125,14 +125,14 @@ const Statistics = () => {
    */
   const calculateStats = (userMissions) => {
     const total = userMissions.length;
-    const completed = userMissions.filter(m => m.completed).length;
+    const completed = userMissions.filter(m => m && m.completed).length;
     const pending = total - completed;
     const completionRate = total > 0 ? ((completed / total) * 100).toFixed(1) : 0;
 
     const now = new Date();
     // Tamamlanmamış ve bitiş tarihi geçmiş görevler
-    const overdue = userMissions.filter(m => 
-      !m.completed && m.end_date && new Date(m.end_date) < now
+    const overdue = userMissions.filter(m =>
+      m && !m.completed && m.end_date && new Date(m.end_date) < now
     ).length;
 
     return { total, completed, pending, overdue, completionRate: parseFloat(completionRate) };
@@ -144,7 +144,7 @@ const Statistics = () => {
   const getMonthlyTrend = (userMissions) => {
     const months = {};
     const now = new Date();
-    
+
     // Son 6 ayı oluştur
     for (let i = 5; i >= 0; i--) {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -153,11 +153,12 @@ const Statistics = () => {
     }
 
     userMissions.forEach(mission => {
+      if (!mission) return;
       // Görevin tamamlandığı veya atandığı/oluşturulduğu ayı kullanabiliriz.
       // Burada bitiş tarihini (end_date) baz alıyoruz.
       const endDate = mission.end_date ? new Date(mission.end_date) : new Date();
       const monthKey = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}`;
-      
+
       if (months[monthKey]) {
         months[monthKey].total++;
         if (mission.completed) {
@@ -182,7 +183,7 @@ const Statistics = () => {
    * Tamamlanan görevlerin süre aralıklarına göre dağılımını hesaplar.
    */
   const getCompletionTimes = (userMissions) => {
-    const completedMissions = userMissions.filter(m => m.completed && m.assigned_date);
+    const completedMissions = userMissions.filter(m => m && m.completed && m.assigned_date);
     const times = {
       '0-3 gün': 0,
       '4-7 gün': 0,
@@ -192,6 +193,7 @@ const Statistics = () => {
     };
 
     completedMissions.forEach(mission => {
+      if (!mission) return;
       // API'den dönen verinin start/completion tarihini kullanmak daha doğru olur.
       // Örnekte `assigned_date` ve `end_date` kullanılıyor, bu süre farkı görev süresi olarak ele alınır.
       const start = new Date(mission.assigned_date);
@@ -231,15 +233,15 @@ const Statistics = () => {
    */
   const getRadarData = (userMissions) => {
     const stats = calculateStats(userMissions);
-    const completedMissions = userMissions.filter(m => m.completed && m.assigned_date);
+    const completedMissions = userMissions.filter(m => m && m.completed && m.assigned_date);
 
     // Ortalama Tamamlanma Süresi (Gün)
     const totalCompletionDays = completedMissions.reduce((acc, m) => {
-        const start = new Date(m.assigned_date);
-        const end = new Date(m.end_date);
-        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-        return acc + days;
-      }, 0);
+      const start = new Date(m.assigned_date);
+      const end = new Date(m.end_date);
+      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      return acc + days;
+    }, 0);
     const avgCompletionTime = completedMissions.length > 0
       ? totalCompletionDays / completedMissions.length
       : 0;
@@ -248,7 +250,7 @@ const Statistics = () => {
     const totalMissions = Math.max(1, stats.total);
     const completedRate = stats.completionRate;
     const onTimeRate = 100 - (stats.overdue / totalMissions) * 100;
-    
+
     // Verimlilik: Tamamlanan görev sayısı / (Ortalama süre + 1) * Ölçeklendirme faktörü
     const productivity = Math.min(100, (stats.completed / Math.max(1, avgCompletionTime)) * 20);
     // Aktiflik: Toplam görev sayısı / Maksimum görev sayısı * 100 (Maksimum görev 20 kabul edildi)
@@ -274,6 +276,7 @@ const Statistics = () => {
     const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
     const monthMissions = missions.filter(m => {
+      if (!m) return false;
       const endDate = m.end_date ? new Date(m.end_date) : new Date();
       return endDate >= monthStart && endDate <= monthEnd;
     });
@@ -324,17 +327,17 @@ const Statistics = () => {
   const isEmployee = currentUser?.role === 'EMPLOYEE';
 
   // Çalışanın sadece kendini görmesini sağlar
-  const visibleUsers = isEmployee 
+  const visibleUsers = isEmployee
     ? [currentUser]
-    : canViewAllUsers 
-      ? users 
+    : canViewAllUsers
+      ? users
       : users.filter(u => u.role === 'EMPLOYEE'); // Manager sadece çalışanları görür (varsayım)
 
   // Eğer çalışan kendi sayfasındaysa, selectedUser'ı kendi olarak ayarla
-   
-  
+
+
   // Çalışan kendi sayfasını gördüğünde, başlıklar ve kartlar onun kişisel verilerini gösterir.
-  
+
   // CEO ve MANAGER ana sayfada (selectedUser=null) şirket genelini,
   // Employee ise her zaman kendi detaylarını görür.
 
@@ -349,9 +352,9 @@ const Statistics = () => {
           <div className="header-title">
             <h1> İstatistikler & Raporlar</h1>
             <p className="header-subtitle">
-              {isEmployee || selectedUser 
+              {isEmployee || selectedUser
                 ? `${formatUserName(selectedUser || currentUser)}'ın performans raporu`
-                : canViewAllUsers 
+                : canViewAllUsers
                   ? 'Şirket geneli istatistikler'
                   : 'Çalışan istatistikleri'}
             </p>
@@ -363,7 +366,7 @@ const Statistics = () => {
       </header>
 
       <div className="statistics-container">
-        
+
         {/* CEO/MANAGER Genel Özet ve Grafikler (selectedUser yoksa) */}
         {!selectedUser && !isEmployee && (
           <>
@@ -419,24 +422,24 @@ const Statistics = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis dataKey="month" stroke="#6b7280" />
                     <YAxis stroke="#6b7280" />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                     />
                     <Legend />
-                    <Area 
-                      type="monotone" 
-                      dataKey="toplam" 
+                    <Area
+                      type="monotone"
+                      dataKey="toplam"
                       stackId="1"
-                      stroke={COLORS.primary} 
+                      stroke={COLORS.primary}
                       fill={COLORS.primary}
                       fillOpacity={0.4}
                       name="Toplam Görev"
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="tamamlanan" 
+                    <Area
+                      type="monotone"
+                      dataKey="tamamlanan"
                       stackId="2"
-                      stroke={COLORS.completed} 
+                      stroke={COLORS.completed}
                       fill={COLORS.completed}
                       fillOpacity={0.8}
                       name="Tamamlanan"
@@ -454,7 +457,7 @@ const Statistics = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                       <XAxis dataKey="name" stroke="#6b7280" />
                       <YAxis stroke="#6b7280" />
-                      <Tooltip 
+                      <Tooltip
                         contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                       />
                       <Legend />
@@ -498,7 +501,7 @@ const Statistics = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis type="number" stroke="#6b7280" />
                     <YAxis dataKey="name" type="category" stroke="#6b7280" width={100} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                     />
                     <Bar dataKey="value" fill={COLORS.secondary} name="Görev Sayısı" />
@@ -532,7 +535,7 @@ const Statistics = () => {
                       <h3>Tamamlanma Oranı</h3>
                       <p className="card-number">{displayStats.completionRate}%</p>
                       <div className="progress-bar">
-                        <div 
+                        <div
                           className="progress-fill"
                           style={{ width: `${displayStats.completionRate}%`, backgroundColor: COLORS.primary }}
                         />
@@ -574,21 +577,21 @@ const Statistics = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                         <XAxis dataKey="month" stroke="#6b7280" />
                         <YAxis stroke="#6b7280" />
-                        <Tooltip 
+                        <Tooltip
                           contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                         />
                         <Legend />
-                        <Line 
-                          type="monotone" 
-                          dataKey="tamamlanan" 
-                          stroke={COLORS.completed} 
+                        <Line
+                          type="monotone"
+                          dataKey="tamamlanan"
+                          stroke={COLORS.completed}
                           strokeWidth={3}
                           name="Tamamlanan"
                         />
-                        <Line 
-                          type="monotone" 
-                          dataKey="toplam" 
-                          stroke={COLORS.primary} 
+                        <Line
+                          type="monotone"
+                          dataKey="toplam"
+                          stroke={COLORS.primary}
                           strokeWidth={3}
                           name="Toplam Görev"
                         />
@@ -604,11 +607,11 @@ const Statistics = () => {
                         <PolarGrid stroke="#e5e7eb" />
                         <PolarAngleAxis dataKey="metric" stroke="#6b7280" />
                         <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#6b7280" />
-                        <Radar 
-                          name="Performans Değeri" 
-                          dataKey="value" 
-                          stroke={COLORS.primary} 
-                          fill={COLORS.primary} 
+                        <Radar
+                          name="Performans Değeri"
+                          dataKey="value"
+                          stroke={COLORS.primary}
+                          fill={COLORS.primary}
                           fillOpacity={0.6}
                         />
                         <Tooltip />
@@ -648,7 +651,7 @@ const Statistics = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                         <XAxis dataKey="name" stroke="#6b7280" />
                         <YAxis stroke="#6b7280" />
-                        <Tooltip 
+                        <Tooltip
                           contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                         />
                         <Bar dataKey="value" fill={COLORS.accent} name="Görev Sayısı" />
@@ -668,21 +671,21 @@ const Statistics = () => {
                   {visibleUsers.map(user => {
                     const userMissions = getFilteredMissions(user.id);
                     const userStats = calculateStats(userMissions);
-                    
+
                     return (
-                      <div 
-                        key={user.id} 
+                      <div
+                        key={user.id}
                         className="user-stat-card"
                         onClick={() => setSelectedUser(user)}
                       >
                         <div className="user-header">
                           <div className="user-avatar-large">
-                             {/* BU KISMI DEĞİŞTİRİN */}
-                                {user.profile_photo ? (
-                                  <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
-                                ) : (
-                                  formatUserName(user).charAt(0).toUpperCase()
-                                )}
+                            {/* BU KISMI DEĞİŞTİRİN */}
+                            {user.profile_photo ? (
+                              <img src={user.profile_photo} alt={formatUserName(user)} className="avatar-image" />
+                            ) : (
+                              formatUserName(user).charAt(0).toUpperCase()
+                            )}
                           </div>
                           <div className="user-info">
                             <h3>{formatUserName(user)}</h3>
@@ -698,11 +701,11 @@ const Statistics = () => {
                             <span className="stat-label">Tamamlanma Oranı</span>
                             <span className="stat-value">{userStats.completionRate}%</span>
                             <div className="mini-progress">
-                              <div 
+                              <div
                                 className="mini-progress-fill"
-                                style={{ 
+                                style={{
                                   width: `${userStats.completionRate}%`,
-                                  backgroundColor: COLORS.completed 
+                                  backgroundColor: COLORS.completed
                                 }}
                               />
                             </div>
@@ -759,7 +762,7 @@ const Statistics = () => {
                   <h3>Tamamlanma Oranı</h3>
                   <p className="card-number">{displayStats.completionRate}%</p>
                   <div className="progress-bar">
-                    <div 
+                    <div
                       className="progress-fill"
                       style={{ width: `${displayStats.completionRate}%`, backgroundColor: COLORS.primary }}
                     />
@@ -800,24 +803,24 @@ const Statistics = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis dataKey="month" stroke="#6b7280" />
                     <YAxis stroke="#6b7280" />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
-                    /> 
-                     <Legend />
-                    <Area 
-                      type="monotone" 
-                      dataKey="toplam" 
+                    />
+                    <Legend />
+                    <Area
+                      type="monotone"
+                      dataKey="toplam"
                       stackId="1"
-                      stroke={COLORS.primary} 
+                      stroke={COLORS.primary}
                       fill={COLORS.primary}
                       fillOpacity={0.4}
                       name="Toplam Görev"
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="tamamlanan" 
+                    <Area
+                      type="monotone"
+                      dataKey="tamamlanan"
                       stackId="2"
-                      stroke={COLORS.completed} 
+                      stroke={COLORS.completed}
                       fill={COLORS.completed}
                       fillOpacity={0.8}
                       name="Tamamlanan"
@@ -827,61 +830,61 @@ const Statistics = () => {
               </div>
 
               <div className="chart-card">
-                  <h3>Performans Metrikleriniz</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <RadarChart data={getRadarData(displayMissions)}>
-                      <PolarGrid stroke="#e5e7eb" />
-                      <PolarAngleAxis dataKey="metric" stroke="#6b7280" />
-                      <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#6b7280" />
-                      <Radar 
-                        name="Performans Değeri" 
-                        dataKey="value" 
-                        stroke={COLORS.primary} 
-                        fill={COLORS.primary} 
-                        fillOpacity={0.6}
-                      />
-                      <Tooltip />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
+                <h3>Performans Metrikleriniz</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <RadarChart data={getRadarData(displayMissions)}>
+                    <PolarGrid stroke="#e5e7eb" />
+                    <PolarAngleAxis dataKey="metric" stroke="#6b7280" />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#6b7280" />
+                    <Radar
+                      name="Performans Değeri"
+                      dataKey="value"
+                      stroke={COLORS.primary}
+                      fill={COLORS.primary}
+                      fillOpacity={0.6}
+                    />
+                    <Tooltip />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
 
-                <div className="chart-card">
-                  <h3>Görev Durumu</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={getStatusDistribution(displayMissions)}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {getStatusDistribution(displayMissions).map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="chart-card">
+                <h3>Görev Durumu</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={getStatusDistribution(displayMissions)}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {getStatusDistribution(displayMissions).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
 
-                <div className="chart-card">
-                  <h3>Tamamlanma Süreleri</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={getCompletionTimes(displayMissions)}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" stroke="#6b7280" />
-                      <YAxis stroke="#6b7280" />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
-                      />
-                      <Bar dataKey="value" fill={COLORS.accent} name="Görev Sayısı" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="chart-card">
+                <h3>Tamamlanma Süreleri</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={getCompletionTimes(displayMissions)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="name" stroke="#6b7280" />
+                    <YAxis stroke="#6b7280" />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
+                    />
+                    <Bar dataKey="value" fill={COLORS.accent} name="Görev Sayısı" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </>
         )}
