@@ -59,6 +59,19 @@ const ProjectList = () => {
         }
     };
 
+    const handleDeleteProject = async (id, e) => {
+        e.stopPropagation(); // Card click event'ini engelle
+        if (!window.confirm("Bu projeyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) return;
+
+        try {
+            await api.delete(`/api/projects/${id}/`);
+            fetchProjects();
+        } catch (err) {
+            console.error("Proje silinemedi:", err);
+            alert("Proje silinirken hata oluştu.");
+        }
+    };
+
     return (
         <div className="projects-container">
             <div className="projects-header">
@@ -96,8 +109,32 @@ const ProjectList = () => {
                         <div className="project-card-header">
                             <h3 className="project-title">{project.title}</h3>
                             {project.my_role === 'ADMIN' && <span className="admin-badge">Yönetici</span>}
+                            {project.am_i_creator && (
+                                <button
+                                    className="delete-project-btn"
+                                    onClick={(e) => handleDeleteProject(project.id, e)}
+                                    title="Projeyi Sil"
+                                >
+                                    🗑️
+                                </button>
+                            )}
                         </div>
                         <p className="project-description">{project.description || 'Açıklama yok'}</p>
+
+                        {/* Progress Bar */}
+                        <div className="project-progress-section">
+                            <div className="progress-info">
+                                <span>İlerleme</span>
+                                <span>%{project.progress || 0}</span>
+                            </div>
+                            <div className="progress-bar-container">
+                                <div
+                                    className="progress-bar-fill"
+                                    style={{ width: `${project.progress || 0}%` }}
+                                ></div>
+                            </div>
+                        </div>
+
                         <div className="project-footer">
                             <span className="member-count">👥 {project.members && project.members.length} Üye</span>
                         </div>

@@ -14,10 +14,16 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const [hoveredMission, setHoveredMission] = useState(null);
+  // View Selection
+  const [viewMode, setViewMode] = useState('calendar'); // 'calendar' | 'gantt'
 
   // Ay ve yıl navigation için
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
+
+
+
+
 
   useEffect(() => {
     fetchMissions();
@@ -180,6 +186,55 @@ const HomePage = () => {
   };
 
   const calendarDays = generateCalendarDays();
+
+  // --- GANTT LOGIC ---
+  const getGanttPosition = (mission) => {
+    // 1. Define View Boundaries from calendarDays
+    if (!calendarDays.length) return null;
+
+    const first = calendarDays[0];
+    const last = calendarDays[calendarDays.length - 1];
+
+    const viewStart = new Date(first.year, first.month, first.day, 0, 0, 0, 0);
+    const viewEnd = new Date(last.year, last.month, last.day, 23, 59, 59, 999);
+
+    // 2. Mission Boundaries
+    const mStart = new Date(mission.assigned_date);
+    const mEnd = new Date(mission.end_date);
+    mStart.setHours(0, 0, 0, 0);
+    mEnd.setHours(23, 59, 59, 999);
+
+    // 3. Check Overlap
+    if (mEnd < viewStart || mStart > viewEnd) return null;
+
+    // 4. Calculate Coordinates (Percentages)
+    const totalViewMs = viewEnd.getTime() - viewStart.getTime();
+
+    // Clamp start
+    const visibleStart = mStart < viewStart ? viewStart : mStart;
+    const offsetMs = visibleStart.getTime() - viewStart.getTime();
+    const leftPercent = (offsetMs / totalViewMs) * 100;
+
+    // Clamp end
+    const visibleEnd = mEnd > viewEnd ? viewEnd : mEnd;
+    // Duration is visibleEnd - visibleStart. 
+    // Add roughly 1 day (86400000ms) to include the last day fully in visual block? 
+    // Actually viewEnd includes the full last day (23:59).
+    // Let's use duration ms.
+    const durationMs = visibleEnd.getTime() - visibleStart.getTime();
+    // To prevent 0 width for same day, ensure min width of 1 day equivalent
+    // actually totalViewMs is roughly 42 days.
+    // 1 day percent = (1 / 42) * 100 ~= 2.3%
+    const widthPercent = (durationMs / totalViewMs) * 100;
+
+    // Correction: If start==end (1 day), durationMs is ~24h (due to 00:00 vs 23:59 setup above? No mEnd is 23:59)
+    // mStart 00:00, mEnd 23:59 -> diff is 23h59m -> ~1 day. 
+    // So widthPercent should be correct.
+
+    return { left: `${leftPercent}%`, width: `${widthPercent}%` };
+  };
+
+  const ganttMissions = missions.filter(m => getGanttPosition(m) !== null);
   const monthNames = [
     "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
@@ -239,18 +294,29 @@ const HomePage = () => {
         {/* Kocaman Takvim */}
         <div className="calendar-section">
           <div className="calendar-header">
-            <button className="month-nav-btn" onClick={() => changeMonth('prev')}>
-              ‹
-            </button>
-            <div className="calendar-title">
-              <h2>{monthNames[viewMonth]} {viewYear}</h2>
-              <button className="today-btn" onClick={goToToday}>
-                Bugüne Git
+            <div className="calendar-controls-left">
+              <button className="month-nav-btn" onClick={() => changeMonth('prev')}>‹</button>
+              <div className="calendar-title">
+                <h2>{monthNames[viewMonth]} {viewYear}</h2>
+                <button className="today-btn" onClick={goToToday}>Bugüne Git</button>
+              </div>
+              <button className="month-nav-btn" onClick={() => changeMonth('next')}>›</button>
+            </div>
+
+            <div className="view-toggle">
+              <button
+                className={`view-btn ${viewMode === 'calendar' ? 'active' : ''}`}
+                onClick={() => setViewMode('calendar')}
+              >
+                📅 Takvim
+              </button>
+              <button
+                className={`view-btn ${viewMode === 'gantt' ? 'active' : ''}`}
+                onClick={() => setViewMode('gantt')}
+              >
+                📊 Gantt
               </button>
             </div>
-            <button className="month-nav-btn" onClick={() => changeMonth('next')}>
-              ›
-            </button>
           </div>
 
           <div className="calendar-wrapper">
@@ -261,77 +327,102 @@ const HomePage = () => {
               </div>
             ) : (
               <>
-                {/* Gün İsimleri */}
-                <div className="calendar-days-header">
-                  {dayNames.map(day => (
-                    <div key={day} className="day-name">{day}</div>
-                  ))}
-                </div>
+                {viewMode === 'calendar' ? (
+                  /* === CALENDAR VIEW === */
+                  <>
+                    <div className="calendar-days-header">
+                      {dayNames.map(day => (
+                        <div key={day} className="day-name">{day}</div>
+                      ))}
+                    </div>
 
-                {/* Takvim Günleri */}
-                <div className="calendar-grid">
-                  {calendarDays.map((dateObj, index) => {
-                    const dayMissions = getMissionsForDate(dateObj.day, dateObj.month, dateObj.year);
-                    const hasStartMission = dayMissions.some(m =>
-                      isMissionStartDate(dateObj.day, dateObj.month, dateObj.year, m)
-                    );
-                    const hasEndMission = dayMissions.some(m =>
-                      isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, m)
-                    );
+                    <div className="calendar-grid">
+                      {calendarDays.map((dateObj, index) => {
+                        const dayMissions = getMissionsForDate(dateObj.day, dateObj.month, dateObj.year);
+                        const hasStartMission = dayMissions.some(m =>
+                          isMissionStartDate(dateObj.day, dateObj.month, dateObj.year, m)
+                        );
+                        const hasEndMission = dayMissions.some(m =>
+                          isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, m)
+                        );
 
-                    return (
-                      <div
-                        key={index}
-                        className={`calendar-day ${!dateObj.isCurrentMonth ? 'other-month' : ''} ${isToday(dateObj.day, dateObj.month, dateObj.year) ? 'today' : ''
-                          } ${dayMissions.length > 0 ? 'has-missions' : ''}`}
-                        onClick={() => setSelectedDate(dateObj)}
-                      >
-                        <div className={`day-number ${isWeekend(dateObj.day, dateObj.month, dateObj.year) ? 'weekend-day' : ''}`}>
-                          {dateObj.day}
-                        </div>
+                        return (
+                          <div
+                            key={index}
+                            className={`calendar-day ${!dateObj.isCurrentMonth ? 'other-month' : ''} ${isToday(dateObj.day, dateObj.month, dateObj.year) ? 'today' : ''
+                              } ${dayMissions.length > 0 ? 'has-missions' : ''}`}
+                            onClick={() => setSelectedDate(dateObj)}
+                          >
+                            <div className={`day-number ${isWeekend(dateObj.day, dateObj.month, dateObj.year) ? 'weekend-day' : ''}`}>
+                              {dateObj.day}
+                            </div>
 
-                        {/* Görev İşaretleyicileri */}
-                        {dayMissions.length > 0 && (
-                          <div className="mission-indicators">
-                            {dayMissions.slice(0, 3).map(mission => (
-                              <div
-                                key={mission.id}
-                                className={`mission-indicator ${mission.completed ? 'completed' : 'pending'}`}
-                                onMouseEnter={() => setHoveredMission(mission)}
-                                onMouseLeave={() => setHoveredMission(null)}
-                                title={mission.description}
-                              >
-                                {isMissionStartDate(dateObj.day, dateObj.month, dateObj.year, mission) && (
-                                  <span className="start-flag">🚩</span>
+                            {dayMissions.length > 0 && (
+                              <div className="mission-indicators">
+                                {dayMissions.slice(0, 3).map(mission => (
+                                  <div
+                                    key={mission.id}
+                                    className={`mission-indicator ${mission.completed ? 'completed' : 'pending'}`}
+                                    onMouseEnter={() => setHoveredMission(mission)}
+                                    onMouseLeave={() => setHoveredMission(null)}
+                                    title={mission.description}
+                                  >
+                                    {!isMissionStartDate(dateObj.day, dateObj.month, dateObj.year, mission) && !isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, mission) && <span className="middle-dot">●</span>}
+                                    {isMissionStartDate(dateObj.day, dateObj.month, dateObj.year, mission) && <span className="start-flag">🚩</span>}
+                                    {isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, mission) && <span className="end-flag">🏁</span>}
+                                  </div>
+                                ))}
+                                {dayMissions.length > 3 && (
+                                  <div className="more-indicator">+{dayMissions.length - 3}</div>
                                 )}
-                                {isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, mission) && (
-                                  <span className="end-flag">🏁</span>
-                                )}
-                                {!isMissionStartDate(dateObj.day, dateObj.month, dateObj.year, mission) &&
-                                  !isMissionEndDate(dateObj.day, dateObj.month, dateObj.year, mission) && (
-                                    <span className="middle-dot">●</span>
-                                  )}
-                              </div>
-                            ))}
-                            {dayMissions.length > 3 && (
-                              <div className="more-indicator">
-                                +{dayMissions.length - 3}
                               </div>
                             )}
                           </div>
-                        )}
-
-                        {/* Başlangıç/Bitiş İşaretleri */}
-                        {hasStartMission && (
-                          <div className="date-badge start-badge">Başlangıç</div>
-                        )}
-                        {hasEndMission && (
-                          <div className="date-badge end-badge">Bitiş</div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  /* === GANTT VIEW === */
+                  <div className="gantt-container">
+                    <div className="gantt-timeline-header">
+                      {calendarDays.map((date, idx) => (
+                        <div key={idx} className={`gantt-header-cell ${!date.isCurrentMonth ? 'other' : ''} ${isToday(date.day, date.month, date.year) ? 'today' : ''}`}>
+                          <span className="gantt-day-num">{date.day}</span>
+                          <span className="gantt-day-name">{dayNames[idx % 7]}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="gantt-body">
+                      {ganttMissions.length === 0 ? (
+                        <div className="no-missions-gantt">Bu aralıkta görüntülenecek görev yok.</div>
+                      ) : (
+                        ganttMissions.map(mission => {
+                          const pos = getGanttPosition(mission);
+                          if (!pos) return null;
+                          return (
+                            <div key={mission.id} className="gantt-row">
+                              <div
+                                className={`gantt-bar ${mission.completed ? 'completed' : 'pending'} ${mission.priority ? mission.priority.toLowerCase() : ''}`}
+                                style={{ left: pos.left, width: pos.width }}
+                                onMouseEnter={() => setHoveredMission(mission)}
+                                onMouseLeave={() => setHoveredMission(null)}
+                              >
+                                <span className="gantt-bar-label">{mission.description}</span>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                    {/* Background Grid Lines (Optional visual guide) */}
+                    <div className="gantt-grid-overlay">
+                      {calendarDays.map((_, idx) => (
+                        <div key={idx} className="gantt-grid-col"></div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>

@@ -137,10 +137,12 @@ class ProjectSerializer(serializers.ModelSerializer):
     comments = ProjectCommentSerializer(many=True, read_only=True)
     is_member = serializers.SerializerMethodField()
     my_role = serializers.SerializerMethodField()
+    progress = serializers.SerializerMethodField()
+    am_i_creator = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
-        fields = ['id', 'title', 'description', 'created_by', 'created_by_details', 'created_at', 'updated_at', 'members', 'comments', 'is_member', 'my_role']
+        fields = ['id', 'title', 'description', 'created_by', 'created_by_details', 'created_at', 'updated_at', 'members', 'comments', 'is_member', 'my_role', 'progress', 'am_i_creator']
         read_only_fields = ['id', 'created_by', 'created_at', 'updated_at']
 
     def get_is_member(self, obj):
@@ -155,6 +157,19 @@ class ProjectSerializer(serializers.ModelSerializer):
             member = obj.members.filter(user=request.user).first()
             return member.role if member else None
         return None
+
+    def get_progress(self, obj):
+        total_missions = obj.missions.count()
+        if total_missions == 0:
+            return 0
+        completed_missions = obj.missions.filter(completed=True).count()
+        return int((completed_missions / total_missions) * 100)
+
+    def get_am_i_creator(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.created_by == request.user
+        return False
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -234,6 +249,10 @@ class MissionSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         due_to_users = validated_data.pop('due_to', None)
         new_files = validated_data.pop('new_attachments', [])
+
+        # Sync 'completed' flag with 'status'
+        if 'status' in validated_data and validated_data['status'] != 'COMPLETED':
+            instance.completed = False
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)

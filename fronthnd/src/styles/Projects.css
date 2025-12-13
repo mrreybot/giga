@@ -491,3 +491,57 @@
 .invite-btn:hover {
     background: #5a52d5;
 }
+
+/* === PROGRESS BAR === */
+.project-progress-section {
+    margin-top: auto;
+    /* Push to bottom if description is short */
+    margin-bottom: 12px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6C63FF, #00d4ff);
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+}
+
+/* === DELETE BUTTON === */
+.delete-project-btn {
+    background: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    color: #f44336;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+    margin-left: 10px;
+    /* Space from badgetitle */
+}
+
+.delete-project-btn:hover {
+    background: rgba(244, 67, 54, 0.2);
+    transform: scale(1.05);
+}

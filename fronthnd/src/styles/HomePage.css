@@ -798,8 +798,186 @@
 
 .assigned-to {
   font-weight: 500;
-  color: var(--accent-primary);
 }
+
+/* ============================================
+   VIEW TOGGLE & CONTROLS
+   ============================================ */
+.calendar-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--bg-tertiary);
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.view-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-btn.active {
+  background: white;
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.view-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   GANTT CHART VIEW
+   ============================================ */
+.gantt-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: white;
+  position: relative;
+}
+
+.gantt-timeline-header {
+  display: grid;
+  grid-template-columns: repeat(42, 1fr);
+  /* Matching calendar days count typically 6 weeks * 7 */
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.gantt-header-cell {
+  padding: 8px 2px;
+  text-align: center;
+  border-right: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 30px;
+}
+
+.gantt-header-cell.other {
+  opacity: 0.4;
+  background: var(--bg-secondary);
+}
+
+.gantt-header-cell.today {
+  background: var(--accent-light);
+  color: var(--accent-secondary);
+}
+
+.gantt-day-num {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.gantt-day-name {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.gantt-body {
+  position: relative;
+  min-height: 200px;
+  padding: 1rem 0;
+  background: repeating-linear-gradient(to right,
+      transparent,
+      transparent calc(100% / 42 - 1px),
+      var(--border-secondary) calc(100% / 42 - 1px),
+      var(--border-secondary) calc(100% / 42));
+  background-size: 100% 100%;
+}
+
+.gantt-row {
+  position: relative;
+  height: 36px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.gantt-bar {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  background: var(--accent-primary);
+  border-radius: 4px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.gantt-bar:hover {
+  transform: scaleY(1.1);
+  z-index: 2;
+}
+
+.gantt-bar.completed {
+  background: var(--success);
+}
+
+.gantt-bar.pending {
+  background: var(--warning);
+}
+
+.gantt-bar.high {
+  border: 1px solid #b91c1c;
+}
+
+.gantt-bar-label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+.no-missions-gantt {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* Optional Overlay Grid if gradient isn't enough or tricky */
+.gantt-grid-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(42, 1fr);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.1;
+}
+
+.gantt-grid-col {
+  border-right: 1px solid black;
+}
+
+
 
 .no-upcoming {
   text-align: center;

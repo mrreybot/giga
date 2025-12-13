@@ -182,6 +182,7 @@ const Dashboard = () => {
 
   const closeMissionModal = () => {
     setSelectedMission(null);
+    setIsEditing(false);
   };
 
   const formatDate = (dateString) => {
@@ -258,6 +259,14 @@ const Dashboard = () => {
     };
   };
 
+  // --- Edit Mode State ---
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    description: "",
+    priority: "MEDIUM",
+    end_date: ""
+  });
+
   const handleCompleteClick = (mission, e) => {
     e.stopPropagation();
     setCompletingMission(mission);
@@ -281,6 +290,30 @@ const Dashboard = () => {
     }
   };
 
+  const handleEditClick = () => {
+    if (!selectedMission) return;
+    setEditForm({
+      description: selectedMission.description || "",
+      priority: selectedMission.priority || "MEDIUM",
+      end_date: selectedMission.end_date ? selectedMission.end_date.split('T')[0] : ""
+    });
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!selectedMission) return;
+    try {
+      const res = await api.patch(`/api/missions/${selectedMission.id}/`, editForm);
+      setMissions(prev => prev.map(m => m.id === selectedMission.id ? res.data : m));
+      setSelectedMission(res.data);
+      setIsEditing(false);
+      alert("Görev güncellendi!");
+    } catch (err) {
+      console.error("Güncelleme hatası", err);
+      alert("Güncelleme başarısız.");
+    }
+  };
+
   const columns = getColumns();
 
   return (
@@ -295,35 +328,95 @@ const Dashboard = () => {
           <div className="mission-detail-modal" onClick={(e) => e.stopPropagation()}>
             {/* ... (Existing modal content) ... */}
             <div className="modal-header">
-              <h2>📋 Görev Detayı #{selectedMission.id}</h2>
+              <h2>{isEditing ? '✏️ Görevi Düzenle' : `📋 Görev Detayı #${selectedMission.id}`}</h2>
               <button className="close-modal" onClick={closeMissionModal}>✕</button>
             </div>
+
             <div className="modal-content">
-              <div className="detail-section">
-                <label>Açıklama:</label>
-                <p>{selectedMission.description || "Açıklama yok"}</p>
-              </div>
-              <div className="detail-row">
-                {/* ... More existing details ... */}
-                <div className="detail-section">
-                  <label>Durum:</label>
-                  <span>{selectedMission.status === 'COMPLETED' ? '✅ Bitti' : selectedMission.status === 'IN_PROGRESS' ? '⏳ Devam Ediyor' : '📅 Yapılacak'}</span>
+              {isEditing ? (
+                <div className="edit-form">
+                  <div className="form-group">
+                    <label>Açıklama</label>
+                    <textarea
+                      className="filter-input"
+                      rows={3}
+                      value={editForm.description}
+                      onChange={e => setEditForm({ ...editForm, description: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Öncelik</label>
+                    <select
+                      className="filter-select"
+                      value={editForm.priority}
+                      onChange={e => setEditForm({ ...editForm, priority: e.target.value })}
+                    >
+                      <option value="LOW">Düşük</option>
+                      <option value="MEDIUM">Orta</option>
+                      <option value="HIGH">Yüksek</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Bitiş Tarihi</label>
+                    <input
+                      type="date"
+                      className="filter-input"
+                      value={editForm.end_date}
+                      onChange={e => setEditForm({ ...editForm, end_date: e.target.value })}
+                    />
+                  </div>
                 </div>
-              </div>
-              {/* Keeping content concise for brevity in this replacement block, but preserving critical parts */}
-              <div className="detail-section">
-                <label>👥 Atananlar:</label>
-                <div className="assigned-users-grid">
-                  {selectedMission.assigned_users?.map(user => (
-                    <div key={user.id} className="user-chip">
-                      <span>{formatUserName(user)}</span>
+              ) : (
+                <>
+                  <div className="detail-section">
+                    <label>Açıklama:</label>
+                    <p>{selectedMission.description || "Açıklama yok"}</p>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-section">
+                      <label>Öncelik:</label>
+                      <span className={`priority-badge ${getPriorityBadgeClass(selectedMission.priority)}`}>
+                        {getPriorityLabel(selectedMission.priority)}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <div className="detail-section">
+                      <label>Bitiş Tarihi:</label>
+                      <span>{formatDate(selectedMission.end_date)}</span>
+                    </div>
+                    <div className="detail-section">
+                      <label>Durum:</label>
+                      <span>{selectedMission.status === 'COMPLETED' ? '✅ Bitti' : selectedMission.status === 'IN_PROGRESS' ? '⏳ Devam Ediyor' : '📅 Yapılacak'}</span>
+                    </div>
+                  </div>
+                  <div className="detail-section">
+                    <label>👥 Atananlar:</label>
+                    <div className="assigned-users-grid">
+                      {selectedMission.assigned_users?.map(user => (
+                        <div key={user.id} className="user-chip">
+                          <span>{formatUserName(user)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
             <div className="modal-footer">
-              <button onClick={closeMissionModal} className="close-modal-btn">Kapat</button>
+              {isEditing ? (
+                <>
+                  <button onClick={() => setIsEditing(false)} className="close-modal-btn">İptal</button>
+                  <button onClick={handleSaveEdit} className="logout-btn">Kaydet</button>
+                </>
+              ) : (
+                <>
+                  {selectedMission.can_edit && (
+                    <button onClick={handleEditClick} className="edit-btn" style={{ marginRight: 'auto', background: '#FFC107', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: '600' }}>
+                      ✏️ Düzenle
+                    </button>
+                  )}
+                  <button onClick={closeMissionModal} className="close-modal-btn">Kapat</button>
+                </>
+              )}
             </div>
           </div>
         </div>

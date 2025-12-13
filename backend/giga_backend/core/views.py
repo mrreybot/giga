@@ -187,6 +187,13 @@ class MissionViewSet(viewsets.ModelViewSet):
 
         # Toggle işlemi
         mission.completed = not mission.completed
+        
+        # Status senkronizasyonu
+        if mission.completed:
+            mission.status = 'COMPLETED'
+        else:
+            mission.status = 'PENDING' # Varsayılan olarak PENDING'e dön
+            
         mission.save()
 
         serializer = self.get_serializer(mission, context={'request': request})
@@ -466,6 +473,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         context['request'] = self.request
         return context
 
+    def destroy(self, request, *args, **kwargs):
+        project = self.get_object()
+        if project.created_by != request.user:
+            return Response({"detail": "Sadece projeyi oluşturan kişi silebilir."}, status=status.HTTP_403_FORBIDDEN)
+        return super().destroy(request, *args, **kwargs)
+
     @action(detail=True, methods=['post'])
     def invite_member(self, request, pk=None):
         project = self.get_object()
@@ -475,17 +488,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response({"detail": "Sadece yöneticiler davet gönderebilir."}, status=status.HTTP_403_FORBIDDEN)
         
         email = request.data.get('email')
-        if not email:
-            return Response({"detail": "E-posta gereklidir."}, status=status.HTTP_400_BAD_REQUEST)
+        user_id = request.data.get('user_id')
+
+        if not email and not user_id:
+            return Response({"detail": "E-posta veya kullanıcı seçimi gereklidir."}, status=status.HTTP_400_BAD_REQUEST)
             
-        # Kullanıcı sistemde var mı?
-        try:
-            invited_user = User.objects.get(email=email)
-            # Zaten üye mi?
+        invited_user = None
+
+        if user_id:
+             try:
+                 invited_user = User.objects.get(id=user_id)
+                 email = invited_user.email # Use user's email
+             except User.DoesNotExist:
+                 return Response({"detail": "Seçilen kullanıcı bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Kullanıcı sistemde var mı? (Email ile geldiyse)
+        if not invited_user and email:
+            try:
+                invited_user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                invited_user = None
+
+        if invited_user:
+             # Zaten üye mi?
             if project.members.filter(user=invited_user).exists():
                 return Response({"detail": "Bu kullanıcı zaten projede ekli."}, status=status.HTTP_400_BAD_REQUEST)
-        except User.DoesNotExist:
-            invited_user = None
             
         # Zaten davet edilmiş mi?
         if ProjectInvite.objects.filter(project=project, email=email, status='PENDING').exists():
@@ -500,6 +527,35 @@ class ProjectViewSet(viewsets.ModelViewSet):
         
         serializer = ProjectInviteSerializer(invite)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'])
+    def remove_member(self, request, pk=None):
+        """Projeden üye çıkarma endpointi"""
+        project = self.get_object()
+        
+        # Sadece adminler üye çıkarabilir
+        if not project.members.filter(user=request.user, role='ADMIN').exists():
+            return Response({"detail": "Sadece yöneticiler üye çıkarabilir."}, status=status.HTTP_403_FORBIDDEN)
+
+        member_id = request.data.get('member_id')
+        user_id = request.data.get('user_id')
+
+        member_to_remove = None
+        
+        if member_id:
+             member_to_remove = project.members.filter(id=member_id).first()
+        elif user_id:
+             member_to_remove = project.members.filter(user_id=user_id).first()
+
+        if not member_to_remove:
+            return Response({"detail": "Üye bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Admin kendini çıkaramaz (veya son admin çıkamaz mantığı eklenebilir ama şimdilik basit tutalım)
+        if member_to_remove.user == request.user:
+             return Response({"detail": "Kendinizi projeden çıkaramazsınız."}, status=status.HTTP_400_BAD_REQUEST)
+
+        member_to_remove.delete()
+        return Response({"message": "Üye projeden çıkarıldı."}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'])
     def members(self, request, pk=None):
