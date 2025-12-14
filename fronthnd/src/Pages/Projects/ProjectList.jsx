@@ -125,6 +125,7 @@ const ProjectList = () => {
                                     title="Projeyi Sil"
                                 >
                                     <Trash2 size={16} />
+                                    <span>Sil</span> {/* Seliimhan buradaydı, delete buton düzelttim */}
                                 </button>
                             )}
                         </div>

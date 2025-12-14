@@ -103,6 +103,7 @@ const ProjectDetail = () => {
             if (!grouped[dept]) grouped[dept] = [];
             grouped[dept].push(user);
         });
+        console.log("grouped", grouped);
         return grouped;
     };
 
@@ -169,7 +170,7 @@ const ProjectDetail = () => {
             )}
 
             {activeTab === 'members' && (
-                <div>
+                <div className="members-tab-content">
                     <div className="members-grid">
                         {project.members && project.members.map(member => (
                             <div key={member.id} className="member-card">
@@ -182,8 +183,8 @@ const ProjectDetail = () => {
                                         )}
                                     </div>
                                     <div className="member-info">
-                                        <div className="member-name font-bold text-lg">{member.user.full_name || member.user.username}</div>
-                                        <div className="member-email text-sm text-gray-500">{member.user.email}</div>
+                                        <div className="member-name">{member.user.full_name || member.user.username}</div>
+                                        <div className="member-email">{member.user.email}</div>
                                         <div className={`member-role ${member.role === 'ADMIN' ? 'ADMIN' : 'MEMBER'}`}>
                                             {member.role === 'ADMIN' ? 'Yönetici' : 'Üye'}
                                         </div>
@@ -232,14 +233,60 @@ const ProjectDetail = () => {
                                     <div className="dept-users-grid">
                                         {users.map(user => (
                                             <div key={user.id} className="user-invite-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: '#fafafa', borderRadius: '8px', marginBottom: '8px', border: '1px solid #e5e5e5' }}>
-                                                <div className="user-invite-info">
-                                                    <span className="user-invite-name" style={{ fontWeight: '600', display: 'block' }}>{user.full_name || user.username}</span>
-                                                    <span className="user-invite-title" style={{ fontSize: '0.85rem', color: '#525252' }}>{user.unvan || user.role}</span>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    {/* Profil Fotoğrafı */} {/* selimhan ekledi */}
+                                                    <div style={{ 
+                                                        width: '48px', 
+                                                        height: '48px', 
+                                                        borderRadius: '50%', 
+                                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center', 
+                                                        color: 'white', 
+                                                        fontWeight: '600',
+                                                        fontSize: '1rem',
+                                                        flexShrink: 0,
+                                                        overflow: 'hidden'
+                                                    }}>
+                                                        {user.profile_photo ? (
+                                                            <img 
+                                                                src={user.profile_photo} 
+                                                                alt={user.username} 
+                                                                style={{ 
+                                                                    width: '100%', 
+                                                                    height: '100%', 
+                                                                    objectFit: 'cover' 
+                                                                }} 
+                                                            />
+                                                        ) : (
+                                                            getInitials(user.full_name || user.username)
+                                                        )}
+                                                    </div>
+                                                    
+                                                    <div className="user-invite-info">
+                                                        <span className="user-invite-name" style={{ fontWeight: '600', display: 'block' }}>
+                                                            {user.full_name || user.username}
+                                                        </span>
+                                                        <span className="user-invite-title" style={{ fontSize: '0.85rem', color: '#525252' }}>
+                                                            {user.unvan || user.role}
+                                                        </span>
+                                                    </div>
                                                 </div>
+                                                
                                                 <button
                                                     className="invite-action-btn"
                                                     onClick={() => handleInviteUser(user.id)}
-                                                    style={{ background: '#171717', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.875rem' }}
+                                                    style={{ 
+                                                        background: '#171717', 
+                                                        color: 'white', 
+                                                        border: 'none', 
+                                                        padding: '8px 16px', 
+                                                        borderRadius: '6px', 
+                                                        cursor: 'pointer', 
+                                                        fontSize: '0.875rem',
+                                                        flexShrink: 0
+                                                    }}
                                                 >
                                                     Davet Et
                                                 </button>

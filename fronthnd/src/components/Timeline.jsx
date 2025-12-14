@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from "../services/api";
 import "../styles/Timeline.css";
+import { Calendar } from "lucide-react";
 
 const Timeline = ({ tasks, comments, projectId, onRefresh }) => {
     const [newComment, setNewComment] = useState("");
@@ -79,7 +80,9 @@ const Timeline = ({ tasks, comments, projectId, onRefresh }) => {
                     <div key={index} className={`timeline-item ${item.type}`}>
                         <div className="timeline-marker"></div>
                         <div className="timeline-content">
-                            <span className="timeline-date">{formatDate(item.date)}</span>
+                            <span className="timeline-date">
+                                <Calendar size={12} /> {formatDate(item.date)}  {/* Seliimhan buradaydı, Tarihi düzelttim */}
+                            </span>
 
                             {item.type === 'task' ? (
                                 <div className={`timeline-card task-card ${item.data.completed ? 'completed' : ''}`}>
