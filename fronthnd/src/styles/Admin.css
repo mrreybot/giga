@@ -282,7 +282,7 @@
   border-radius: 8px;
   width: 90%;
   max-width: 500px; /* Modal genişliği azaltıldı */
-  max-height: 90vh;
+  max-height: 100vh;
   overflow-y: auto;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   animation: slideUp 0.3s ease;
@@ -312,7 +312,8 @@
 }
 
 .modal-header h2 {
-  margin: 0;
+  color: white;
+  margin: 0;  
   font-size: 1.3rem;
 }
 
@@ -320,20 +321,23 @@
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
-  font-size: 1.3rem;
+  font-size: 1.3rem;  
   cursor: pointer;
   width: 30px;
   height: 30px;
   border-radius: 50%;
   display: flex;
-  align-items: center;
+  align-items: center; 
   justify-content: center;
+  z-index: 10; /* Üst katmanda kalmasını garanti edelim */
   transition: all 0.2s ease;
+ /* ✅ DÜZELTME EKLE: Kaymayı önlemek için */
+  line-height: 1; /* Karakterin dikey ortalanmasını garanti eder */
+  padding: 0; /* Tarayıcıların varsayılan padding'ini sıfırlar */
 }
-
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: rotate(90deg);
+  background: #f1341f;
+  /*transform: rotate(90deg);*/
 }
 
 .modal-body {

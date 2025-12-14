@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../services/constant";
 import "../styles/Admin.css";
-import { Pen, Trash2 } from "lucide-react";
+import { Pen, Trash2, X } from "lucide-react";
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -349,22 +349,13 @@ const Admin = () => {
                 </select>
               </div>
 
-              {/*<div className="form-group">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={editingUser.is_active || false}
-                    onChange={(e) => setEditingUser({ ...editingUser, is_active: e.target.checked })}
-                  />
-                </label>
-              </div>*/}
             </div>
             <div className="modal-footer">
               <button className="btn-secondary" onClick={() => setShowEditModal(false)}>
                 İptal
               </button>
               <button className="btn-primary" onClick={handleSaveUser}>
-                💾 Kaydet
+                Kaydet
               </button>
             </div>
           </div>
