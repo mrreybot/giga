@@ -9,7 +9,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
-  
+
   const [profileData, setProfileData] = useState({
     first_name: "",
     last_name: "",
@@ -45,7 +45,7 @@ const ProfilePage = () => {
     try {
       const response = await api.get("/api/user/profile/");
       console.log("📥 Profile data received:", response.data);
-      
+
       setProfileData({
         first_name: response.data.first_name || "",
         last_name: response.data.last_name || "",
@@ -56,7 +56,7 @@ const ProfilePage = () => {
         department: response.data.department || "",
         profile_photo: response.data.profile_photo || null
       });
-      
+
       setNotificationSettings({
         email_notifications: response.data.email_notifications ?? true,
         task_reminders: response.data.task_reminders ?? true,
@@ -68,7 +68,7 @@ const ProfilePage = () => {
         setPreviewImage(response.data.profile_photo);
         console.log("🖼️ Profile photo URL:", response.data.profile_photo);
       }
-      
+
       setLoading(false);
     } catch (error) {
       console.error("❌ Profil yüklenemedi:", error);
@@ -104,12 +104,12 @@ const ProfilePage = () => {
     const file = e.target.files[0];
     if (file) {
       console.log("📸 Photo selected:", file.name, "Size:", file.size, "Type:", file.type);
-      
+
       if (file.size > 5 * 1024 * 1024) {
         alert("Dosya boyutu 5MB'dan küçük olmalıdır!");
         return;
       }
-      
+
       setPhotoFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -131,7 +131,7 @@ const ProfilePage = () => {
       formData.append("unvan", profileData.unvan);
       formData.append("phone", profileData.phone);
       formData.append("department", profileData.department);
-      
+
       if (photoFile) {
         formData.append("profile_photo", photoFile);
         console.log("✅ Photo added to FormData:", photoFile.name);
@@ -148,10 +148,10 @@ const ProfilePage = () => {
 
       console.log("✅ Profile updated:", response.data);
       alert("Profil başarıyla güncellendi!");
-      
+
       // Fotoğraf state'ini temizle
       setPhotoFile(null);
-      
+
       // Profili yeniden yükle
       fetchUserProfile();
     } catch (error) {
@@ -165,7 +165,7 @@ const ProfilePage = () => {
 
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-    
+
     if (securityData.newPassword !== securityData.confirmPassword) {
       alert("Yeni şifreler eşleşmiyor!");
       return;
@@ -257,7 +257,7 @@ const ProfilePage = () => {
                 </label>
               </div>
             </div>
-            
+
             <div className="profile-info">
               <h2>{profileData.first_name} {profileData.last_name}</h2>
               <p className="profile-email">{profileData.email}</p>
@@ -281,19 +281,19 @@ const ProfilePage = () => {
               className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
               onClick={() => setActiveTab("profile")}
             >
-               Profil Bilgileri
+              Profil Bilgileri
             </button>
             <button
               className={`tab-btn ${activeTab === "security" ? "active" : ""}`}
               onClick={() => setActiveTab("security")}
             >
-               Güvenlik
+              Güvenlik
             </button>
             <button
               className={`tab-btn ${activeTab === "notifications" ? "active" : ""}`}
               onClick={() => setActiveTab("notifications")}
             >
-               Bildirimler
+              Bildirimler
             </button>
           </div>
 
@@ -301,7 +301,7 @@ const ProfilePage = () => {
             {activeTab === "profile" && (
               <form onSubmit={handleProfileUpdate} className="profile-form">
                 <h3>Kişisel Bilgiler</h3>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>Ad</label>
@@ -313,7 +313,7 @@ const ProfilePage = () => {
                       placeholder="Adınız"
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Soyad</label>
                     <input
@@ -347,7 +347,7 @@ const ProfilePage = () => {
                       onChange={handleInputChange}
                       placeholder="Ör: Yazılım Geliştirici"
                     />
-                  </div>     
+                  </div>
                   <div className="form-group">
                     <label>Departman</label>
                     <select
@@ -356,6 +356,7 @@ const ProfilePage = () => {
                       onChange={handleInputChange}
                     >
                       <option value="">Departman Seçiniz</option>
+                      <option value="Yönetim">Yönetim</option>
                       <option value="Depozito Yönetim Sistemi">Depozito Yönetim Sistemi</option>
                       <option value="Geri Kazanım ve Üretici">Geri Kazanım ve Üretici</option>
                       <option value="Çevre Koruma">Çevre Koruma</option>
@@ -396,7 +397,7 @@ const ProfilePage = () => {
             {activeTab === "security" && (
               <form onSubmit={handlePasswordUpdate} className="profile-form">
                 <h3>Şifre Değiştir</h3>
-                
+
                 <div className="form-group">
                   <label>Mevcut Şifre</label>
                   <input
@@ -453,7 +454,7 @@ const ProfilePage = () => {
             {activeTab === "notifications" && (
               <form onSubmit={handleNotificationUpdate} className="profile-form">
                 <h3>Bildirim Tercihleri</h3>
-                
+
                 <div className="form-group">
                   <label>Bildirim E-posta Adresi</label>
                   <input

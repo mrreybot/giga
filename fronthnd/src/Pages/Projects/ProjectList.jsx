@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
-import "../../styles/Projects.css"; // New CSS file
+import "../../styles/Projects.css";
+import {
+    Plus,
+    Trash2,
+    Users,
+    Mail,
+    Check,
+    X,
+    Shield
+} from "lucide-react";
 
 const ProjectList = () => {
     const [projects, setProjects] = useState([]);
@@ -80,19 +89,19 @@ const ProjectList = () => {
                     className="new-project-btn"
                     onClick={() => setShowCreateModal(true)}
                 >
-                    + Yeni Proje
+                    <Plus size={18} /> Yeni Proje
                 </button>
             </div>
 
             {invites.length > 0 && (
                 <div className="invites-section">
-                    <h3>📩 Bekleyen Davetler ({invites.length})</h3>
+                    <h3><Mail size={18} /> Bekleyen Davetler ({invites.length})</h3>
                     {invites.map(invite => (
                         <div key={invite.id} className="invite-card">
                             <span><strong>{invite.project_name}</strong> projesine <strong>{invite.invited_by_name}</strong> tarafından davet edildiniz.</span>
                             <div className="invite-actions">
-                                <button onClick={() => handleRespondInvite(invite.id, 'ACCEPTED')} className="accept-btn">Kabul Et</button>
-                                <button onClick={() => handleRespondInvite(invite.id, 'REJECTED')} className="reject-btn">Reddet</button>
+                                <button onClick={() => handleRespondInvite(invite.id, 'ACCEPTED')} className="accept-btn"><Check size={16} /> Kabul Et</button>
+                                <button onClick={() => handleRespondInvite(invite.id, 'REJECTED')} className="reject-btn"><X size={16} /> Reddet</button>
                             </div>
                         </div>
                     ))}
@@ -108,14 +117,14 @@ const ProjectList = () => {
                     >
                         <div className="project-card-header">
                             <h3 className="project-title">{project.title}</h3>
-                            {project.my_role === 'ADMIN' && <span className="admin-badge">Yönetici</span>}
+                            {project.my_role === 'ADMIN' && <span className="admin-badge"><Shield size={12} style={{ marginRight: 4 }} /> Yönetici</span>}
                             {project.am_i_creator && (
                                 <button
                                     className="delete-project-btn"
                                     onClick={(e) => handleDeleteProject(project.id, e)}
                                     title="Projeyi Sil"
                                 >
-                                    🗑️
+                                    <Trash2 size={16} />
                                 </button>
                             )}
                         </div>
@@ -136,7 +145,7 @@ const ProjectList = () => {
                         </div>
 
                         <div className="project-footer">
-                            <span className="member-count">👥 {project.members && project.members.length} Üye</span>
+                            <span className="member-count"><Users size={14} /> {project.members && project.members.length} Üye</span>
                         </div>
                     </div>
                 ))}

@@ -90,9 +90,16 @@ const AddTask = () => {
 
       setUsers(userData);
 
-      // Extract unique departments from users
-      const uniqueDepts = [...new Set(userData.map(u => u.department).filter(d => d))];
-      setDepartments(uniqueDepts);
+      // Standardize departments list
+      const standardizedDepts = [
+        "Yönetim",
+        "Depozito Yönetim Sistemi",
+        "Geri Kazanım ve Üretici",
+        "Çevre Koruma",
+        "Bilgi Teknolojileri",
+        "İnsan Kaynakları"
+      ];
+      setDepartments(standardizedDepts);
     } catch (error) {
       console.error("❌ Kullanıcılar yüklenemedi:", error);
       alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);

@@ -10,7 +10,7 @@ const Admin = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  
+
   const navigate = useNavigate();
 
   // Admin yetkisi kontrolü
@@ -25,9 +25,9 @@ const Admin = () => {
 
         const response = await api.get("/api/user/profile/");
         const userRole = response.data.role;
-        
-        if (userRole !== "CEO") {
-          alert("Bu sayfaya erişim yetkiniz yok! Sadece CEO erişebilir.");
+
+        if (userRole !== "CEO" && userRole !== "MANAGER") {
+          alert("Bu sayfaya erişim yetkiniz yok! Sadece CEO ve Yöneticiler erişebilir.");
           navigate("/home");
         }
       } catch (error) {
@@ -60,14 +60,14 @@ const Admin = () => {
     setLoading(true);
     try {
       const response = await api.get("/api/users/organization/");
-      
+
       // Tüm rolleri birleştir
       const allUsers = [
         ...(response.data.CEO || []),
         ...(response.data.MANAGER || []),
         ...(response.data.EMPLOYEE || [])
       ];
-      
+
       setUsers(allUsers);
     } catch (error) {
       console.error("❌ Data fetch failed:", error);
@@ -85,7 +85,7 @@ const Admin = () => {
   const handleSaveUser = async () => {
     try {
       console.log("💾 Updating user:", editingUser.id, editingUser);
-      
+
       const updateData = {
         first_name: editingUser.first_name,
         last_name: editingUser.last_name,
@@ -95,11 +95,11 @@ const Admin = () => {
         role: editingUser.role,
         is_active: editingUser.is_active
       };
-      
+
       console.log("📤 Update data:", updateData);
-      
+
       const response = await api.patch(`/api/user/${editingUser.id}/`, updateData);
-      
+
       console.log("✅ Update response:", response.data);
       alert("Kullanıcı başarıyla güncellendi!");
       setShowEditModal(false);
@@ -109,7 +109,7 @@ const Admin = () => {
       console.error("❌ User update failed:", error);
       console.error("❌ Error response:", error.response?.data);
       console.error("❌ Error status:", error.response?.status);
-      
+
       if (error.response?.status === 403) {
         alert(error.response?.data?.detail || "Bu kullanıcıyı güncelleme yetkiniz yok!");
       } else if (error.response?.status === 404) {
@@ -135,7 +135,7 @@ const Admin = () => {
       fetchUsers();
     } catch (error) {
       console.error("❌ User deletion failed:", error);
-      
+
       if (error.response?.status === 404) {
         alert("Kullanıcı bulunamadı!");
       } else if (error.response?.status === 403) {
@@ -151,7 +151,7 @@ const Admin = () => {
 
 
   const getRoleBadgeClass = (role) => {
-    switch(role) {
+    switch (role) {
       case "CEO": return "badge-ceo";
       case "MANAGER": return "badge-manager";
       case "EMPLOYEE": return "badge-employee";
@@ -160,7 +160,7 @@ const Admin = () => {
   };
 
   const getRoleText = (role) => {
-    switch(role) {
+    switch (role) {
       case "CEO": return "CEO";
       case "MANAGER": return "Yönetici";
       case "EMPLOYEE": return "Çalışan";
@@ -191,7 +191,7 @@ const Admin = () => {
           <div className="users-section">
             <div className="section-header">
               <button className="btn-primary" onClick={() => navigate("/addpeople")}>
-                 Yeni Kullanıcı Ekle
+                Yeni Kullanıcı Ekle
               </button>
             </div>
 
@@ -235,18 +235,18 @@ const Admin = () => {
                         <td>{user.department || "-"}</td>
                         <td>{user.phone || "-"}</td>
                         <td>
-                          
+
                         </td>
                         <td className="actions-cell">
-                          <button 
-                            className="btn-icon btn-edit" 
+                          <button
+                            className="btn-icon btn-edit"
                             onClick={() => handleEditUser(user)}
                             title="Düzenle"
                           >
                             ✏️
                           </button>
-                          <button 
-                            className="btn-icon btn-delete" 
+                          <button
+                            className="btn-icon btn-delete"
                             onClick={() => handleDeleteUser(user.id, user.username)}
                             title="Sil"
                           >
@@ -287,7 +287,7 @@ const Admin = () => {
                   <input
                     type="text"
                     value={editingUser.first_name || ""}
-                    onChange={(e) => setEditingUser({...editingUser, first_name: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, first_name: e.target.value })}
                     placeholder="Ad"
                   />
                 </div>
@@ -296,30 +296,31 @@ const Admin = () => {
                   <input
                     type="text"
                     value={editingUser.last_name || ""}
-                    onChange={(e) => setEditingUser({...editingUser, last_name: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, last_name: e.target.value })}
                     placeholder="Soyad"
                   />
                 </div>
               </div>
-              
+
               <div className="form-group">
                 <label>Email</label>
                 <input
                   type="email"
                   value={editingUser.email || ""}
-                  onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
+                  onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
                   placeholder="example@tuca.gov.tr"
                 />
               </div>
-              
+
               <div className="form-row">
                 <div className="form-group">
                   <label>Departman</label>
                   <select
                     value={editingUser.department || ""}
-                    onChange={(e) => setEditingUser({...editingUser, department: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, department: e.target.value })}
                   >
                     <option value="">Departman Seçiniz</option>
+                    <option value="Yönetim">Yönetim</option>
                     <option value="Depozito Yönetim Sistemi">Depozito Yönetim Sistemi</option>
                     <option value="Geri Kazanım ve Üretici">Geri Kazanım ve Üretici</option>
                     <option value="Çevre Koruma">Çevre Koruma</option>
@@ -332,17 +333,17 @@ const Admin = () => {
                   <input
                     type="tel"
                     value={editingUser.phone || ""}
-                    onChange={(e) => setEditingUser({...editingUser, phone: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
                     placeholder="+90 5XX XXX XX XX"
                   />
                 </div>
               </div>
-              
+
               <div className="form-group">
                 <label>Rol</label>
                 <select
                   value={editingUser.role || ""}
-                  onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
+                  onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
                 >
                   <option value="CEO">CEO</option>
                   <option value="MANAGER">Manager (Yönetici)</option>
@@ -355,7 +356,7 @@ const Admin = () => {
                   <input
                     type="checkbox"
                     checked={editingUser.is_active || false}
-                    onChange={(e) => setEditingUser({...editingUser, is_active: e.target.checked})}
+                    onChange={(e) => setEditingUser({ ...editingUser, is_active: e.target.checked })}
                   />
                   {" "}Aktif Kullanıcı
                 </label>

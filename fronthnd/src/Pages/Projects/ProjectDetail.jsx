@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Timeline from "../../components/Timeline";
 import "../../styles/Projects.css";
+import { X, UserPlus, Settings, Users, Calendar, Layout, User } from "lucide-react";
 
 const ProjectDetail = () => {
     const { id } = useParams();
@@ -85,10 +86,7 @@ const ProjectDetail = () => {
     const getGroupedUsers = () => {
         const grouped = {};
         assignableUsers.forEach(user => {
-            // Filter out existing members (optional, but requested feature implies selecting new people)
-            // If user wants to see "tum userler" regardless, we can skip filtering. 
-            // Usually you don't invite existing members. Let's start by filtering existing members out visually or marking them.
-            // Let's filter out ALREADY ADDED members from the list to avoid clutter.
+            // Filter out existing members
             const isMember = project?.members?.some(m => m.user.id === user.id);
             if (isMember) return;
 
@@ -106,6 +104,13 @@ const ProjectDetail = () => {
             grouped[dept].push(user);
         });
         return grouped;
+    };
+
+    // Helper to get initials
+    const getInitials = (name) => {
+        return name
+            ? name.split(' ').map((n) => n[0]).join('').toUpperCase().substring(0, 2)
+            : 'U';
     };
 
     if (loading) return <div className="loading-state">Yükleniyor...</div>;
@@ -130,12 +135,14 @@ const ProjectDetail = () => {
                     onClick={() => setActiveTab('tasks')}
                     className={`tab-btn ${activeTab === 'tasks' ? 'active' : ''}`}
                 >
+                    <Layout size={18} style={{ marginRight: 8, verticalAlign: 'text-bottom' }} />
                     Zaman Çizelgesi & Görevler
                 </button>
                 <button
                     onClick={() => setActiveTab('members')}
                     className={`tab-btn ${activeTab === 'members' ? 'active' : ''}`}
                 >
+                    <Users size={18} style={{ marginRight: 8, verticalAlign: 'text-bottom' }} />
                     Üyeler
                 </button>
                 {project.my_role === 'ADMIN' && (
@@ -143,6 +150,7 @@ const ProjectDetail = () => {
                         onClick={() => setActiveTab('settings')}
                         className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
                     >
+                        <Settings size={18} style={{ marginRight: 8, verticalAlign: 'text-bottom' }} />
                         Ayarlar
                     </button>
                 )}
@@ -165,21 +173,33 @@ const ProjectDetail = () => {
                     <div className="members-grid">
                         {project.members && project.members.map(member => (
                             <div key={member.id} className="member-card">
-                                <div className="member-info">
-                                    <div className="member-name">{member.user.full_name || member.user.username}</div>
-                                    <div className="member-email">{member.user.email}</div>
-                                    <div className={`member-role ${member.role === 'ADMIN' ? 'role-admin' : 'role-member'}`}>
-                                        {member.role === 'ADMIN' ? 'Yönetici' : 'Üye'}
+                                <div className="member-header">
+                                    <div className="member-avatar">
+                                        {member.user.profile_photo ? (
+                                            <img src={member.user.profile_photo} alt={member.user.username} />
+                                        ) : (
+                                            getInitials(member.user.full_name || member.user.username)
+                                        )}
+                                    </div>
+                                    <div className="member-info">
+                                        <div className="member-name font-bold text-lg">{member.user.full_name || member.user.username}</div>
+                                        <div className="member-email text-sm text-gray-500">{member.user.email}</div>
+                                        <div className={`member-role ${member.role === 'ADMIN' ? 'ADMIN' : 'MEMBER'}`}>
+                                            {member.role === 'ADMIN' ? 'Yönetici' : 'Üye'}
+                                        </div>
                                     </div>
                                 </div>
-                                {project.my_role === 'ADMIN' && member.user.id !== project.created_by && ( // Admin can remove others, but creator usually special
-                                    <button
-                                        className="remove-member-btn"
-                                        onClick={() => handleRemoveMember(member.id)}
-                                        title="Üyeyi Çıkar"
-                                    >
-                                        ✕
-                                    </button>
+
+                                {project.my_role === 'ADMIN' && member.user.id !== project.created_by && (
+                                    <div className="member-actions">
+                                        <button
+                                            className="remove-member-btn"
+                                            onClick={() => handleRemoveMember(member.id)}
+                                            title="Üyeyi Çıkar"
+                                        >
+                                            <X size={16} /> Çıkar
+                                        </button>
+                                    </div>
                                 )}
                             </div>
                         ))}
@@ -190,7 +210,7 @@ const ProjectDetail = () => {
             {activeTab === 'settings' && (
                 <div className="settings-section">
                     <div className="invite-section-header">
-                        <h3 className="settings-title">Yeni Üye Davet Et</h3>
+                        <h3 className="settings-title"><UserPlus size={20} style={{ marginRight: 8 }} /> Yeni Üye Davet Et</h3>
                         <div className="invite-search-box">
                             <input
                                 type="text"
@@ -211,14 +231,15 @@ const ProjectDetail = () => {
                                     <h4 className="dept-title">{dept}</h4>
                                     <div className="dept-users-grid">
                                         {users.map(user => (
-                                            <div key={user.id} className="user-invite-card">
+                                            <div key={user.id} className="user-invite-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: '#fafafa', borderRadius: '8px', marginBottom: '8px', border: '1px solid #e5e5e5' }}>
                                                 <div className="user-invite-info">
-                                                    <span className="user-invite-name">{user.full_name || user.username}</span>
-                                                    <span className="user-invite-title">{user.unvan || user.role}</span>
+                                                    <span className="user-invite-name" style={{ fontWeight: '600', display: 'block' }}>{user.full_name || user.username}</span>
+                                                    <span className="user-invite-title" style={{ fontSize: '0.85rem', color: '#525252' }}>{user.unvan || user.role}</span>
                                                 </div>
                                                 <button
                                                     className="invite-action-btn"
                                                     onClick={() => handleInviteUser(user.id)}
+                                                    style={{ background: '#171717', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.875rem' }}
                                                 >
                                                     Davet Et
                                                 </button>

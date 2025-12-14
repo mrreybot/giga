@@ -9,7 +9,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
-  
+
   // Kayıt formu için genişletilmiş state'ler
   const [regFirstName, setRegFirstName] = useState("");
   const [regLastName, setRegLastName] = useState("");
@@ -17,15 +17,15 @@ const LoginPage = () => {
   const [regPassword, setRegPassword] = useState("");
   const [regDepartment, setRegDepartment] = useState("");
   const [regPhone, setRegPhone] = useState("");
-  
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const res = await api.post("/api/token/", { 
-        username: email, 
+      const res = await api.post("/api/token/", {
+        username: email,
         password
       });
 
@@ -41,7 +41,7 @@ const LoginPage = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    
+
 
     if (!regEmail.endsWith("@tuca.gov.tr")) {
       alert("Lütfen geçerli bir TUCA e-posta adresi girin (@tuca.gov.tr)");
@@ -53,9 +53,9 @@ const LoginPage = () => {
       alert("Lütfen geçerli bir telefon numarası girin");
       return;
     }
-    
+
     try {
-      await api.post("/api/user/register/", { 
+      await api.post("/api/user/register/", {
         username: regEmail,
         password: regPassword,
         first_name: regFirstName,
@@ -64,7 +64,7 @@ const LoginPage = () => {
         department: regDepartment,
         phone: regPhone
       });
-      
+
       // Başarılı kayıt sonrası formu temizle ve login ekranına geç
       alert("Kayıt başarılı! Şimdi giriş yapabilirsiniz.");
       setIsRegister(false);
@@ -76,16 +76,16 @@ const LoginPage = () => {
       setRegPhone("");
     } catch (error) {
       console.error("Hata detayı:", error.response?.data);
-      
+
       // Daha anlaşılır hata mesajı
       if (error.response?.data) {
         const errors = error.response.data;
         let errorMessage = "Kayıt başarısız:\n";
-        
+
         Object.keys(errors).forEach(key => {
           errorMessage += `${key}: ${errors[key]}\n`;
         });
-        
+
         alert(errorMessage);
       } else {
         alert("Kayıt sırasında bir hata oluştu!");
@@ -184,11 +184,12 @@ const LoginPage = () => {
                   required
                 >
                   <option value="">Departman Seçiniz</option>
+                  <option value="Yönetim">Yönetim</option>
                   <option value="Depozito Yönetim Sistemi">Depozito Yönetim Sistemi</option>
                   <option value="Geri Kazanım ve Üretici">Geri Kazanım ve Üretici</option>
                   <option value="Çevre Koruma">Çevre Koruma</option>
                   <option value="Bilgi Teknolojileri">Bilgi Teknolojileri</option>
-                  <option value ="İnsan Kaynakları">İnsan Kaynakları</option>
+                  <option value="İnsan Kaynakları">İnsan Kaynakları</option>
                 </select>
               </div>
 
@@ -225,7 +226,7 @@ const LoginPage = () => {
             </span>
           </p>
         </div>
-      )}   
+      )}
     </div>
   );
 };
