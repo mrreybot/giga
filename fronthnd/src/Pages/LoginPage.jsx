@@ -9,7 +9,6 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
-
   // Kayıt formu için genişletilmiş state'ler
   const [regFirstName, setRegFirstName] = useState("");
   const [regLastName, setRegLastName] = useState("");
@@ -17,7 +16,6 @@ const LoginPage = () => {
   const [regPassword, setRegPassword] = useState("");
   const [regDepartment, setRegDepartment] = useState("");
   const [regPhone, setRegPhone] = useState("");
-
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -42,7 +40,6 @@ const LoginPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-
     if (!regEmail.endsWith("@tuca.gov.tr")) {
       alert("Lütfen geçerli bir TUCA e-posta adresi girin (@tuca.gov.tr)");
       return;
@@ -64,7 +61,6 @@ const LoginPage = () => {
         department: regDepartment,
         phone: regPhone
       });
-
       // Başarılı kayıt sonrası formu temizle ve login ekranına geç
       alert("Kayıt başarılı! Şimdi giriş yapabilirsiniz.");
       setIsRegister(false);
@@ -76,7 +72,6 @@ const LoginPage = () => {
       setRegPhone("");
     } catch (error) {
       console.error("Hata detayı:", error.response?.data);
-
       // Daha anlaşılır hata mesajı
       if (error.response?.data) {
         const errors = error.response.data;

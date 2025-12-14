@@ -407,35 +407,47 @@ class MissionViewSet(viewsets.ModelViewSet):
 # ============ ASSIGNABLE USERS (ROLE-BASED FILTERING) ============
 
 class AssignableUsersView(generics.ListAPIView):
-    """Görev atanabilecek kullanıcıları listele - Role bazlı filtreleme"""
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         user = self.request.user
         
-        # ✅ CEO: Herkesi görebilir
+        # 1. HİYERARŞİK ROL FİLTRELEMESİ (Queryset'i tanımla)
         if user.role == 'CEO':
-            return User.objects.all().order_by('role', 'username')
-        
+            # CEO herkesi görür
+            queryset = User.objects.filter(is_active=True)
         elif user.role == 'MANAGER':
-         return User.objects.filter(role__in=['MANAGER', 'EMPLOYEE']).order_by('role', 'username')
-
+            # MANAGER sadece kendi ve alt seviyesini görür
+            queryset = User.objects.filter(role__in=['MANAGER', 'EMPLOYEE'], is_active=True)
         elif user.role == 'EMPLOYEE':
-         return User.objects.filter(role='EMPLOYEE').order_by('username')
-
-        
-        
+            # EMPLOYEE sadece kendi seviyesini görür
+            queryset = User.objects.filter(role='EMPLOYEE', is_active=True)
         else:
+            # Rol yoksa veya bilinmiyorsa boş küme döndür
             return User.objects.none()
+
+        # 2. PROJE BAZLI FİLTRELEME (Queryset'i daralt)
+        project_id = self.request.query_params.get('project_id')
+        if project_id:
+            try:
+                # DÜZELTME: İlişki alan adını doğru kullan (Many-to-Many veya FK üzerinden)
+                # Burası daha önceki kodun doğru versiyonudur:
+                queryset = queryset.filter(project_memberships__project_id=project_id)
+            except Exception as e:
+                 # Hata yakalama: Eğer bir NameError veya model ilişki hatası olursa
+                 print(f"Proje filtrelemesi hatası: {e}")
+                 return User.objects.none()
+
+
+        # 3. SONUÇ DÖNDÜRME
+        return queryset.order_by('role', 'username').distinct()
     
+    # list metodu aynı kalır...
     def list(self, request, *args, **kwargs):
-        """Direkt array dön - Herkes erişebilir"""
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
 # ============ ORGANIZATION CHART ============
 
 class OrganizationChartView(generics.ListAPIView):
