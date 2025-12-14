@@ -215,9 +215,9 @@
   font-size: 0.9rem;
   font-family: inherit;
   transition: all 0.2s;
-  background: white;
-  color: #111827;
-}
+  background: white !important;
+  color: #6b7280 !important;
+} 
 
 .form-input:hover,
 .form-textarea:hover,
@@ -627,6 +627,101 @@
 .btn-spinner {
   font-size: 1rem;
   animation: spin 2s linear infinite;
+}
+
+/* AddTask.css - Mevcut CSS'inizin SONUNA ekleyin */
+
+/* Filtre İpucu */
+.filter-hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #60a5fa;
+  font-style: italic;
+}
+
+/* Aktif Filtreler Göstergesi */
+.active-filters {
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.filter-indicator {
+  font-size: 0.9rem;
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  background: rgba(96, 165, 250, 0.2);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #93c5fd;
+  font-weight: 500;
+}
+
+/* Departman Badge */
+.dept-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+/* No Users İyileştirmesi */
+.no-users {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+.no-users p {
+  font-size: 1.125rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .active-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-tag {
+    font-size: 0.8rem;
+  }
+}
+
+/* Animasyon */
+@keyframes filterPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.active-filters {
+  animation: filterPulse 2s ease-in-out;
 }
 
 /* ===== RESPONSIVE ===== */

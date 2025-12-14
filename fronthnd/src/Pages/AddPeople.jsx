@@ -154,9 +154,6 @@ const AddPeople = () => {
             <UserPlus size={32} />
           </div>
           <p className="subtitle">Sisteme yeni bir kullanıcı eklemek için bilgileri doldurun</p>
-          {userDepartment && (
-            <p className="user-dept-info">👤 Departmanınız: {userDepartment}</p>
-          )}
         </div>
 
         {successMessage && (

@@ -2,11 +2,18 @@ import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import "../styles/Archive.css";
 
+const MAX_DISPLAY_USERS = 3; // "dahasını göster" tuşu çıkmadan görünen max kullanıcı sayısı
 
 const Archive = () => {
   const [archivedMissions, setArchivedMissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [expandedMissionId, setExpandedMissionId] = useState(null); // hangi görevin alıcılarının genişletildiğini takip et
+
+  const toggleExpansion = (missionId) => {
+        setExpandedMissionId(prevId => (prevId === missionId ? null : missionId));
+    }; //açılır menüyü açıp kapatma fonksiyonu
 
   const roleTranslations = {
     CEO: "CEO",
@@ -63,19 +70,24 @@ const Archive = () => {
       })
       : "-";
 
-  const formatUserBlock = (user) => {
-    if (!user) return <span style={{ color: "#8f9fbf" }}>Bilgi Yok</span>;
+const formatUserBlock = (user) => {
+    if (!user) return <span style={{ color: "#8f9fbf" }}>Bilgi Yok</span>;
 
-    const email = user.email || user.username || "——";
-    const role = roleTranslations[user.role] || user.role || "";
+    // KULLANICI ADINI BELİRLE: (Ad Soyad -> Kullanıcı Adı/E-posta -> Varsayılan)
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+    const display = fullName || user.username || user.email || "İsimsiz";
+    
+    const email = user.email || user.username || "——"; // E-posta hala title için saklandı
+    const role = roleTranslations[user.role] || user.role || "";
 
-    return (
-      <div className="user-block" title={email}>
-        <span className="user-email">{email}</span>
-        {role ? <span className="user-role">({role})</span> : null}
-      </div>
-    );
-  };
+    return (
+        // Title'a e-posta/username bilgisi konuldu
+      <div className="user-block" title={email}> 
+        <span className="user-name-display">{display}</span> {/* YENİ CLASS */}
+        {role ? <span className="user-role">({role})</span> : null}
+      </div>
+    );
+  };
 
   const filtered = archivedMissions.filter((m) => {
     const q = searchTerm.trim().toLowerCase();
@@ -143,16 +155,44 @@ const Archive = () => {
                   </td>
 
                   <td className="assigned-list">
-                    {m.assigned_users && m.assigned_users.length > 0 ? (
-                      m.assigned_users.map((u) => (
-                        <div key={u.id} className="assigned-item">
-                          {formatUserBlock(u)}
-                        </div>
-                      ))
-                    ) : (
-                      <span style={{ color: "#8f9fbf" }}>Boş</span>
-                    )}
-                  </td>
+                    {m.assigned_users && m.assigned_users.length > 0 ? (
+                      <>
+                        {/* 1. Gösterilecek kullanıcıları al */}
+                        {m.assigned_users.slice(0, MAX_DISPLAY_USERS).map((u) => (
+                          <div key={u.id} className="assigned-item">
+                            {formatUserBlock(u)}
+                          </div>
+                        ))}
+
+                        {/* 2. Eğer 3'ten fazla kullanıcı varsa 'daha fazla' butonunu göster */}
+                        {m.assigned_users.length > MAX_DISPLAY_USERS && (
+                            <>
+                                {/* Butona tıklandığında görünür hale gelen gizli kullanıcılar */}
+                                {expandedMissionId === m.id && 
+                                    m.assigned_users.slice(MAX_DISPLAY_USERS).map((u) => (
+                                        <div key={u.id} className="assigned-item expanded">
+                                            {formatUserBlock(u)}
+                                        </div>
+                                    ))
+                                }
+
+                                {/* Toggle Butonu */}
+                                <button 
+                                    onClick={() => toggleExpansion(m.id)} 
+                                    className="btn-toggle-recipients"
+                                    aria-expanded={expandedMissionId === m.id}
+                                >
+                                    {expandedMissionId === m.id
+                                        ? `▲ ${MAX_DISPLAY_USERS} kişiyi göster`
+                                        : `▼ +${m.assigned_users.length - MAX_DISPLAY_USERS} kişi daha`}
+                                </button>
+                            </>
+                        )}
+                      </>
+                    ) : (
+                      <span style={{ color: "#8f9fbf" }}>Boş</span>
+                    )}
+                  </td>
 
                   <td className="col-location">{m.from_to || "-"}</td>
 

@@ -232,37 +232,6 @@
   color: #666;
 }
 
-/* Status Toggle */
-.status-toggle {
-  padding: 0.4rem 0.8rem; /* Küçültüldü */
-  border: none;
-  border-radius: 16px;
-  font-size: 0.8rem; /* Küçültüldü */
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.status-toggle.active {
-  background: #28a745; /* Yeşil - Aktif */
-  color: white;
-}
-
-.status-toggle.active:hover {
-  background: #1e7e34;
-  transform: scale(1.05);
-}
-
-.status-toggle.inactive {
-  background: #dc3545; /* Kırmızı - Pasif */
-  color: white;
-}
-
-.status-toggle.inactive:hover {
-  background: #c82333;
-  transform: scale(1.05);
-}
-
 /* Actions Cell */
 .actions-cell {
   display: flex;

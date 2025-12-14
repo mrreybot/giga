@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../services/api";
 import "../styles/AddTask.css";
@@ -17,6 +17,7 @@ const AddTask = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [currentUser, setCurrentUser] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -31,10 +32,9 @@ const AddTask = () => {
     department: ''
   });
 
+  // 1. İlk Yükleme (Profil ve Projeler)
   useEffect(() => {
     fetchCurrentUser();
-    fetchCurrentUser();
-    fetchUsers();
     fetchProjects();
 
     if (editingMission) {
@@ -50,38 +50,46 @@ const AddTask = () => {
         department: editingMission.department || ''
       });
     }
+    // NOT: fetchUsers'ı buradan kaldırdık, aşağıda project dependency'si ile çağıracağız.
   }, [editingMission]);
+
+  // 2. Proje Değiştiğinde Kullanıcıları Sunucudan Çek (Server-Side Filtering)
+  useEffect(() => {
+    fetchUsers(formData.project);
+  }, [formData.project]);
 
   const fetchCurrentUser = async () => {
     try {
       const response = await api.get(PROFILE_ENDPOINT);
       setCurrentUser(response.data);
-
-      // Artık EMPLOYEE'ler de görev oluşturabilir, yetki kontrolü kaldırıldı
     } catch (error) {
-      console.error(" Kullanıcı bilgisi alınamadı:", error);
+      console.error("❌ Kullanıcı bilgisi alınamadı:", error);
     }
   };
 
   const fetchProjects = async () => {
     try {
       const res = await api.get('/api/projects/');
-      // Pagination check
       const projectList = res.data.results || (Array.isArray(res.data) ? res.data : []);
       setProjects(projectList);
     } catch (error) {
-      console.error("Projeler yüklenemedi:", error);
+      console.error("❌ Projeler yüklenemedi:", error);
     }
   };
 
-  const fetchUsers = async () => {
+  // ✅ GÜNCELLENDİ: Proje ID'sine göre backend'e istek atar
+  const fetchUsers = async (projectId = '') => {
     setLoading(true);
     try {
-      const response = await api.get(USERS_ENDPOINT);
+      // URL'i dinamik oluşturuyoruz
+      let url = USERS_ENDPOINT;
+      if (projectId) {
+        url += `?project_id=${projectId}`;
+      }
 
-      // Backend'den array veya obje dönebilir
+      const response = await api.get(url);
+
       let userData = [];
-
       if (Array.isArray(response.data)) {
         userData = response.data;
       } else if (response.data && typeof response.data === 'object') {
@@ -90,7 +98,7 @@ const AddTask = () => {
 
       setUsers(userData);
 
-      // Standardize departments list
+      // Departmanları statik olarak set ediyoruz (İsterseniz bunu da backend'den çekebilirsiniz)
       const standardizedDepts = [
         "Yönetim",
         "Depozito Yönetim Sistemi",
@@ -100,14 +108,42 @@ const AddTask = () => {
         "İnsan Kaynakları"
       ];
       setDepartments(standardizedDepts);
+
     } catch (error) {
       console.error("❌ Kullanıcılar yüklenemedi:", error);
-      alert(`Kullanıcılar yüklenirken hata oluştu!\n${error.response?.data?.detail || error.message}`);
+      // Hata durumunda listeyi temizle ama alert ile kullanıcıyı çok sıkma (opsiyonel)
       setUsers([]);
     } finally {
       setLoading(false);
     }
   };
+
+// AddTask.jsx dosyanızda bu bloğu bulun ve değiştirin:
+
+// ⭐ GÜNCELLENDİ: Proje filtresi buradan tamamen kaldırıldı!
+const filteredUsers = useMemo(() => {
+    let filtered = [...users];
+
+    // NOT: 'users' state'i artık Backend'den (fetchUsers içinde) 
+    // projenin ID'sine göre filtrelenmiş olarak gelmektedir.
+
+    // Departman filtresi (Client-side devam ediyor)
+    if (formData.department) {
+        filtered = filtered.filter(user => 
+            user.department === formData.department
+        );
+    }
+
+    // Öncelik seviyesi filtresi (Client-side devam ediyor)
+    if (formData.priority && formData.priority !== 'MEDIUM') {
+        // Kullanıcı modelinizde priority_level varsa çalışır
+        if (filtered.some(u => u.priority_level)) {
+           filtered = filtered.filter(user => user.priority_level === formData.priority);
+        }
+    }
+
+    return filtered;
+}, [users, formData.department, formData.priority]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -143,8 +179,6 @@ const AddTask = () => {
 
   const handleSubmitMission = async (e) => {
     e.preventDefault();
-
-    // Validasyon
     if (!formData.description.trim()) {
       alert("Lütfen açıklama giriniz!");
       return;
@@ -158,7 +192,6 @@ const AddTask = () => {
       return;
     }
 
-    // Tarih kontrolü
     const startDate = new Date(formData.assigned_date);
     const endDate = new Date(formData.end_date);
     if (endDate < startDate) {
@@ -167,7 +200,6 @@ const AddTask = () => {
     }
 
     setSaving(true);
-
     try {
       const submitData = new FormData();
       submitData.append('description', formData.description);
@@ -199,36 +231,22 @@ const AddTask = () => {
         await api.patch(`${MISSIONS_ENDPOINT}${editingMission.id}/`, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        alert(" Görev başarıyla güncellendi!");
+        alert("✅ Görev başarıyla güncellendi!");
       } else {
         await api.post(MISSIONS_ENDPOINT, submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        alert(" Görev başarıyla oluşturuldu!");
+        alert("✅ Görev başarıyla oluşturuldu!");
       }
 
       navigate('/dashboard');
 
     } catch (error) {
       console.error("❌ Görev kaydedilemedi:", error);
-
       let errorMessage = "Görev kaydedilirken hata oluştu!";
-
-      if (error.response?.status === 403) {
-        errorMessage = error.response.data.detail || "Bu işlem için yetkiniz yok.";
-      } else if (error.response?.data) {
-        const errorData = error.response.data;
-
-        if (typeof errorData === 'object') {
-          const errors = Object.entries(errorData)
-            .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
-            .join('\n');
-          errorMessage += `\n\n${errors}`;
-        } else if (errorData.detail) {
-          errorMessage += `\n\n${errorData.detail}`;
-        }
+      if (error.response?.data?.detail) {
+        errorMessage += `\n\n${error.response.data.detail}`;
       }
-
       alert(errorMessage);
     } finally {
       setSaving(false);
@@ -279,7 +297,6 @@ const AddTask = () => {
             {/* GÖREV DETAYLARI */}
             <div className="form-section">
               <h2 className="section-title">Görev Detayları</h2>
-
               <div className="form-group">
                 <label htmlFor="desc" className="form-label">
                   Görev Açıklaması <span className="required">*</span>
@@ -343,6 +360,7 @@ const AddTask = () => {
                 />
               </div>
 
+              {/* ⭐ PROJE - Bu alan değiştiğinde backend isteği tetiklenir */}
               <div className="form-group">
                 <label htmlFor="project" className="form-label">
                   Proje <span className="optional">(Opsiyonel)</span>
@@ -360,6 +378,11 @@ const AddTask = () => {
                     <option key={proj.id} value={proj.id}>{proj.title}</option>
                   ))}
                 </select>
+                {formData.project && (
+                  <small className="filter-hint">
+                    💡 Seçili projeye ait kullanıcılar getiriliyor...
+                  </small>
+                )}
               </div>
 
               <div className="form-row">
@@ -380,6 +403,7 @@ const AddTask = () => {
                     <option value="HIGH">Yüksek</option>
                   </select>
                 </div>
+
                 <div className="form-group">
                   <label htmlFor="department" className="form-label">
                     İlgilenen Departman <span className="optional">(Opsiyonel)</span>
@@ -399,6 +423,11 @@ const AddTask = () => {
                       <option key={index} value={dept} />
                     ))}
                   </datalist>
+                  {formData.department && (
+                    <small className="filter-hint">
+                      💡 Seçili departmana göre kullanıcılar filtreleniyor
+                    </small>
+                  )}
                 </div>
               </div>
 
@@ -424,7 +453,6 @@ const AddTask = () => {
                     </span>
                   </label>
                 </div>
-
                 {formData.attachments.length > 0 && (
                   <div className="selected-files">
                     {formData.attachments.map((file, index) => (
@@ -445,38 +473,50 @@ const AddTask = () => {
               </div>
             </div>
 
-            {/* GÖREV ATAMA */}
+            {/* ⭐ GÖREV ATAMA LİSTESİ */}
             <div className="form-section">
               <div className="section-header">
-                <h2 className="section-title">
-                  Görev Atama
-                  {currentUser?.role === 'MANAGER' && (
-                    <span className="role-info"> </span>
-                  )}
-                  {currentUser?.role === 'EMPLOYEE' && (
-                    <span className="role-info"> </span>
-                  )}
-                  {currentUser?.role === 'CEO' && (
-                    <span className="role-info"> </span>
-                  )}
-                </h2>
+                <h2 className="section-title">Görev Atama</h2>
                 <span className="selection-count">
                   {formData.due_to.length} kişi seçildi
                 </span>
               </div>
+
+              {(formData.project || formData.department) && (
+                <div className="active-filters">
+                  <span className="filter-indicator">
+                    🔍 {filteredUsers.length} kullanıcı listeleniyor
+                  </span>
+                  {formData.project && (
+                    <span className="filter-tag">
+                      Proje: {projects.find(p => p.id === parseInt(formData.project))?.title || 'Yükleniyor...'}
+                    </span>
+                  )}
+                  {formData.department && (
+                    <span className="filter-tag">
+                      Departman: {formData.department}
+                    </span>
+                  )}
+                </div>
+              )}
 
               {loading ? (
                 <div className="loading-users">
                   <div className="spinner">⏳</div>
                   <p>Kullanıcılar yükleniyor...</p>
                 </div>
-              ) : users.length === 0 ? (
+              ) : filteredUsers.length === 0 ? (
                 <div className="no-users">
-                  <p> Atanabilir kullanıcı bulunamadı</p>
+                  <p>🔍 Aradığınız kriterlere uygun kullanıcı bulunamadı.</p>
+                  {(formData.project || formData.department) && (
+                    <small style={{ color: '#9ca3af', marginTop: '0.5rem', display: 'block' }}>
+                      Filtreleri değiştirerek tekrar deneyebilirsiniz.
+                    </small>
+                  )}
                 </div>
               ) : (
                 <div className="users-grid">
-                  {users.map(user => (
+                  {filteredUsers.map(user => (
                     <label
                       key={user.id}
                       className={`user-card ${formData.due_to.includes(user.id) ? 'selected' : ''}`}
@@ -504,6 +544,11 @@ const AddTask = () => {
                             <span className={`role-badge ${getRoleBadgeClass(user.role)}`}>
                               {getRoleLabel(user.role)}
                             </span>
+                            {user.department && (
+                              <span className="dept-badge">
+                                {user.department}
+                              </span>
+                            )}
                           </div>
                         </div>
                         <div className="check-indicator">✓</div>
@@ -514,7 +559,6 @@ const AddTask = () => {
               )}
             </div>
 
-            {/* FORM BUTTONS */}
             <div className="form-actions">
               <button
                 type="button"
@@ -536,12 +580,12 @@ const AddTask = () => {
                   </>
                 ) : editingMission ? (
                   <>
-                    <span className="btn-icon"></span>
+                    <span className="btn-icon">💾</span>
                     Değişiklikleri Kaydet
                   </>
                 ) : (
                   <>
-                    <span className="btn-icon"></span>
+                    <span className="btn-icon">✓</span>
                     Görevi Oluştur
                   </>
                 )}

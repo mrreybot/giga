@@ -267,6 +267,56 @@
   margin: 24px;
 }
 
+/* Archive.css dosyasına eklenmeli */
+
+/* Genel Hücre Stili (isteğe bağlı, daha iyi dikey hizalama için) */
+.assigned-list {
+    vertical-align: top;
+}
+
+/* Her bir kullanıcı bloğu */
+.assigned-item {
+    margin-bottom: 2px;
+}
+
+/* Toggle butonu stilleri */
+.btn-toggle-recipients {
+    background: transparent;
+    border: none;
+    color: #4299e1; /* Link rengi */
+    cursor: pointer;
+    padding: 0;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: underline;
+    transition: color 0.2s;
+    display: block; /* Yeni satırda görünmesini sağlar */
+}
+
+.btn-toggle-recipients:hover {
+    color: #63b3ed;
+}
+
+/* FormatUserBlock içindeki roller/emailler */
+.user-block {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.user-email {
+    font-size: 0.85rem;
+    color: #cbd5e0; /* Açık renk */
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: #a0aec0; /* Daha sönük renk */
+    margin-left: 5px;
+    font-weight: normal;
+}
+
 /* Responsive ayarlamalar */
 @media (max-width: 900px) {
   .archive-table { min-width: 900px; }

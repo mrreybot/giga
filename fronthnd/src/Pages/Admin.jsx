@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../services/constant";
 import "../styles/Admin.css";
+import { Pen, Trash2 } from "lucide-react";
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -206,7 +207,6 @@ const Admin = () => {
                     <th>Rol</th>
                     <th>Departman</th>
                     <th>Telefon</th>
-                    <th>Durum</th>
                     <th>İşlemler</th>
                   </tr>
                 </thead>
@@ -234,25 +234,23 @@ const Admin = () => {
                         </td>
                         <td>{user.department || "-"}</td>
                         <td>{user.phone || "-"}</td>
-                        <td>
-
-                        </td>
                         <td className="actions-cell">
                           <button
                             className="btn-icon btn-edit"
                             onClick={() => handleEditUser(user)}
                             title="Düzenle"
                           >
-                            ✏️
+                            <Pen size={20} />
+
                           </button>
                           <button
                             className="btn-icon btn-delete"
                             onClick={() => handleDeleteUser(user.id, user.username)}
                             title="Sil"
                           >
-                            🗑️
+                            <Trash2 size={20} />
                           </button>
-                        </td>
+                        </td> 
                       </tr>
                     ))
                   ) : (
@@ -351,16 +349,15 @@ const Admin = () => {
                 </select>
               </div>
 
-              <div className="form-group">
+              {/*<div className="form-group">
                 <label>
                   <input
                     type="checkbox"
                     checked={editingUser.is_active || false}
                     onChange={(e) => setEditingUser({ ...editingUser, is_active: e.target.checked })}
                   />
-                  {" "}Aktif Kullanıcı
                 </label>
-              </div>
+              </div>*/}
             </div>
             <div className="modal-footer">
               <button className="btn-secondary" onClick={() => setShowEditModal(false)}>
