@@ -210,8 +210,8 @@
 }
 
 /* Atanmış kullanıcı listesi */
-.assigned-list { display:flex; flex-direction:column; gap:6px; max-width:260px; }
-.assigned-item { display:flex; gap:8px; align-items:center; }
+.assigned-list { display:flex; flex-direction:column; gap:6px; max-width:260px; justify-content:center;}
+.assigned-item { display:flex; gap:8px; align-items:center; justify-content:center;}
 
 /* Lokasyon */
 .col-location { text-align:center; color:#d97706; /* Turuncu/Sarı (uygun bir renk) */ font-weight:700; text-transform:uppercase; }
