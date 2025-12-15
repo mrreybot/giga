@@ -214,3 +214,41 @@ form input:focus {
     transform: translateY(-20px);
   }
 }
+/* --- LOGO STİLLERİ ---hasan ekledi */ 
+
+/* Logoyu ortalar ve altındaki başlıkla arasını açar */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Başlık ile logo arasındaki boşluk */
+  width: 100%;
+}
+
+/* Logonun boyutunu ayarlar */
+.auth-logo {
+  width: 400px !important;/* Logonun büyüklüğünü buradan değiştirebilirsin */
+  height: auto; /* Oranı bozmadan otomatik ayarlar */
+  object-fit: contain;
+  transition: transform 0.3s ease; /* Hover efekti için yumuşak geçiş */
+}
+
+/* Mouse ile üzerine gelince hafif büyüsün (İsteğe bağlı) */
+.auth-logo:hover {
+  transform: scale(1.05);
+}
+/* --- KAYDIRMA ÇUBUĞUNU GİZLE --- */
+
+/* Chrome, Safari ve Edge için */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Firefox için */
+html {
+    scrollbar-width: none;
+}
+
+body {
+    -ms-overflow-style: none;  /* IE ve Edge */
+}

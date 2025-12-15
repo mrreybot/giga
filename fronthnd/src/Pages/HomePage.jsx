@@ -308,13 +308,13 @@ const HomePage = () => {
                 className={`view-btn ${viewMode === 'calendar' ? 'active' : ''}`}
                 onClick={() => setViewMode('calendar')}
               >
-                📅 Takvim
+                 Takvim
               </button>
               <button
                 className={`view-btn ${viewMode === 'gantt' ? 'active' : ''}`}
                 onClick={() => setViewMode('gantt')}
               >
-                📊 Gantt
+                 Gantt
               </button>
             </div>
           </div>
