@@ -4,6 +4,8 @@ import api from "../services/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../services/constant";
 import "../styles/Login.css";
 import "../styles/Register.css";
+import logo from '../assets/tca_logo.png'; // logo ekleme
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -91,8 +93,13 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       {/* LOGIN PANEL */}
+      {/* logo eklendi  */}
       {!isRegister && (
+        
         <div className="login-card">
+          <div className="logo-container">
+            <img src={logo} alt="Uygulama Logosu" className="auth-logo" />
+          </div>
           <h2>Hoşgeldiniz</h2>
           <p className="subtitle">Görevlerinize erişmek için giriş yapın</p>
 
@@ -127,9 +134,14 @@ const LoginPage = () => {
         </div>
       )}
 
-      {/* REGISTER PANEL - Genişletilmiş */}
+      {/* REGISTER PANEL - Genişletilmiş  */}
+       {/* logo eklendi  */}
       {isRegister && (
         <div className="login-card register-extended">
+           <div className="logo-container">
+            <img src={logo} alt="Uygulama Logosu" className="auth-logo" />
+          </div>
+          
           <h2>Hesabınızı oluşturalım</h2>
           <p className="subtitle">Devam etmek için bilgilerinizi girin</p>
 
