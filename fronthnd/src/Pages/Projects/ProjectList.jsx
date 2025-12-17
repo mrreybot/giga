@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import "../../styles/Projects.css";
+import "../../styles/Invites.css";
 import {
     Plus,
     Trash2,
@@ -16,9 +17,17 @@ const ProjectList = () => {
     const [projects, setProjects] = useState([]);
     const [invites, setInvites] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
+
+    // Form State
     const [newProjectTitle, setNewProjectTitle] = useState("");
     const [newProjectDesc, setNewProjectDesc] = useState("");
+    const [newProjectTopic, setNewProjectTopic] = useState("");
+    const [newProjectDept, setNewProjectDept] = useState("");
+    const [newProjectStartDate, setNewProjectStartDate] = useState("");
+    const [newProjectEndDate, setNewProjectEndDate] = useState("");
+
     const navigate = useNavigate();
+    const departments = ["Yönetim", "İnsan Kaynakları", "Yazılım", "Pazarlama", "Finans", "Operasyon", "Diğer"];
 
     useEffect(() => {
         fetchProjects();
@@ -48,10 +57,22 @@ const ProjectList = () => {
     const handleCreateProject = async (e) => {
         e.preventDefault();
         try {
-            await api.post('/api/projects/', { title: newProjectTitle, description: newProjectDesc });
+            await api.post('/api/projects/', {
+                title: newProjectTitle,
+                description: newProjectDesc,
+                topic: newProjectTopic,
+                department: newProjectDept,
+                start_date: newProjectStartDate,
+                end_date: newProjectEndDate
+            });
             setShowCreateModal(false);
+            // Reset Form
             setNewProjectTitle("");
             setNewProjectDesc("");
+            setNewProjectTopic("");
+            setNewProjectDept("");
+            setNewProjectStartDate("");
+            setNewProjectEndDate("");
             fetchProjects();
         } catch (err) {
             alert("Proje oluşturulamadı.");
@@ -68,23 +89,13 @@ const ProjectList = () => {
         }
     };
 
-    const handleDeleteProject = async (id, e) => {
-        e.stopPropagation(); // Card click event'ini engelle
-        if (!window.confirm("Bu projeyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) return;
 
-        try {
-            await api.delete(`/api/projects/${id}/`);
-            fetchProjects();
-        } catch (err) {
-            console.error("Proje silinemedi:", err);
-            alert("Proje silinirken hata oluştu.");
-        }
-    };
 
     return (
         <div className="projects-container">
             <div className="projects-header">
                 <h2>Projelerim</h2>
+                <h3>                </h3>
                 <button
                     className="new-project-btn"
                     onClick={() => setShowCreateModal(true)}
@@ -98,7 +109,7 @@ const ProjectList = () => {
                     <h3><Mail size={18} /> Bekleyen Davetler ({invites.length})</h3>
                     {invites.map(invite => (
                         <div key={invite.id} className="invite-card">
-                            <span><strong>{invite.project_name}</strong> projesine <strong>{invite.invited_by_name}</strong> tarafından davet edildiniz.</span>
+                            <span className="invite-message"><strong>{invite.project_name}</strong> projesine <strong>{invite.invited_by_name}</strong> tarafından davet edildiniz.</span>
                             <div className="invite-actions">
                                 <button onClick={() => handleRespondInvite(invite.id, 'ACCEPTED')} className="accept-btn"><Check size={16} /> Kabul Et</button>
                                 <button onClick={() => handleRespondInvite(invite.id, 'REJECTED')} className="reject-btn"><X size={16} /> Reddet</button>
@@ -118,15 +129,6 @@ const ProjectList = () => {
                         <div className="project-card-header">
                             <h3 className="project-title">{project.title}</h3>
                             {project.my_role === 'ADMIN' && <span className="admin-badge"><Shield size={12} style={{ marginRight: 4 }} /> Yönetici</span>}
-                            {project.am_i_creator && (
-                                <button
-                                    className="delete-project-btn"
-                                    onClick={(e) => handleDeleteProject(project.id, e)}
-                                    title="Projeyi Sil"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            )}
                         </div>
                         <p className="project-description">{project.description || 'Açıklama yok'}</p>
 
@@ -157,6 +159,7 @@ const ProjectList = () => {
                         <h3 className="modal-title">Yeni Proje Oluştur</h3>
                         <form onSubmit={handleCreateProject}>
                             <div className="form-group">
+                                <label className="form-label">Proje Adı</label>
                                 <input
                                     type="text"
                                     placeholder="Proje Adı"
@@ -166,7 +169,58 @@ const ProjectList = () => {
                                     required
                                 />
                             </div>
+
                             <div className="form-group">
+                                <label className="form-label">Konu</label>
+                                <input
+                                    type="text"
+                                    placeholder="Proje Konusu"
+                                    className="form-input"
+                                    value={newProjectTopic}
+                                    onChange={e => setNewProjectTopic(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="form-row">
+                                <div className="form-group half">
+                                    <label className="form-label">Departman</label>
+                                    <select
+                                        className="form-select"
+                                        value={newProjectDept}
+                                        onChange={e => setNewProjectDept(e.target.value)}
+                                    >
+                                        <option value="">Seçiniz...</option>
+                                        {departments.map(d => (
+                                            <option key={d} value={d}>{d}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-group half"></div>
+                            </div>
+
+                            <div className="form-row">
+                                <div className="form-group half">
+                                    <label className="form-label">Başlangıç Tarihi</label>
+                                    <input
+                                        type="date"
+                                        className="form-input"
+                                        value={newProjectStartDate}
+                                        onChange={e => setNewProjectStartDate(e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group half">
+                                    <label className="form-label">Bitiş Tarihi</label>
+                                    <input
+                                        type="date"
+                                        className="form-input"
+                                        value={newProjectEndDate}
+                                        onChange={e => setNewProjectEndDate(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Açıklama</label>
                                 <textarea
                                     placeholder="Açıklama"
                                     className="form-textarea"

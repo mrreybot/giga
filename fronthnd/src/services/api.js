@@ -2,7 +2,7 @@ import axios from "axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constant.js";
 
 // Production URL (opsiyonel)
-const apiUrl = 'http://127.0.0.1:8000/' 
+const apiUrl = 'http://10.253.235.227:8000';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
@@ -16,7 +16,7 @@ const refreshAccessToken = async () => {
   try {
     console.log("🔄 Attempting to refresh token...");
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-    
+
     if (!refreshToken) {
       throw new Error('No refresh token found');
     }
@@ -27,19 +27,19 @@ const refreshAccessToken = async () => {
 
     const { access } = response.data;
     localStorage.setItem(ACCESS_TOKEN, access);
-    
+
     console.log("✅ Token refreshed successfully");
     return access;
   } catch (error) {
     console.error("❌ Token refresh failed:", error);
-    
+
     // Refresh token'ı da geçersizse çıkış yap
     localStorage.removeItem(ACCESS_TOKEN);
     localStorage.removeItem(REFRESH_TOKEN);
-    
+
     // Login sayfasına yönlendir
     window.location.href = '/';
-    
+
     throw error;
   }
 };
@@ -48,17 +48,17 @@ const refreshAccessToken = async () => {
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
-    
+
     console.log("📤 Request to:", config.url);
     console.log("🔑 Token exists:", !!token);
-    
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       console.log("✅ Authorization header set");
     } else {
       console.warn("⚠️  No token in localStorage");
     }
-    
+
     // ✅ FormData için Content-Type'ı KALDIRMA (axios otomatik ekleyecek)
     // Eğer data FormData ise, Content-Type'ı siliyoruz
     if (config.data instanceof FormData) {
@@ -68,9 +68,9 @@ api.interceptors.request.use(
       // Normal JSON istekleri için
       config.headers['Content-Type'] = 'application/json';
     }
-    
+
     console.log("📋 Final Headers:", config.headers);
-    
+
     return config;
   },
   (error) => {
@@ -92,7 +92,7 @@ api.interceptors.response.use(
 
     // Eğer token expire olduysa ve daha önce refresh denenmediyse
     if (
-      error.response?.status === 401 && 
+      error.response?.status === 401 &&
       !originalRequest._retry
     ) {
       console.log("🔐 Token expired, attempting refresh...");

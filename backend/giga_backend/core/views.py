@@ -495,9 +495,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def invite_member(self, request, pk=None):
         project = self.get_object()
         
-        # Sadece adminler davet edebilir
-        if not project.members.filter(user=request.user, role='ADMIN').exists():
-            return Response({"detail": "Sadece yöneticiler davet gönderebilir."}, status=status.HTTP_403_FORBIDDEN)
+        # Herkes davet edebilir (IsAuthenticated zaten genel permission olarak var)
+        # if not project.members.filter(user=request.user, role='ADMIN').exists():
+        #     return Response({"detail": "Sadece yöneticiler davet gönderebilir."}, status=status.HTTP_403_FORBIDDEN)
         
         email = request.data.get('email')
         user_id = request.data.get('user_id')
@@ -654,5 +654,10 @@ class NotificationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def mark_all_read(self, request):
         self.get_queryset().filter(is_read=False).update(is_read=True)
+        return Response({'status': 'ok'})
+
+    @action(detail=False, methods=['post'])
+    def clear_all(self, request):
+        self.get_queryset().delete()
         return Response({'status': 'ok'})
 
