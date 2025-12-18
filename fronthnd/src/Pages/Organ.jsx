@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import "../styles/Organ.css";
+import { Mail, Phone, Building, User, X, MapPin } from "lucide-react";
 
 const ORG_CHART_ENDPOINT = "/api/users/organization/";
 
@@ -183,45 +184,71 @@ const Organ = () => {
         )}
       </div>
 
-      {/* Modal - Same as before */}
+      {/* Modal - Improved UI */}
       {showModal && selectedUser && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Kullanıcı Detayları</h2>
-              <button className="close-btn" onClick={closeModal}>×</button>
-            </div>
-            <div className="modal-body">
-              <div className="modal-avatar">
+        <div className="organ-modal-overlay" onClick={closeModal}>
+          <div className="organ-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="organ-close-btn" onClick={closeModal}>
+              <X size={24} />
+            </button>
+
+            <div className="organ-modal-header-bg"></div>
+
+            <div className="organ-modal-body">
+              <div className="organ-modal-avatar-wrapper">
                 {selectedUser.profile_photo ? (
-                  <img src={selectedUser.profile_photo} alt={formatUserName(selectedUser)} />
+                  <img src={selectedUser.profile_photo} alt={formatUserName(selectedUser)} className="organ-modal-avatar-img" />
                 ) : (
-                  <div className="avatar-placeholder">
+                  <div className="organ-modal-avatar-placeholder">
                     {formatUserName(selectedUser).charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-              <h3 className="modal-name">{formatUserName(selectedUser)}</h3>
-              <div className="modal-role-badge">{selectedUser.role}</div>
 
-              <div className="modal-info">
+              <div className="organ-modal-main-info">
+                <h3 className="organ-modal-name">{formatUserName(selectedUser)}</h3>
+                <span className="organ-modal-role">{selectedUser.role}</span>
+              </div>
+
+              <div className="organ-modal-details-list">
+                <div className="organ-detail-item">
+                  <div className="organ-icon-box">
+                    <Building size={18} />
+                  </div>
+                  <div className="organ-detail-text">
+                    <span className="organ-label">Departman</span>
+                    <span className="organ-value">{selectedUser.department || 'Belirtilmemiş'}</span>
+                  </div>
+                </div>
+
                 {selectedUser.email && (
-                  <div className="modal-info-item">
-                    <span className="info-label">📧 E-posta:</span>
-                    <span className="info-value">{selectedUser.email}</span>
+                  <div className="organ-detail-item">
+                    <div className="organ-icon-box">
+                      <Mail size={18} />
+                    </div>
+                    <div className="organ-detail-text">
+                      <span className="organ-label">E-posta</span>
+                      <a href={`mailto:${selectedUser.email}`} className="organ-value link">{selectedUser.email}</a>
+                    </div>
                   </div>
                 )}
-                <div className="modal-info-item">
-                  <span className="info-label">🏢 Departman:</span>
-                  <span className="info-value">{selectedUser.department || '-'}</span>
-                </div>
+
                 {selectedUser.phone && (
-                  <div className="modal-info-item">
-                    <span className="info-label">📞 Telefon:</span>
-                    <span className="info-value">{selectedUser.phone}</span>
+                  <div className="organ-detail-item">
+                    <div className="organ-icon-box">
+                      <Phone size={18} />
+                    </div>
+                    <div className="organ-detail-text">
+                      <span className="organ-label">Telefon</span>
+                      <span className="organ-value">{selectedUser.phone}</span>
+                    </div>
                   </div>
                 )}
               </div>
+            </div>
+
+            <div className="organ-modal-footer">
+              <span className="organ-company-tag">GIGA Inc.</span>
             </div>
           </div>
         </div>

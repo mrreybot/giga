@@ -166,6 +166,11 @@ class MissionFeedback(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=200, verbose_name="Proje Adı")
     description = models.TextField(blank=True, null=True, verbose_name="Açıklama")
+    topic = models.CharField(max_length=200, blank=True, null=True, verbose_name="Konu")
+    department = models.CharField(max_length=100, blank=True, null=True, verbose_name="Departman")
+    start_date = models.DateField(blank=True, null=True, verbose_name="Başlangıç Tarihi")
+    end_date = models.DateField(blank=True, null=True, verbose_name="Bitiş Tarihi")
+
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='created_projects')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -226,7 +226,7 @@
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
-  padding: 1.5rem;
+  padding: 1.5rem; 
   margin-bottom: 2rem;
 }
 
@@ -584,7 +584,7 @@
 }
 
 .close-btn {
-  width: 32px;
+ width: 32px;
   height: 32px;
   border: 1px solid var(--border-secondary);
   background: var(--bg-tertiary);
@@ -593,7 +593,15 @@
   cursor: pointer;
   transition: all 0.15s ease;
   color: var(--text-primary);
+
+  /* --- EKLEMEN GEREKEN SİHİRLİ KODLAR --- */
+  display: flex;             /* İçindekileri yönetebilmek için */
+  align-items: center;       /* Dikeyde (yukarı-aşağı) ortala */
+  justify-content: center;   /* Yatayda (sağ-sol) ortala */
+  padding: 0;                /* Gereksiz boşlukları sıfırla */
+  line-height: 1;            /* Satır yüksekliği kaymasını engelle */
 }
+
 
 .close-btn:hover {
   background: var(--danger);

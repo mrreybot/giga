@@ -214,3 +214,26 @@ form select:focus {
   border-color: #444;
   box-shadow: 0 0 6px #4a57ff;
 }
+/* --- LOGO STİLLERİ ---hasanekledi */
+
+/* Logoyu ortalar ve altındaki başlıkla arasını açar */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Başlık ile logo arasındaki boşluk */
+  width: 100%;
+}
+
+/* Logonun boyutunu ayarlar */
+.auth-logo {
+  width: 400px !important;/* Logonun büyüklüğünü buradan değiştirebilirsin */
+  height: auto; /* Oranı bozmadan otomatik ayarlar */
+  object-fit: contain;
+  transition: transform 0.3s ease; /* Hover efekti için yumuşak geçiş */
+}
+
+/* Mouse ile üzerine gelince hafif büyüsün (İsteğe bağlı) */
+.auth-logo:hover {
+  transform: scale(1.05);
+}

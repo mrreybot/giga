@@ -1,0 +1,110 @@
+/* === INVITES SECTION === */
+.invites-section {
+    margin-bottom: 40px;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+}
+
+.invites-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    color: var(--text-primary, #171717);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+}
+
+/* === INVITE CARD === */
+.invite-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-light, #e5e5e5);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.invite-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #171717 0%, #404040 100%);
+}
+
+.invite-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: var(--border-medium, #d4d4d4);
+}
+
+.invite-message {
+    font-size: 1rem;
+    color: var(--text-secondary, #525252);
+    line-height: 1.5;
+}
+
+.invite-message strong {
+    color: var(--text-primary, #171717);
+    font-weight: 600;
+}
+
+/* === ACTIONS === */
+.invite-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.accept-btn {
+    background: var(--color-gray-900, #171717);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.reject-btn {
+    background: var(--bg-primary, #ffffff);
+    color: var(--text-secondary, #525252);
+    border: 1px solid var(--border-medium, #d4d4d4);
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.accept-btn:hover {
+    background: var(--color-black, #000000);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.reject-btn:hover {
+    background: var(--bg-hover, #f5f5f5);
+    border-color: var(--color-gray-400, #a3a3a3);
+    color: var(--text-primary, #171717);
+}

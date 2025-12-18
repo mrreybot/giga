@@ -113,6 +113,16 @@ const Sidebar = () => {
     }
   };
 
+  const handleClearAll = async () => {
+    try {
+      await api.post('/api/notifications/clear_all/');
+      setNotifications([]);
+      setUnreadNotifCount(0);
+    } catch (err) {
+      console.error("Hata:", err);
+    }
+  };
+
   const menuItems = [
     {
       id: 1,
@@ -246,6 +256,7 @@ const Sidebar = () => {
               onClose={() => setShowNotifications(false)}
               onRead={handleReadNotification}
               onReadAll={handleReadAll}
+              onClearAll={handleClearAll}
             />
           )}
         </div>

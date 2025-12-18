@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import '../styles/Sidebar.css';
 
-const NotificationPanel = ({ notifications, onClose, onRead, onReadAll }) => {
+const NotificationPanel = ({ notifications, onClose, onRead, onReadAll, onClearAll }) => {
     const navigate = useNavigate();
 
     const handleNotificationClick = async (notification) => {
@@ -47,9 +47,14 @@ const NotificationPanel = ({ notifications, onClose, onRead, onReadAll }) => {
             <div className="notification-header">
                 <h3>Bildirimler</h3>
                 {notifications.length > 0 && (
-                    <button className="mark-all-read" onClick={onReadAll}>
-                        Tümünü Okundu İşaretle
-                    </button>
+                    <div className="header-actions">
+                        <button className="mark-all-read" onClick={onReadAll}>
+                            Tümünü Okundu İşaretle
+                        </button>
+                        <button className="clear-all" onClick={onClearAll}>
+                            Temizle
+                        </button>
+                    </div>
                 )}
             </div>
 

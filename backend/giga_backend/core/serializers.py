@@ -142,7 +142,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['id', 'title', 'description', 'created_by', 'created_by_details', 'created_at', 'updated_at', 'members', 'comments', 'is_member', 'my_role', 'progress', 'am_i_creator']
+        fields = ['id', 'title', 'description', 'topic', 'department', 'start_date', 'end_date', 'created_by', 'created_by_details', 'created_at', 'updated_at', 'members', 'comments', 'is_member', 'my_role', 'progress', 'am_i_creator']
         read_only_fields = ['id', 'created_by', 'created_at', 'updated_at']
 
     def get_is_member(self, obj):

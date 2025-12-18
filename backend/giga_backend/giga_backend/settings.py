@@ -146,7 +146,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
-    "http://192.168.1.106:8081",
+    "http://10.253.235.227:3000",
+    "http://10.253.235.227:5173",
+    "http://10.253.235.227:8000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -220,3 +222,29 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_OBTAIN_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer',
     'SLIDING_TOKEN_REFRESH_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer',
 }
+# ============================================================
+# EMAIL SETTINGS
+# ============================================================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'cevreyonetimuygu@gmail.com'
+EMAIL_HOST_PASSWORD = 'ilxd zmkz mdwu soah'  
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Workaround for SSL Certificate Verify Failed (Mac)
+import os
+import ssl
+import certifi
+
+os.environ['SSL_CERT_FILE'] = certifi.where() # Try using certifi first
+
+# Fallback: if certifi doesn't fix it, this monkeys fixes the default SSL context
+# DANGEROUS IN PRODUCTION - OK FOR LOCAL DEV
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context

@@ -1,5 +1,7 @@
+// dashboard.jsx
+
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Added useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "../styles/Dashboard.css";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -16,7 +18,10 @@ import {
   X,
   Loader,
   Filter,
-  Trash2 // Imported Trash2
+  Trash2,
+  AlertCircle,
+  MessageSquare,
+  FileText
 } from 'lucide-react';
 
 const MISSIONS_ENDPOINT = "/api/missions/";
@@ -34,7 +39,6 @@ const Dashboard = () => {
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [completingMission, setCompletingMission] = useState(null);
 
-  // Filter state (assignmentType removed as we split the view)
   const [filters, setFilters] = useState({
     status: 'all',
     searchText: '',
@@ -43,7 +47,6 @@ const Dashboard = () => {
     dateTo: ''
   });
 
-  // Edit Mode State
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     description: "",
@@ -51,7 +54,6 @@ const Dashboard = () => {
     end_date: ""
   });
 
-  // Formatter functions - Moved to top to avoid ReferenceError
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -91,7 +93,7 @@ const Dashboard = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      await fetchCurrentUser(); // Need user for splitting logic
+      await fetchCurrentUser();
       await fetchMissions();
       await fetchUsers();
     } catch (error) {
@@ -138,37 +140,30 @@ const Dashboard = () => {
     }
   };
 
-  // --- Splitting Logic ---
-  // Helper to filter missions based on common filters (search, date, etc.)
   const applyCommonFilters = (missionList) => {
     return missionList.filter(mission => {
       if (!mission) return false;
 
-      // Status Filter
       if (filters.status === 'completed' && mission.status !== 'COMPLETED' && !mission.completed) return false;
       if (filters.status === 'pending') {
         if (mission.status === 'COMPLETED' || mission.completed) return false;
       }
 
-      // Search Filter
       if (filters.searchText) {
         const searchLower = filters.searchText.toLowerCase();
         const descMatch = mission.description?.toLowerCase().includes(searchLower);
         const locationMatch = mission.from_to?.toLowerCase().includes(searchLower);
         const creatorMatch = formatUserName(mission.created_by_info)?.toLowerCase().includes(searchLower);
-        // Check assigned users names too
         const assigneeMatch = mission.assigned_users?.some(u => formatUserName(u).toLowerCase().includes(searchLower));
 
         if (!descMatch && !locationMatch && !creatorMatch && !assigneeMatch) return false;
       }
 
-      // Selected User Filter
       if (filters.selectedUser !== 'all') {
         const hasUser = mission.assigned_users?.some(u => u.id === parseInt(filters.selectedUser));
         if (!hasUser) return false;
       }
 
-      // Date Filters
       if (filters.dateFrom) {
         const missionDate = new Date(mission.assigned_date);
         const filterDate = new Date(filters.dateFrom);
@@ -184,23 +179,18 @@ const Dashboard = () => {
     });
   };
 
-  // 1. Kanban Missions: Assigned TO Me (Strictly check assigned_users)
   const myKanbanMissions = applyCommonFilters(
     missions.filter(m => currentUser && m.assigned_users?.some(u => u.id === currentUser.id))
   );
 
-  // 2. Outgoing Missions: Assigned BY Me (Created by me)
   const myOutgoingMissions = applyCommonFilters(
     missions.filter(m => currentUser && m.created_by_info?.id === currentUser.id)
   );
 
-  // Grouping Logic for Outgoing Missions
-  // Group by Department -> User
   const getGroupedOutgoingMissions = () => {
     const grouped = {};
 
     myOutgoingMissions.forEach(mission => {
-      // If no assigned users, maybe put under 'Atanmamış'
       if (!mission.assigned_users || mission.assigned_users.length === 0) {
         const dept = "Atanmamış";
         if (!grouped[dept]) grouped[dept] = {};
@@ -210,14 +200,12 @@ const Dashboard = () => {
       }
 
       mission.assigned_users.forEach(user => {
-        // Use User's department. If missing, use "Genel"
         const dept = user.department || "Diğer";
         const userName = formatUserName(user);
 
         if (!grouped[dept]) grouped[dept] = {};
         if (!grouped[dept][userName]) grouped[dept][userName] = [];
 
-        // Avoid adding same mission multiple times to the same user list (unlikely unless data issue)
         if (!grouped[dept][userName].find(m => m.id === mission.id)) {
           grouped[dept][userName].push(mission);
         }
@@ -229,8 +217,6 @@ const Dashboard = () => {
 
   const groupedOutgoing = getGroupedOutgoingMissions();
 
-
-  // --- Kanban Columns Logic (Only for My Kanban Missions) ---
   const getColumns = () => {
     const columns = {
       PENDING: { id: 'PENDING', title: 'Yapılacak', items: [] },
@@ -258,7 +244,6 @@ const Dashboard = () => {
     const missionId = parseInt(draggableId);
     const newStatus = destination.droppableId;
 
-    // Optimistic Update
     const originalMissions = [...missions];
     setMissions(prev => prev.map(m => m.id === missionId ? { ...m, status: newStatus, completed: newStatus === 'COMPLETED' } : m));
 
@@ -267,10 +252,9 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Status update failed:", error);
       alert("Durum güncellenemedi.");
-      setMissions(originalMissions); // Revert
+      setMissions(originalMissions);
     }
   };
-
 
   const handleFilterChange = (name, value) => {
     setFilters(prev => ({ ...prev, [name]: value }));
@@ -316,7 +300,6 @@ const Dashboard = () => {
     }
   };
 
-  /* ... Actions (Complete, Edit) ... */
   const handleCompleteClick = (mission, e) => {
     e.stopPropagation();
     setCompletingMission(mission);
@@ -363,23 +346,21 @@ const Dashboard = () => {
     }
   };
 
-  // --- Render Components ---
-
   const KanbanBoard = () => (
     <div className="kanban-section">
-      <h2 className="section-title-sticky"><ClipboardList size={22} style={{ marginRight: 8 }} /> Bana Atanan Görevler (Kanban)</h2>
-      <div className="kanban-board" style={{ display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '20px' }}>
+      <h2 className="section-title-sticky">
+        <ClipboardList size={22} /> Bana Atanan Görevler
+      </h2>
+      <div className="kanban-board">
         <DragDropContext onDragEnd={onDragEnd}>
           {Object.values(columns).map(column => (
-            <div key={column.id} className="kanban-column" style={{
-              flex: '1', minWidth: '300px', backgroundColor: '#f4f5f7', borderRadius: '8px', padding: '10px', display: 'flex', flexDirection: 'column'
-            }}>
-              <h3 style={{ marginBottom: '10px', color: '#172b4d', fontSize: '1rem', fontWeight: '600', paddingLeft: '8px' }}>
-                {column.title} <span style={{ color: '#6b778c', fontSize: '0.8rem', marginLeft: '5px' }}>({column.items.length})</span>
+            <div key={column.id} className="kanban-column">
+              <h3 className="kanban-column-title">
+                {column.title} <span className="kanban-count">({column.items.length})</span>
               </h3>
               <Droppable droppableId={column.id}>
                 {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef} style={{ minHeight: '100px', flex: 1 }}>
+                  <div {...provided.droppableProps} ref={provided.innerRef} className="kanban-column-content">
                     {column.items.map((mission, index) => (
                       <Draggable key={mission.id} draggableId={mission.id.toString()} index={index}>
                         {(provided) => (
@@ -389,25 +370,21 @@ const Dashboard = () => {
                             {...provided.dragHandleProps}
                             className={`mission-card ${mission.priority ? 'priority-' + mission.priority.toLowerCase() : ''}`}
                             onClick={() => handleMissionClick(mission)}
-                            style={{
-                              userSelect: 'none', padding: '12px', margin: '0 0 8px 0', backgroundColor: 'white', borderRadius: '6px', boxShadow: '0 1px 2px rgba(9, 30, 66, 0.25)',
-                              ...provided.draggableProps.style
-                            }}
+                            style={provided.draggableProps.style}
                           >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                            <div className="kanban-card-header">
                               <span className={`priority-dot ${mission.priority ? mission.priority.toLowerCase() : 'medium'}`}></span>
-                              <span style={{ fontSize: '11px', color: '#6b778c' }}>{formatDate(mission.end_date)}</span>
+                              <span className="kanban-card-date">{formatDate(mission.end_date)}</span>
                             </div>
-                            <div style={{ marginBottom: '8px', fontSize: '14px', color: '#172b4d', fontWeight: 500 }}>
+                            <div className="kanban-card-body">
                               {mission.description}
                             </div>
-                            {/* Avatar display logic same as before */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                              {mission.assigned_users?.map(u => (
-                                <span key={u.id} className="user-avatar-tiny" title={formatUserName(u)} style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#dfe1e6', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div className="kanban-card-footer">
+                              {mission.assigned_users?.slice(0, 3).map(u => (
+                                <span key={u.id} className="user-avatar-tiny" title={formatUserName(u)}>
                                   {formatUserName(u).charAt(0)}
                                 </span>
-                              )).slice(0, 3)}
+                              ))}
                             </div>
                           </div>
                         )}
@@ -426,7 +403,9 @@ const Dashboard = () => {
 
   const GroupedList = () => (
     <div className="grouped-list-section">
-      <h2 className="section-title-sticky"><Upload size={22} style={{ marginRight: 8 }} /> Benim Atadığım Görevler</h2>
+      <h2 className="section-title-sticky">
+        <Upload size={22} /> Benim Atadığım Görevler
+      </h2>
       {Object.keys(groupedOutgoing).length === 0 ? (
         <p className="no-data-text">Henüz atadığınız bir görev bulunmuyor.</p>
       ) : (
@@ -436,7 +415,9 @@ const Dashboard = () => {
             <div className="dept-content">
               {Object.entries(usersObj).map(([userName, missions]) => (
                 <div key={userName} className="user-group">
-                  <h4 className="user-header"><User size={16} /> {userName} <span className="count-badge">{missions.length}</span></h4>
+                  <h4 className="user-header">
+                    <User size={16} /> {userName} <span className="count-badge">{missions.length}</span>
+                  </h4>
                   <div className="missions-grid-list">
                     {missions.map(mission => (
                       <div key={mission.id} className="mission-list-item" onClick={() => handleMissionClick(mission)}>
@@ -460,7 +441,6 @@ const Dashboard = () => {
     </div>
   );
 
-  // Role Based Layout
   const isManagerOrCEO = currentUser && (currentUser.role === 'CEO' || currentUser.role === 'MANAGER');
 
   return (
@@ -469,72 +449,186 @@ const Dashboard = () => {
         <h1>Görev Paneli</h1>
       </header>
 
-      {/* Modal Definitions (Same as before) */}
+      {/* Mission Detail Modal */}
+      {/* Selimhan buraları düzeltti */}
       {selectedMission && (
         <div className="modal-overlay" onClick={closeMissionModal}>
           <div className="mission-detail-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>{isEditing ? <><Edit size={24} /> Görevi Düzenle</> : <><ClipboardList size={24} /> Görev Detayı #{selectedMission.id}</>}</h2>
-              <button className="close-modal" onClick={closeMissionModal}><X size={24} /></button>
+            <button className="modal-close-btn" onClick={closeMissionModal}>
+              <X size={20} />
+            </button>
+
+            <div className="modal-hero">
+              <div className="modal-hero-icon">
+                <ClipboardList size={28} />
+              </div>
+              <div className="modal-hero-content">
+                <h2 className="modal-title">
+                  {isEditing ? 'Görevi Düzenle' : `Görev #${selectedMission.id}`}
+                </h2>
+                <div className="modal-subtitle">
+                  <span className={`status-badge status-${selectedMission.status?.toLowerCase() || 'pending'}`}>
+                    {selectedMission.status === 'COMPLETED' ? (
+                      <>
+                        <CheckCircle size={14} /> Tamamlandı
+                      </>
+                    ) : selectedMission.status === 'IN_PROGRESS' ? (
+                      <>
+                        <Clock size={14} /> Devam Ediyor
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle size={14} /> Bekliyor
+                      </>
+                    )}
+                  </span>
+                  <span className={`priority-badge ${getPriorityBadgeClass(selectedMission.priority)}`}>
+                    {getPriorityLabel(selectedMission.priority)}
+                  </span>
+                </div>
+              </div>
             </div>
+
             <div className="modal-content">
               {isEditing ? (
                 <div className="edit-form">
                   <div className="form-group">
-                    <label>Açıklama</label>
-                    <textarea className="filter-input" rows={3} value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} />
+                    <label className="form-label">
+                      <FileText size={16} />
+                      Açıklama
+                    </label>
+                    <textarea
+                      className="form-textarea"
+                      rows={4}
+                      value={editForm.description}
+                      onChange={e => setEditForm({ ...editForm, description: e.target.value })}
+                      placeholder="Görev açıklamasını girin..."
+                    />
                   </div>
-                  <div className="form-group">
-                    <label>Öncelik</label>
-                    <select className="filter-select" value={editForm.priority} onChange={e => setEditForm({ ...editForm, priority: e.target.value })}>
-                      <option value="LOW">Düşük</option>
-                      <option value="MEDIUM">Orta</option>
-                      <option value="HIGH">Yüksek</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Bitiş Tarihi</label>
-                    <input type="date" className="filter-input" value={editForm.end_date} onChange={e => setEditForm({ ...editForm, end_date: e.target.value })} />
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label className="form-label">
+                        <AlertCircle size={16} />
+                        Öncelik
+                      </label>
+                      <select
+                        className="form-select"
+                        value={editForm.priority}
+                        onChange={e => setEditForm({ ...editForm, priority: e.target.value })}
+                      >
+                        <option value="LOW">Düşük</option>
+                        <option value="MEDIUM">Orta</option>
+                        <option value="HIGH">Yüksek</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">
+                        <Calendar size={16} />
+                        Bitiş Tarihi
+                      </label>
+                      <input
+                        type="date"
+                        className="form-input"
+                        value={editForm.end_date}
+                        onChange={e => setEditForm({ ...editForm, end_date: e.target.value })}
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
                 <>
-                  <div className="detail-section"><label>Açıklama:</label><p>{selectedMission.description}</p></div>
-                  <div className="detail-row">
-                    <div className="detail-section"><label>Öncelik:</label><span className={`priority-badge ${getPriorityBadgeClass(selectedMission.priority)}`}>{getPriorityLabel(selectedMission.priority)}</span></div>
-                    <div className="detail-section"><label>Bitiş:</label><span>{formatDate(selectedMission.end_date)}</span></div>
-                    <div className="detail-section"><label>Durum:</label><span>{selectedMission.status === 'COMPLETED' ? <><CheckCircle size={16} /> Bitti</> : selectedMission.status === 'IN_PROGRESS' ? <><Clock size={16} /> Devam Ediyor</> : <><Calendar size={16} /> Yapılacak</>}</span></div>
+                  <div className="detail-card">
+                    <div className="detail-card-header">
+                      <FileText size={18} />
+                      <span>Açıklama</span>
+                    </div>
+                    <p className="detail-card-text">{selectedMission.description}</p>
                   </div>
-                  <div className="detail-section">
-                    <label><Users size={16} /> Atananlar:</label>
+
+                  <div className="detail-grid">
+                    <div className="detail-card">
+                      <div className="detail-card-header">
+                        <Calendar size={18} />
+                        <span>Bitiş Tarihi</span>
+                      </div>
+                      <p className="detail-card-value">{formatDate(selectedMission.end_date)}</p>
+                    </div>
+
+                    <div className="detail-card">
+                      <div className="detail-card-header">
+                        <User size={18} />
+                        <span>Oluşturan</span>
+                      </div>
+                      <p className="detail-card-value">{formatUserName(selectedMission.created_by_info)}</p>
+                    </div>
+                  </div>
+
+                  <div className="detail-card">
+                    <div className="detail-card-header">
+                      <Users size={18} />
+                      <span>Atanan Kullanıcılar</span>
+                    </div>
                     <div className="assigned-users-grid">
                       {selectedMission.assigned_users?.map(user => (
-                        <div key={user.id} className="user-chip"><span>{formatUserName(user)}</span></div>
+                        <div key={user.id} className="user-chip-modern">
+                          <div className="user-avatar-modern">
+                            {formatUserName(user).charAt(0)}
+                          </div>
+                          <div className="user-chip-info">
+                            <span className="user-chip-name">{formatUserName(user)}</span>
+                            {user.department && (
+                              <span className="user-chip-dept">{user.department}</span>
+                            )}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
                 </>
               )}
             </div>
-            <div className="modal-footer">
+
+            <div className="modal-actions">
               {isEditing ? (
                 <>
-                  <button onClick={() => setIsEditing(false)} className="close-modal-btn">İptal</button>
-                  <button onClick={handleSaveEdit} className="logout-btn">Kaydet</button>
+                  <button onClick={() => setIsEditing(false)} className="btn-secondary btn-compact">
+                    <X size={16} />
+                    İptal
+                  </button>
+                  <button onClick={handleSaveEdit} className="btn-primary btn-compact">
+                    <CheckCircle size={16} />
+                    Kaydet
+                  </button>
                 </>
               ) : (
                 <>
-                  {selectedMission.can_edit && <button onClick={handleEditClick} className="edit-btn" style={{ marginRight: 'auto', background: '#FFC107', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}><Edit size={16} /> Düzenle</button>}
-
-                  {/* Delete Button for Creator */}
-                  {currentUser && selectedMission.created_by_info?.id === currentUser.id && (
-                    <button onClick={handleDeleteMission} className="delete-btn" style={{ marginLeft: '10px', background: '#fee2e2', color: '#ef4444', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Trash2 size={16} /> Sil
+                  {/* İlk Satır: Düzenle ve Sil */}
+                  {selectedMission.can_edit && (
+                    <button onClick={handleEditClick} className="btn-edit btn-compact">
+                      <Edit size={16} />
+                      Düzenle
                     </button>
                   )}
 
-                  {selectedMission.can_complete && !selectedMission.completed && <button onClick={(e) => handleCompleteClick(selectedMission, e)} className="logout-btn">Tamamla</button>}
-                  <button onClick={closeMissionModal} className="close-modal-btn">Kapat</button>
+                  {currentUser && selectedMission.created_by_info?.id === currentUser.id && (
+                    <button onClick={handleDeleteMission} className="btn-delete btn-compact">
+                      <Trash2 size={16} />
+                      Sil
+                    </button>
+                  )}
+
+                  {/* İkinci Satır: Tamamla ve Kapat */}
+                  {selectedMission.can_complete && !selectedMission.completed && (
+                    <button onClick={(e) => handleCompleteClick(selectedMission, e)} className="btn-success btn-compact">
+                      <CheckCircle size={16} />
+                      Tamamla
+                    </button>
+                  )}
+
+                  <button onClick={closeMissionModal} className="btn-secondary btn-compact">
+                    <X size={16} />
+                    Kapat
+                  </button>
                 </>
               )}
             </div>
@@ -542,45 +636,100 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Complete Modal */}
       {showCompleteModal && completingMission && (
         <div className="modal-overlay" onClick={() => setShowCompleteModal(false)}>
-          <div className="mission-detail-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header"><h2><CheckCircle size={24} /> Görevi Tamamla</h2><button onClick={() => setShowCompleteModal(false)} className="close-modal"><X size={24} /></button></div>
-            <div className="modal-content"><textarea value={feedbackText} onChange={(e) => setFeedbackText(e.target.value)} placeholder="Yorumunuz..." className="filter-input" rows={4} /></div>
-            <div className="modal-footer"><button className="logout-btn" onClick={handleCompleteSubmit}>Tamamla</button></div>
+          <div className="complete-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setShowCompleteModal(false)}>
+              <X size={20} />
+            </button>
+
+            <div className="modal-hero">
+              <div className="modal-hero-icon success">
+                <CheckCircle size={28} />
+              </div>
+              <div className="modal-hero-content">
+                <h2 className="modal-title">Görevi Tamamla</h2>
+                <p className="modal-subtitle-text">Bu görevi tamamlamak üzeresiniz. Yorumunuzu ekleyebilirsiniz.</p>
+              </div>
+            </div>
+
+            <div className="modal-content">
+              <div className="form-group">
+                <label className="form-label">
+                  <MessageSquare size={16} />
+                  Yorumunuz (Opsiyonel)
+                </label>
+                <textarea
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  placeholder="Görev hakkında notlarınızı ekleyin..."
+                  className="form-textarea"
+                  rows={5}
+                />
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button className="btn-secondary" onClick={() => setShowCompleteModal(false)}>
+                İptal
+              </button>
+              <button className="btn-success" onClick={handleCompleteSubmit}>
+                <CheckCircle size={18} />
+                Tamamla
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       <main className="dashboard-main">
         <div className="task-list-view">
-          {/* Filter Panel */}
           <div className="filter-panel">
             <div className="filter-header">
-              <h3><Filter size={18} /> Filtrele</h3>
+              <h3>Filtrele</h3> {/* Selimhan buraları düzeltti */}
               {hasActiveFilters() && <button onClick={clearFilters} className="clear-filters-btn">Temizle</button>}
             </div>
             <div className="filter-grid">
               <div className="filter-group">
                 <label>Arama</label>
-                <div style={{ position: 'relative' }}>
-                  <input value={filters.searchText} onChange={(e) => handleFilterChange('searchText', e.target.value)} className="filter-input" placeholder="Görev, kişi veya konum ara..." style={{ paddingLeft: '32px' }} />
-                  <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
+                <div className="input-with-icon">
+                  <Search size={16} className="input-icon" />
+                  <input
+                    value={filters.searchText}
+                    onChange={(e) => handleFilterChange('searchText', e.target.value)}
+                    className="filter-input"
+                    placeholder="Görev, kişi veya konum ara..."
+                  />
                 </div>
               </div>
               <div className="filter-group">
                 <label>Tarih Aralığı</label>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <input type="date" className="filter-input" value={filters.dateFrom} onChange={(e) => handleFilterChange('dateFrom', e.target.value)} />
-                  <input type="date" className="filter-input" value={filters.dateTo} onChange={(e) => handleFilterChange('dateTo', e.target.value)} />
+                <div className="date-range-inputs">
+                  <input
+                    type="date"
+                    className="filter-input"
+                    value={filters.dateFrom}
+                    onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
+                  />
+                  <input
+                    type="date"
+                    className="filter-input"
+                    value={filters.dateTo}
+                    onChange={(e) => handleFilterChange('dateTo', e.target.value)}
+                  />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Dynamic Layout Based on Role */}
           {loading ? (
-            <div className="loading-state"><div className="spinner"><Loader size={32} className="spin-animation" /></div><p>Yükleniyor...</p></div>
+            <div className="loading-state">
+              <div className="spinner">
+                <Loader size={32} className="spin-animation" />
+              </div>
+              <p>Yükleniyor...</p>
+            </div>
           ) : isManagerOrCEO ? (
             <>
               <GroupedList />
@@ -590,7 +739,6 @@ const Dashboard = () => {
           ) : (
             <>
               <KanbanBoard />
-              {/* Even employees might have assigned tasks if they are allowed to assign */}
               {myOutgoingMissions.length > 0 && (
                 <>
                   <div className="divider-line"></div>
