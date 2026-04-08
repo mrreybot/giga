@@ -1,0 +1,1061 @@
+/* ============================================
+   ANA SAYFA - HOMEPAGE STYLES (Modern Office)
+   ============================================ */
+:root {
+  /* Background Colors */
+  --bg-primary: #f9fafb;
+  --bg-secondary: #f3f4f6;
+  --bg-tertiary: #e5e7eb;
+
+  /* Card Colors */
+  --card-bg: #ffffff;
+  --card-hover: #f9fafb;
+
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+
+  /* Border Colors */
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+
+  /* Accent Colors */
+  --accent-primary: #3b82f6;
+  --accent-secondary: #2563eb;
+  --accent-light: #dbeafe;
+  --accent-lighter: #eff6ff;
+
+  /* Success Colors */
+  --success: #10b981;
+  --success-dark: #047857;
+  --success-light: #d1fae5;
+
+  /* Warning Colors */
+  --warning: #f59e0b;
+  --warning-dark: #d97706;
+  --warning-light: #fef3c7;
+
+  /* Danger Colors */
+  --danger: #ef4444;
+  --danger-dark: #dc2626;
+
+  /* Info Colors */
+  --info-light: #dbeafe;
+  --info-dark: #1e40af;
+
+  /* Modal Colors */
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --modal-bg: #ffffff;
+}
+
+.home-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding-bottom: 3rem;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.home-header {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-primary);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 1rem 32rem;
+}
+
+.header-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-header h1 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.nav-btn,
+.refresh-btn,
+.logout-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: var(--card-bg);
+}
+
+.nav-btn {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
+
+.nav-btn:hover {
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+}
+
+.refresh-btn {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.refresh-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--text-tertiary);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.logout-btn {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
+.logout-btn:hover {
+  background: var(--danger-dark);
+  border-color: var(--danger-dark);
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+.home-container {
+  max-width: 1600px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+/* ============================================
+   İSTATİSTİK KARTLARI
+   ============================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.15s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.total-card .stat-icon {
+  background: var(--info-light);
+  color: var(--info-dark);
+}
+
+.completed-card .stat-icon {
+  background: var(--success-light);
+  color: var(--success-dark);
+}
+
+.pending-card .stat-icon {
+  background: var(--warning-light);
+  color: var(--warning-dark);
+}
+
+.rate-card .stat-icon {
+  background: var(--accent-lighter);
+  color: var(--accent-primary);
+}
+
+.stat-info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-number {
+  margin: 0;
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   KOCAMAN TAKVİM
+   ============================================ */
+.calendar-section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 1.5rem; 
+  margin-bottom: 2rem;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.calendar-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.calendar-title h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.today-btn {
+  padding: 0.5rem 1rem;
+  background: var(--accent-primary);
+  color: white;
+  border: 1px solid var(--accent-primary);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.today-btn:hover {
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+}
+
+.month-nav-btn {
+  width: 36px;
+  height: 36px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.month-nav-btn:hover {
+  background: var(--border-primary);
+  border-color: var(--text-tertiary);
+}
+
+/* Takvim Loading */
+.calendar-loading {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.calendar-loading .spinner {
+  font-size: 2rem;
+  animation: spin 1s linear infinite;
+  color: var(--accent-primary);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Gün İsimleri */
+.calendar-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.day-name {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+/* Takvim Grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  min-height: 120px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-day:hover {
+  background: var(--card-hover);
+  border-color: var(--accent-primary);
+}
+
+.calendar-day.other-month {
+  opacity: 0.3;
+}
+
+.calendar-day.today {
+  background: var(--accent-light);
+  border-color: var(--accent-primary);
+  border-width: 2px;
+}
+
+.calendar-day.has-missions {
+  background: var(--warning-light);
+  border-color: var(--warning);
+}
+
+.day-number {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.weekend-day {
+  color: #ef4444;
+  /* Red color for weekends */
+}
+
+/* Görev İşaretleyicileri */
+.mission-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.mission-indicator {
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s ease;
+}
+
+.mission-indicator.pending {
+  background: var(--warning-light);
+  color: var(--warning-dark);
+  border: 1px solid var(--warning);
+}
+
+.mission-indicator.completed {
+  background: var(--success-light);
+  color: var(--success-dark);
+  border: 1px solid var(--success);
+}
+
+.mission-indicator:hover {
+  transform: translateY(-1px);
+}
+
+.start-flag,
+.end-flag,
+.middle-dot {
+  font-size: 0.75rem;
+}
+
+.more-indicator {
+  padding: 3px 6px;
+  background: var(--accent-primary);
+  color: white;
+  border-radius: 3px;
+  font-size: 0.625rem;
+  font-weight: 600;
+}
+
+/* Tarih Badge'leri */
+.date-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.start-badge {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.end-badge {
+  background: var(--danger);
+  color: white;
+}
+
+/* ============================================
+   MISSION TOOLTIP
+   ============================================ */
+.mission-tooltip {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 320px;
+  z-index: 1000;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mission-tooltip h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.mission-tooltip p {
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.mission-tooltip .status {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.mission-tooltip .status.completed {
+  background: var(--success-light);
+  color: var(--success-dark);
+}
+
+.mission-tooltip .status.pending {
+  background: var(--warning-light);
+  color: var(--warning-dark);
+}
+
+/* ============================================
+   SEÇİLİ GÜN MODALI
+   ============================================ */
+.selected-date-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--modal-overlay);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 2rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.selected-date-modal .modal-content {
+  background: var(--modal-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: modalSlide 0.2s ease;
+}
+
+@keyframes modalSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selected-date-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.selected-date-modal .modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.close-btn {
+ width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-secondary);
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--text-primary);
+
+  /* --- EKLEMEN GEREKEN SİHİRLİ KODLAR --- */
+  display: flex;             /* İçindekileri yönetebilmek için */
+  align-items: center;       /* Dikeyde (yukarı-aşağı) ortala */
+  justify-content: center;   /* Yatayda (sağ-sol) ortala */
+  padding: 0;                /* Gereksiz boşlukları sıfırla */
+  line-height: 1;            /* Satır yüksekliği kaymasını engelle */
+}
+
+
+.close-btn:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
+.selected-date-modal .modal-body {
+  padding: 1.5rem;
+}
+
+.no-missions {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1rem;
+  color: var(--text-tertiary);
+}
+
+/* Tarih Görevleri Listesi */
+.date-missions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.date-mission-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 1.25rem;
+  border-left: 3px solid var(--accent-primary);
+  transition: all 0.15s ease;
+}
+
+.date-mission-card:hover {
+  border-left-width: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.date-mission-card.completed {
+  border-left-color: var(--success);
+  opacity: 0.75;
+}
+
+.mission-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.75rem;
+}
+
+.mission-card-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  flex: 1;
+}
+
+.completed-badge {
+  padding: 0.25rem 0.5rem;
+  background: var(--success-light);
+  color: var(--success-dark);
+  border: 1px solid var(--success);
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.mission-card-body p {
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.mission-location {
+  font-weight: 500;
+  color: var(--accent-primary);
+}
+
+.mission-users {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.user-badge {
+  padding: 0.25rem 0.5rem;
+  background: var(--accent-primary);
+  color: white;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.date-marker {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+.start-marker {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.end-marker {
+  background: var(--danger);
+  color: white;
+}
+
+/* ============================================
+   YAKLAŞAN GÖREVLER
+   ============================================ */
+.upcoming-missions {
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 2rem;
+}
+
+.upcoming-missions h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.upcoming-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.upcoming-card {
+  display: flex;
+  gap: 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 1.25rem;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.upcoming-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.upcoming-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: 64px;
+  background: var(--accent-primary);
+  color: white;
+  border-radius: 4px;
+}
+
+.date-day {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.date-month {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.upcoming-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.upcoming-info h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.upcoming-info p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.assigned-to {
+  font-weight: 500;
+}
+
+/* ============================================
+   VIEW TOGGLE & CONTROLS
+   ============================================ */
+.calendar-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--bg-tertiary);
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.view-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-btn.active {
+  background: white;
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.view-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   GANTT CHART VIEW
+   ============================================ */
+.gantt-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: white;
+  position: relative;
+}
+
+.gantt-timeline-header {
+  display: grid;
+  grid-template-columns: repeat(42, 1fr);
+  /* Matching calendar days count typically 6 weeks * 7 */
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.gantt-header-cell {
+  padding: 8px 2px;
+  text-align: center;
+  border-right: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 30px;
+}
+
+.gantt-header-cell.other {
+  opacity: 0.4;
+  background: var(--bg-secondary);
+}
+
+.gantt-header-cell.today {
+  background: var(--accent-light);
+  color: var(--accent-secondary);
+}
+
+.gantt-day-num {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.gantt-day-name {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.gantt-body {
+  position: relative;
+  min-height: 200px;
+  padding: 1rem 0;
+  background: repeating-linear-gradient(to right,
+      transparent,
+      transparent calc(100% / 42 - 1px),
+      var(--border-secondary) calc(100% / 42 - 1px),
+      var(--border-secondary) calc(100% / 42));
+  background-size: 100% 100%;
+}
+
+.gantt-row {
+  position: relative;
+  height: 36px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.gantt-bar {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  background: var(--accent-primary);
+  border-radius: 4px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.gantt-bar:hover {
+  transform: scaleY(1.1);
+  z-index: 2;
+}
+
+.gantt-bar.completed {
+  background: var(--success);
+}
+
+.gantt-bar.pending {
+  background: var(--warning);
+}
+
+.gantt-bar.high {
+  border: 1px solid #b91c1c;
+}
+
+.gantt-bar-label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+.no-missions-gantt {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* Optional Overlay Grid if gradient isn't enough or tricky */
+.gantt-grid-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(42, 1fr);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.1;
+}
+
+.gantt-grid-col {
+  border-right: 1px solid black;
+}
+
+
+
+.no-upcoming {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1rem;
+  color: var(--text-tertiary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1200px) {
+  .calendar-day {
+    min-height: 100px;
+  }
+
+  .day-number {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-header {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-section {
+    padding: 1.25rem;
+  }
+
+  .calendar-title h2 {
+    font-size: 1.25rem;
+  }
+
+  .calendar-day {
+    min-height: 90px;
+    padding: 0.5rem;
+  }
+
+  .day-number {
+    font-size: 0.875rem;
+  }
+
+  .mission-indicator {
+    font-size: 0.625rem;
+    padding: 2px 4px;
+  }
+
+  .upcoming-card {
+    flex-direction: column;
+  }
+
+  .upcoming-date {
+    width: 100%;
+    flex-direction: row;
+    height: auto;
+    padding: 0.75rem;
+  }
+}

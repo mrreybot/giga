@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
@@ -6,5 +7,48 @@
   },
   "dependencies": {
     "axios": "^1.13.0"
+=======
+  "name": "giga",
+  "version": "1.0.0",
+  "description": "Giga Desktop Application",
+  "author": "Reyhan",
+  "main": "Electron/main.js",
+  "scripts": {
+    "electron:start": "electron .",
+    "electron:dev": "NODE_ENV=development electron .",
+    "electron:build": "electron-builder",
+    "dev": "concurrently \"cd fronthnd && npm run dev\" \"wait-on http://localhost:5173 && npm run electron:dev\""
+  },
+  "build": {
+    "appId": "com.reyhan.giga",
+    "productName": "Giga",
+    "files": [
+      "Electron/**/*",
+      "fronthnd/dist/**/*",
+      "!.venv",
+      "!**/.venv",
+      "!**/node_modules/.venv"
+    ],
+    "mac": {
+      "icon": "Electron/icon.icns",
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "icon": "Electron/icon.ico"
+    }
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.1",
+    "electron": "^39.2.6",
+    "electron-builder": "^26.0.12",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.16",
+    "wait-on": "^8.0.1"
+  },
+  "dependencies": {
+    "axios": "^1.13.0",
+    "recharts": "^3.5.1"
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   }
 }

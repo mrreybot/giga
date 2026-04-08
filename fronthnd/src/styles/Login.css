@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+<<<<<<< HEAD
   font-family: "Poppins", sans-serif;
   box-sizing: border-box;
 }
@@ -26,45 +27,124 @@
 h2 {
   font-size: 32px;
   font-weight: 700;
+=======
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+}
+
+html, body {
+    background-color: #f1f5f9ff !important;
+    width: 100%;
+    justify-content: center;
+}
+
+.login-container {
+  overflow-x: hidden;
+  display: flex;
+  overflow : hidden;
+  flex-direction: row-reverse; /* Kolonların yerini değiştirir */
+  height: 100vh;
+  width: 100%;
+  background: #f1f5f9ff;
+  position: relative; 
+  justify-content: center;
+  /* 💎 ARKA PLAN EKLEME */
+  background-color: #f1f5f9ff !important;
+}
+
+.login-card {
+  flex-grow: 1; /* Kalan tüm boşluğu doldurur */
+  min-width: 350px;
+  min-height: 550px; 
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9ff !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+  animation: fadeInSlide 0.6s ease-out;
+}
+
+h2 {
+  font-family: 'Montserrat', sans-serif;
+  color:#444;
+  font-weight: 900;
+  font-size: 50px;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   margin-bottom: 10px;
 }
 
 .subtitle {
+<<<<<<< HEAD
   font-size: 15px;
   margin-bottom: 30px;
   color: #555;
 }
 
 form label {
+=======
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  margin-bottom: 30px;
+  color: #444;
+}
+
+form label {
+  font-family: 'Montserrat', sans-serif;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   font-size: 14px;
   margin-top: 15px;
   color: #444;
 }
 
 form input {
+<<<<<<< HEAD
+=======
+  font-family: 'Montserrat', sans-serif;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   width: 100%;
   padding: 12px;
   margin-top: 5px;
   border-radius: 8px;
+<<<<<<< HEAD
   border: 1px solid #ccc;
+=======
+  color: #444;
+  border: 1px solid #fff;
+  background-color: #fff;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   font-size: 15px;
   outline: none;
   transition: 0.2s;
 }
 
 form input:focus {
+<<<<<<< HEAD
   border-color: #4a57ff;
   box-shadow: 0 0 6px rgba(74, 87, 255, 0.3);
+=======
+  border-color: #444;
+  box-shadow: 0 0 6px #4a57ff;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 }
 
 .login-btn {
   width: 100%;
+<<<<<<< HEAD
+=======
+  font-family: 'Montserrat', sans-serif;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   margin-top: 25px;
   padding: 12px;
   border-radius: 8px;
   background: #4a57ff;
   border: none;
+<<<<<<< HEAD
   color: #fff;
+=======
+  color: #f1f5f9ff;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   font-size: 17px;
   cursor: pointer;
   transition: 0.25s;
@@ -75,6 +155,10 @@ form input:focus {
 }
 
 .login-footer {
+<<<<<<< HEAD
+=======
+  font-family: 'Montserrat', sans-serif;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   margin-top: 20px;
   font-size: 14px;
   color: #444;
@@ -83,11 +167,16 @@ form input:focus {
 
 .login-footer a,
 .register-link {
+<<<<<<< HEAD
+=======
+  font-family: 'Montserrat', sans-serif;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   color: #4a57ff;
   cursor: pointer;
   font-weight: 500;
 }
 
+<<<<<<< HEAD
 /* Sağ taraf görselli alan */
 .login-side {
   width: 55%;
@@ -111,6 +200,8 @@ form input:focus {
   opacity: 0.9;
 }
 
+=======
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 /* 📱 Mobile uyum */
 @media (max-width: 900px) {
   .login-container {
@@ -124,3 +215,116 @@ form input:focus {
     height: 100vh;
   }
 }
+<<<<<<< HEAD
+=======
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Çıkış animasyonu için */
+.login-card.fade-out {
+  animation: fadeOutSlide 0.4s ease-in forwards;
+}
+
+@keyframes fadeOutSlide {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Yan yana form elemanları için */
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-group {
+  flex: 1;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.helper-text {
+  display: block;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.register-extended {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Select (Dropdown) Stilleri */
+form select {
+  font-family: 'Montserrat', sans-serif;
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border-radius: 8px;
+  color: #444;
+  border: 1px solid #fff;
+  background-color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23444' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 35px;
+  cursor: pointer;
+}
+
+form select option {
+  padding: 10px;
+  background-color: #fff;
+  color: #444;
+}
+
+form select:focus {
+  border-color: #444;
+  box-shadow: 0 0 6px #4a57ff;
+}
+/* --- LOGO STİLLERİ ---hasanekledi */
+
+/* Logoyu ortalar ve altındaki başlıkla arasını açar */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Başlık ile logo arasındaki boşluk */
+  width: 100%;
+}
+
+/* Logonun boyutunu ayarlar */
+.auth-logo {
+  width: 400px !important;/* Logonun büyüklüğünü buradan değiştirebilirsin */
+  height: auto; /* Oranı bozmadan otomatik ayarlar */
+  object-fit: contain;
+  transition: transform 0.3s ease; /* Hover efekti için yumuşak geçiş */
+}
+
+/* Mouse ile üzerine gelince hafif büyüsün (İsteğe bağlı) */
+.auth-logo:hover {
+  transform: scale(1.05);
+}
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced

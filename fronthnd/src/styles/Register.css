@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+<<<<<<< HEAD
   font-family: "Poppins", sans-serif;
   box-sizing: border-box;
 }
@@ -42,10 +43,93 @@ label {
 }
 
 input {
+=======
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: #f1f5f9ff !important;
+  width: 100%;
+  /* Ortalamayı sadece body/html'de değil, login-container'da yapıyoruz */
+}
+
+/* Kapsayıcı (Container) */
+.login-container {
+  overflow-y: hidden;
+  overflow-x: hidden;
+  display: flex;
+  overflow : hidden;
+  flex-direction: row-reverse; 
+  height: 100vh;
+  width: 100%;
+  background: #f1f5f9ff;
+  position: relative; 
+  justify-content: center; /* Yatayda ortalama */
+  align-items: center; /* Dikeyde ortalama (Eğer kart yüksekliği 100vh'den küçükse) */
+  background-color: #f1f5f9ff !important;
+}
+
+/* Kart (Formun Kendisi) */
+.login-card {
+  flex-grow: 1; 
+  min-width: 350px;
+  min-height: 550px; 
+  max-height: 95vh; /* Büyük ekranlarda daha fazla alan sığdırabilmek için */
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff; /* Kart rengini net beyaz yaptık */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+  animation: fadeInSlide 0.6s ease-out;
+  overflow-y: auto; /* Çok fazla alan olursa kaydırma çubuğu çıksın */
+}
+
+h2 {
+  font-family: 'Montserrat', sans-serif;
+  color:#444;
+  font-weight: 900;
+  font-size: 40px; /* Kayıt formu başlığını biraz küçülttük */
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  margin-bottom: 25px;
+  color: #444;
+}
+
+/* Form Etiketleri ve Alanları için Genel Ayarlar */
+form {
+    width: 100%; /* Formun tam genişliği kullanmasını sağlar */
+}
+
+.form-group {
+    /* Tüm form grupları için standart boşluk */
+    margin-bottom: 15px; 
+    width: 100%;
+}
+
+.form-group label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  margin-top: 5px; /* Etiketler arası boşluklar için */
+  color: #444;
+  font-weight: 500;
+  display: block; /* Etiketin üstte durmasını garantiler */
+}
+
+form input {
+  font-family: 'Montserrat', sans-serif;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   width: 100%;
   padding: 12px;
   margin-top: 5px;
   border-radius: 8px;
+<<<<<<< HEAD
   border: 1px solid #ccc;
   font-size: 15px;
   transition: 0.2s;
@@ -64,11 +148,48 @@ input:focus {
   background: #7647ff;
   border: none;
   color: #fff;
+=======
+  border: 1px solid #e0e0e0; /* Hafif bir sınır ekledik */
+  background-color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s;
+}
+
+form input:focus {
+  border-color: #4a57ff; /* Odakta renk tonunu kullandık */
+  box-shadow: 0 0 6px rgba(74, 87, 255, 0.5);
+}
+
+/* Yan yana form elemanları için (Ad/Soyad/Adres vb.) */
+.form-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+
+.form-row .form-group {
+  flex: 1; /* Ad ve Soyad alanlarının eşit genişlikte olmasını sağlar */
+  margin-bottom: 0; /* form-row kullanıldığında margin'i yönetir */
+}
+
+/* Buton */
+.login-btn {
+  width: 100%;
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 10px; /* Kayıt formunda daha fazla boşluk bıraktık */
+  padding: 12px;
+  border-radius: 8px;
+  background: #4a57ff;
+  border: none;
+  color: #f1f5f9ff;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   font-size: 17px;
   cursor: pointer;
   transition: 0.25s;
 }
 
+<<<<<<< HEAD
 .register-btn:hover {
   background: #5a2de0;
 }
@@ -122,3 +243,133 @@ input:focus {
     height: 100vh;
   }
 }
+=======
+.login-btn:hover {
+  background: #3847d2;
+}
+
+/* Alt Metin */
+.login-footer {
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 25px; 
+  font-size: 14px;
+  color: #444;
+  text-align: center;
+}
+
+.login-footer a,
+.register-link {
+  font-family: 'Montserrat', sans-serif;
+  color: #4a57ff;
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: none; /* Alt çizgiyi kaldırdık */
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Yardımcı Metin */
+.helper-text {
+  display: block;
+  font-size: 0.75rem; /* Biraz küçülttük */
+  color: #666;
+  margin-top: 5px;
+}
+
+
+/* --- 📱 Mobile Uyumluluk --- */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+  }
+  .login-side {
+    display: none;
+  }
+  .login-card {
+    width: 100%;
+    min-height: 100vh; /* Tam mobil ekran */
+    padding: 30px 25px; /* Mobil padding */
+    justify-content: flex-start; /* İçerik yukarıdan başlasın */
+  }
+}
+
+/* 600px ve altındaki ekranlarda (Telefonlar) Ad/Soyad alt alta gelsin */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column; /* Yan yana alanlar alt alta geçer */
+        gap: 0;
+    }
+    .form-row .form-group {
+        margin-bottom: 15px; /* Alt alta geçince standart boşluğu ekle */
+    }
+}
+
+
+/* --- Animasyonlar --- */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card.fade-out {
+  animation: fadeOutSlide 0.4s ease-in forwards;
+}
+
+@keyframes fadeOutSlide {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+/* --- LOGO STİLLERİ ---hasan ekledi */ 
+
+/* Logoyu ortalar ve altındaki başlıkla arasını açar */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Başlık ile logo arasındaki boşluk */
+  width: 100%;
+}
+
+/* Logonun boyutunu ayarlar */
+.auth-logo {
+  width: 400px !important;/* Logonun büyüklüğünü buradan değiştirebilirsin */
+  height: auto; /* Oranı bozmadan otomatik ayarlar */
+  object-fit: contain;
+  transition: transform 0.3s ease; /* Hover efekti için yumuşak geçiş */
+}
+
+/* Mouse ile üzerine gelince hafif büyüsün (İsteğe bağlı) */
+.auth-logo:hover {
+  transform: scale(1.05);
+}
+/* --- KAYDIRMA ÇUBUĞUNU GİZLE --- */
+
+/* Chrome, Safari ve Edge için */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Firefox için */
+html {
+    scrollbar-width: none;
+}
+
+body {
+    -ms-overflow-style: none;  /* IE ve Edge */
+}
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced

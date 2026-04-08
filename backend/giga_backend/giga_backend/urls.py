@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 URL configuration for study_app project.
 
@@ -18,11 +19,18 @@ from django.contrib import admin
 from django.urls import path, include
 
 from core.views import CreateUserView
+=======
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings  
+from django.conf.urls.static import static  
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     
+<<<<<<< HEAD
     ##
     path("api/user/register/", CreateUserView.as_view(), name="register"),
     path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
@@ -30,3 +38,16 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     ##
 ]
+=======
+    # JWT Token endpoints
+    path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("api-auth/", include("rest_framework.urls")),
+    
+    # Core app endpoints
+    path("api/", include("core.urls")),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced

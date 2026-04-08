@@ -1,0 +1,638 @@
+/* Organ.css */
+
+.organ-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 40px;
+  overflow-x: auto;
+  font-family: 'Inter', sans-serif;
+}
+
+.org-structure {
+  background: white;
+  border-radius: 20px;
+  padding: 60px 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  min-width: fit-content;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.org-tree-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* CARDS COMMON */
+.org-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.org-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.card-role {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #718096;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.card-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  overflow: hidden;
+  border: 3px solid white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* CEO LEVEL */
+.level-ceo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.ceo-card {
+  min-width: 250px;
+  background: linear-gradient(to bottom right, #ffffff, #f7fafc);
+  border-top: 4px solid #764ba2;
+}
+
+.vertical-line-central {
+  width: 2px;
+  height: 40px;
+  background-color: #cbd5e0;
+}
+
+/* DEPARTMENTS LEVEL */
+.level-depts-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.connector-line-horizontal {
+  height: 2px;
+  background-color: #cbd5e0;
+  width: 80%;
+  /* Adjust based on grid width approximation */
+  margin-bottom: 20px;
+  /* Space before dept cards comes from vertical connectors of depts */
+  display: none;
+  /* We use a Different approach for horizontal line, CSS Grid makes it tricky to draw a perfect line across exact centers easily without fixed widths. 
+                   Let's use a pseudo-element on the grid container or just rely on visual spacing for now if simple. 
+                   Improved: Let's use a flex row for depts-grid to make lines easier? No, grid is requested for table-like. 
+                   Let's stick to a robust way: A simple horizontal bar above the depts. */
+}
+
+/* Redoing the connector strategy */
+.level-depts-container {
+  position: relative;
+  padding-top: 20px;
+}
+
+/* The horizontal line bridging all departments */
+.level-depts-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50px;
+  /* Approximate offset to cover first to last dept center */
+  right: 50px;
+  height: 2px;
+  background: #cbd5e0;
+  display: block;
+  /* Logic needs refinement in JS to be perfect, but CSS approximation: */
+  /* Better: Use flex/grid centering. */
+}
+
+/* Hacky but effective pure CSS tree lines for flex items */
+/* Actually, let's just make the depts-grid have a border top? No. */
+/* Let's keep it simple: CEO -> Line down -> Horizontal Line -> Lines down to each Dept */
+
+.level-depts-container::before {
+  /* Reset */
+  display: none;
+}
+
+/* Real implementation of lines */
+.level-depts-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  /* This container contains the grid of departments */
+}
+
+.depts-grid {
+  display: flex;
+  /* Changed from grid to flex to better manage the "tree" look and horizontal alignment */
+  flex-wrap: nowrap;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+}
+
+/* Line above all depts */
+.depts-grid::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  /* Line height from CEO is 40px total, this is at 20px mark? No. */
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: #cbd5e0;
+  /* We need to connect to CEO line. CEO line ends at top of depts-grid roughly? */
+}
+
+/* Let's fix the vertical line central from CEO */
+.vertical-line-central {
+  height: 30px;
+  /* Distance from CEO card to the horizontal bar */
+}
+
+/* Now the horizontal bar */
+.level-ceo-container {
+  position: relative;
+}
+
+.level-ceo-container::after {
+  /* This isn't flexible enough. */
+}
+
+/* New Strategy: */
+.depts-grid {
+  display: flex;
+  gap: 30px;
+  padding-top: 20px;
+  /* Space for the vertical connectors */
+  position: relative;
+}
+
+/* Horizontal line spanning the children */
+.depts-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 150px);
+  /* 100% minus the half width of outer cards roughly */
+  height: 2px;
+  background: #cbd5e0;
+}
+
+/* Add a vertical line from the center of the horizontal line up to the CEO (handled by CEO's vertical line effectively meeting this if positioned right) */
+/* Actually, CEO vertical line comes down. This horizontal line is at top of depts-grid. */
+
+.dept-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+  position: relative;
+}
+
+/* Vertical line connecting horizontal bar to dept card */
+.dept-column::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  /* Connects to the horizontal line at 0 relative to grid padding */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 20px;
+  background: #cbd5e0;
+}
+
+/* Department Card */
+.dept-header-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+.dept-title {
+  background: #f7fafc;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a5568;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.director-card {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 15px;
+  width: 100%;
+}
+
+.director-card:hover {
+  transform: none;
+  box-shadow: none;
+  background: #fafbff;
+}
+
+.empty-director {
+  padding: 20px;
+  color: #a0aec0;
+  font-size: 12px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Employees Section */
+.vertical-line-short {
+  width: 2px;
+  height: 15px;
+  background: #cbd5e0;
+}
+
+.employees-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.employee-toggle-btn {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
+  z-index: 2;
+  margin-bottom: 5px;
+}
+
+.employee-toggle-btn:hover {
+  background: #edf2f7;
+  border-color: #a0aec0;
+}
+
+.employee-list {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  margin-top: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.employee-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f7fafc;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.employee-item:last-child {
+  border-bottom: none;
+}
+
+.employee-item:hover {
+  background: #f7fafc;
+}
+
+.emp-avatar-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #4a5568;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.emp-name {
+  font-size: 12px;
+  color: #2d3748;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .depts-grid {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .depts-grid::before {
+    display: none;
+    /* Hide horizontal connector on mobile/wrap */
+  }
+
+  .dept-column::before {
+    display: none;
+  }
+
+
+  .vertical-line-central {
+    display: none;
+  }
+}
+
+/* --- NEW MODAL STYLES --- */
+
+.organ-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.organ-modal-content {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.organ-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #ffffff;
+  border: none;
+  color: #333333;
+  /* Dark icon initially for visibility */
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  /* Square with slight rounding */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.organ-close-btn:hover {
+  background: #dc2626;
+  /* Red background on hover */
+  color: #ffffff;
+  /* White icon on hover */
+
+}
+
+.organ-modal-header-bg {
+  height: 100px;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  /* Navy Blue Gradient */
+  width: 100%;
+}
+
+.organ-modal-body {
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.organ-modal-avatar-wrapper {
+  margin-top: -50px;
+  /* Overlap header */
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.organ-modal-avatar-img,
+.organ-modal-avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: #1e3a8a;
+  /* Navy Blue text */
+  font-weight: bold;
+}
+
+.organ-modal-avatar-placeholder {
+  background: #f1f5f9;
+}
+
+.organ-modal-main-info {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.organ-modal-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e3a8a;
+  /* Navy Blue text */
+  margin-bottom: 4px;
+}
+
+.organ-modal-role {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #1e3a8a;
+  /* Navy Blue text */
+  background: #dbeafe;
+  /* Light Blue bg */
+  padding: 4px 12px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+.organ-modal-details-list {
+  width: 100%;
+}
+
+.organ-detail-item {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.organ-detail-item:hover {
+  background: #f1f5f9;
+}
+
+.organ-icon-box {
+  width: 36px;
+  height: 36px;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  color: #1e3a8a;
+  /* Navy icon */
+  border: 1px solid #e2e8f0;
+}
+
+.organ-detail-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.organ-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.organ-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.organ-value.link {
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.organ-value.link:hover {
+  text-decoration: underline;
+}
+
+.organ-modal-footer {
+  background: #f8fafc;
+  padding: 12px;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+.organ-company-tag {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

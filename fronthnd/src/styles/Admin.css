@@ -1,0 +1,462 @@
+/* Modern, Kurumsal ve Sade (Siyah/Beyaz/Gri Tema) Admin Paneli Tasarımı */
+
+/* Admin Container */
+.admin-container {
+  min-height: 100vh;
+  /* Açık gri arka plan - nötr tonlar */
+  background: #f4f4f4;
+  padding: 2rem;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #dddddd; /* Açık gri taban */
+  border-top: 4px solid #333333; /* Koyu gri/siyah dönen kısım */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Main Content */
+.admin-main {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Users Section */
+.users-section {
+  background: white;
+  border-radius: 8px; /* Köşe yuvarlatması azaltıldı */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Yumuşak gölge */
+  padding: 2rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem; /* Boşluk azaltıldı */
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #cccccc; /* Daha ince, orta gri çizgi */
+}
+
+.section-header h2 {
+  font-size: 1.7rem;
+  color: #222222; /* Koyu başlık rengi */
+  margin: 0;
+  font-weight: 700;
+}
+
+/* Buttons */
+.btn-primary {
+  /* Koyu gri/siyah ana buton rengi */
+  background: #333333; 
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem; /* Biraz daha küçük dolgu */
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:hover {
+  background: #111111;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+  /* Orta gri ikincil buton rengi */
+  background: #6c757d; 
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.btn-icon {
+  background: none;
+  border: 1px solid transparent; /* Kenarlık eklendi */
+  color: #666666; /* İkon rengi */
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-edit:hover {
+  background: #e6e6e6; /* Açık gri hover */
+  color: #333333;
+  transform: scale(1.05);
+}
+
+.btn-delete:hover {
+  background: #fde8e8; /* Hafif kırmızı hover */
+  color: #dc3545; /* Kırmızı renk */
+  transform: scale(1.05);
+}
+
+/* Table */
+.table-container {
+  overflow-x: auto;
+  margin-top: 1.2rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.admin-table thead {
+  /* Koyu gri tablo başlığı */
+  background: #444444;
+  color: white;
+}
+
+.admin-table th {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem; /* Başlık fontu küçültüldü */
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #eeeeee; /* Çok açık gri çizgi */
+  font-size: 0.9rem;
+}
+
+.admin-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background: #f9f9f9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.admin-table tbody tr.inactive-row {
+  opacity: 0.7;
+  background: #fafafa;
+}
+
+/* Username Cell */
+.username-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar {
+  width: 35px; /* Küçültüldü */
+  height: 35px; /* Küçültüldü */
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #999999; /* Orta gri kenarlık */
+}
+
+.user-avatar-placeholder {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  /* Gri/Siyah gradyan placeholder */
+  background: linear-gradient(135deg, #555555 0%, #333333 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem; /* Font küçültüldü */
+}
+
+/* Role Badge */
+.role-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem; /* Küçültüldü */
+  border-radius: 16px;
+  font-size: 0.75rem; /* Küçültüldü */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Rol Renkleri - Nötr ve Kurumsal */
+.badge-ceo {
+  background: #222222; /* Siyah/Koyu Gri */
+  color: white;
+}
+
+.badge-manager {
+  background: #666666; /* Orta Gri */
+  color: white;
+}
+
+.badge-employee {
+  background: #bbbbbb; /* Açık Gri */
+  color: #333333;
+}
+
+.badge-default {
+  background: #e0e0e0;
+  color: #666;
+}
+
+/* Actions Cell */
+.actions-cell {
+  display: flex;
+  gap: 0.4rem; /* Boşluk azaltıldı */
+  align-items: center;
+}
+
+/* No Data */
+.no-data {
+  text-align: center;
+  padding: 2rem !important; /* Dolgu azaltıldı */
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  color: #666;
+}
+
+.no-data-icon {
+  font-size: 2.5rem; /* Küçültüldü */
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Daha koyu arka plan */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px; /* Modal genişliği azaltıldı */
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem; /* Dolgu ayarlandı */
+  border-bottom: 1px solid #cccccc;
+  /* Koyu gri/siyah modal başlık */
+  background: #333333;
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 1.5rem; /* Dolgu azaltıldı */
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  background: #f8f8f8; /* Çok açık gri altlık */
+  border-radius: 0 0 8px 8px;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 1rem; /* Boşluk azaltıldı */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #333333;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.6rem; /* Dolgu azaltıldı */
+  border: 1px solid #cccccc; /* Orta gri kenarlık */
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #333333; /* Siyah odaklanma kenarlığı */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1); /* Siyah-beyaz gölge */
+}
+
+.form-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .admin-table {
+    font-size: 0.85rem;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 0.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+  
+  .section-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-container {
+    overflow-x: scroll;
+  }
+  
+  .admin-table {
+    font-size: 0.8rem;
+  }
+  
+  .actions-cell {
+    flex-direction: row; /* Mobil görünümde yan yana tutuldu */
+    justify-content: flex-start;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-table th,
+  .admin-table td {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .user-avatar,
+  .user-avatar-placeholder {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+  
+  .role-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}

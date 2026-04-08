@@ -1,0 +1,88 @@
+TÜRKİYE ÇEVRE AJANSI - UYGULAMA KULLANIM KILAVUZU
+
+1. GİRİŞ VE HESAP OLUŞTURMA
+----------------------------
+Uygulamaya hoş geldiniz. Bu platform, görevlerinizi, projelerinizi ve ekip içi iletişiminizi yönetmenizi sağlar.
+
+- Kayıt Ol (Register):
+  Eğer hesabınız yoksa, giriş ekranındaki "Kayıt Ol" seçeneğine tıklayın. Ad, soyad, e-posta, telefon ve birim (departman) bilgilerinizi eksiksiz doldurun.
+  Not: Yöneticiler için "Unvan" ve "Departman" seçimi, yönetim panelindeki yetkilerinizi belirler.
+
+- Giriş Yap (Login):
+  Kayıtlı kullanıcı adı ve şifrenizle sisteme giriş yapın.
+
+2. MENÜ VE NAVİGASYON (YAN MENÜ)
+--------------------------------
+Ekranın sol tarafında bulunan menü (Sidebar), uygulamanın ana bölümlerine hızlı erişim sağlar:
+
+- Ana Sayfa: Genel özet ve kısayollar.
+- Projelerim: Dahil olduğunuz veya yönettiğiniz projeler.
+- Görevlerim: Size atanan ve sizin atadığınız görevlerin takibi.
+- Yeni Görev: Hızlıca yeni bir görev oluşturma sayfası.
+- İstatistiklerim: Performans verileriniz ve raporlar.
+- Şirket'im: Organizasyon şeması ve çalışan listesi.
+- Arşivim: Tamamlanmış veya arşivlenmiş geçmiş görevler.
+- Admin: (Sadece Yönetici/CEO) Kullanıcı yönetimi ve sistem ayarları.
+
+3. GÖREV PANELİ (DASHBOARD)
+---------------------------
+Görevlerinizi takip ettiğiniz ana ekrandır.
+
+A. Bana Atanan Görevler (Kanban Görünümü):
+   - "Yapılacak", "Devam Ediyor" ve "Tamamlandı" sütunlarından oluşur.
+   - Görev kartlarını sürükleyip bırakarak (Drag & Drop) durumunu değiştirebilirsiniz.
+   - Bir görevin üzerine tıklayarak detaylarını görebilirsiniz.
+
+B. Benim Atadığım Görevler (Liste Görünümü):
+   - Eğer bir yöneticiyseniz veya başkalarına görev atadıysanız, bu liste görünür.
+   - Görevler, kişilerin departmanlarına ve isimlerine göre gruplanır.
+   - Buradan ekibinizin üzerindeki iş yükünü takip edebilirsiniz.
+
+C. Görev İşlemleri:
+   - Detay Görüntüleme: Göreve tıklayın.
+   - Düzenleme: Detay penceresinde "Düzenle" butonuna basarak açıklama, tarih veya öncelik bilgisini güncelleyebilirsiniz.
+   - Tamamlama: Görevi bitirdiğinizde "Tamamla" butonuna basarak bir sonuç raporu/yorumu yazıp kapatabilirsiniz.
+   - Silme: (SADECE GÖREVİ OLUŞTURANLAR İÇİN) Kendi oluşturduğunuz bir görevi, detay penceresindeki kırmızı "Sil" butonuna basarak kalıcı olarak silebilirsiniz.
+
+D. Filtreleme:
+   - Üstteki "Filtrele" panelini kullanarak isme, tarihe veya içeriğe göre arama yapabilirsiniz.
+
+4. PROJELERİM
+-------------
+Projelerinizi ve proje ekiplerinizi buradan yönetirsiniz.
+
+- Yeni Proje Oluşturma:
+  Sağ üstteki "Yeni Proje" butonuna tıklayın. Proje adı, açıklaması ve başlangıç/bitiş tarihlerini girin.
+
+- Proje Detayları:
+  Bir projeye tıkladığınızda üç sekme görürsünüz:
+  1. Zaman Çizelgesi & Görevler: Projeye bağlı görevlerin listesi ve zaman akışı.
+  2. Üyeler: Proje ekibini şık kartlar halinde görürsünüz. Yöneticiyseniz buradan üye çıkarabilirsiniz.
+  3. Ayarlar (Sadece Yönetici): Projeye yeni üyeler davet edebilirsiniz.
+
+- Davet Yönetimi:
+  "Projelerim" ana sayfasında size gelen proje davetlerini (Kabul Et / Reddet) görebilirsiniz.
+
+5. YENİ GÖREV OLUŞTURMA
+-----------------------
+- "Yeni Görev" menüsüne tıklayın.
+- Görev Tanımı: Ne yapılması gerektiğini açıklayın.
+- Atanacak Kişiler: Görevi kime veya kimlere atayacağınızı seçin.
+- Proje Seçimi (Opsiyonel): Görev bir projeye bağlıysa seçin.
+- Tarih ve Öncelik: Teslim tarihini ve aciliyet durumunu (Düşük/Orta/Yüksek) belirleyin.
+- "Oluştur" butonuna basarak görevi atayın.
+
+6. PROFİL VE AYARLAR
+--------------------
+- Yan menüdeki "Ayarlar" butonuna tıklayarak profilinize gidin.
+- Bilgilerinizi güncelleyebilir, şifrenizi değiştirebilirsiniz.
+
+7. İSTATİSTİKLER VE RAPORLAR
+----------------------------
+- "İstatistiklerim" sayfasında tamamladığınız görev sayısı, geciken işler ve verimlilik grafiklerinizi inceleyebilirsiniz.
+
+DESTEK
+------
+Herhangi bir sorun yaşarsanız veya geliştirme öneriniz olursa, lütfen sistem yöneticisi ile iletişime geçin.
+
+- Türkiye Çevre Ajansı Yazılım Ekibi

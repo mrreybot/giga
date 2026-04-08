@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -31,6 +37,11 @@ body {
 }
 
 h1 {
+<<<<<<< HEAD
+=======
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
   font-size: 3.2em;
   line-height: 1.1;
 }

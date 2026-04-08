@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-64)jrtk+(istfkvz)gepxjc=mk%s3e0!g(7q1gy5d-hyba*8kv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'core.CustomUser'
@@ -62,6 +63,16 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
+=======
+ALLOWED_HOSTS = ["*"]
+
+AUTH_USER_MODEL = 'core.CustomUser'
+
+
+# ============================================================
+# INSTALLED APPS
+# ============================================================
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -69,6 +80,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'core',
     'rest_framework',
     'corsheaders',
@@ -77,6 +89,27 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+=======
+    
+    # Third-party apps (SIRADA ÖNEMLİ!)
+    'corsheaders',                          # CORS
+    'rest_framework',                       # Django REST Framework
+    'rest_framework_simplejwt',             # JWT Authentication
+    
+    # Local apps
+    'core',
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# ============================================================
+# MIDDLEWARE
+# ============================================================
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',      # ← CORS EN ÜSTTE!
+    'django.middleware.security.SecurityMiddleware',
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,6 +138,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'giga_backend.wsgi.application'
 
 
+<<<<<<< HEAD
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -116,14 +150,29 @@ DATABASES = {
         'PASSWORD': 'gigaAYBU',
         'HOST': 'localhost',
         'PORT': '5432',
+=======
+# ============================================================
+# DATABASE
+# ============================================================
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
     }
 }
 
 
+<<<<<<< HEAD
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
+=======
+# ============================================================
+# PASSWORD VALIDATION
+# ============================================================
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -140,9 +189,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+<<<<<<< HEAD
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
+=======
+# ============================================================
+# INTERNATIONALIZATION
+# ============================================================
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -152,6 +207,7 @@ USE_I18N = True
 USE_TZ = True
 
 
+<<<<<<< HEAD
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -161,3 +217,123 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+=======
+# ============================================================
+# STATIC FILES
+# ============================================================
+STATIC_URL = 'static/'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ============================================================
+# CORS SETTINGS
+# ============================================================
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+    "http://10.253.235.227:3000",
+    "http://10.253.235.227:5173",
+    "http://10.253.235.227:8000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://192.168.1.106:8081',
+]
+
+
+# ============================================================
+# REST FRAMEWORK SETTINGS
+# ============================================================
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
+}
+
+
+# ============================================================
+# JWT SETTINGS
+# ============================================================
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JTI_CLAIM': 'jti',
+    'TOKEN_TYPE_CLAIM': 'token_type',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'AUTH_REFRESH_CLASSES': (
+        'rest_framework_simplejwt.tokens.RefreshToken',
+    ),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+    'TOKEN_OBTAIN_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainPairSerializer',
+    'TOKEN_REFRESH_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenRefreshSerializer',
+    'TOKEN_VERIFY_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenVerifySerializer',
+    'TOKEN_BLACKLIST_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenBlacklistSerializer',
+    'SLIDING_TOKEN_OBTAIN_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer',
+    'SLIDING_TOKEN_REFRESH_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer',
+}
+# ============================================================
+# EMAIL SETTINGS
+# ============================================================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'cevreyonetimuygu@gmail.com'
+EMAIL_HOST_PASSWORD = 'ilxd zmkz mdwu soah'  
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Workaround for SSL Certificate Verify Failed (Mac)
+import os
+import ssl
+import certifi
+
+os.environ['SSL_CERT_FILE'] = certifi.where() # Try using certifi first
+
+# Fallback: if certifi doesn't fix it, this monkeys fixes the default SSL context
+# DANGEROUS IN PRODUCTION - OK FOR LOCAL DEV
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+>>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced

@@ -1,0 +1,232 @@
+/* TIMELINE CSS */
+
+.timeline-container {
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+}
+
+.timeline-input-area {
+    margin-bottom: 32px;
+    background: #f5f5f5;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.timeline-comment-form {
+    display: flex;
+    gap: 12px;
+}
+
+.timeline-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    color: #333;
+}
+
+.timeline-input:focus {
+    outline: none;
+    border-color: #6C63FF;
+}
+
+.timeline-submit-btn {
+    padding: 0 24px;
+    background: #6C63FF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.timeline-submit-btn:hover {
+    background: #5a52d5;
+}
+
+/* Timeline Line */
+.timeline {
+    position: relative;
+    padding-left: 32px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #ddd;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -30px;
+    top: 8px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #ddd;
+    background: #fff;
+    z-index: 1;
+}
+
+.timeline-item.task .timeline-marker {
+    background: #6C63FF;
+    box-shadow: 0 0 0 2px #6C63FF;
+}
+
+.timeline-item.comment .timeline-marker {
+    background: #FFD700;
+    box-shadow: 0 0 0 2px #FFD700;
+}
+
+.timeline-content {
+    background: transparent;
+    border-radius: 12px;
+    padding: 0;
+}
+
+/* Updated Date Styling */
+.timeline-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-tertiary, #737373);
+    background: transparent;
+    padding: 4px 0;
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+/* Alternative: Badge style for date */
+.timeline-date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #666;
+    background: #f5f5f5;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    border: 1px solid #e5e5e5;
+}
+
+.timeline-card {
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.timeline-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.timeline-card.task-card {
+    border-left: 4px solid #6C63FF;
+}
+
+.timeline-card.comment-card {
+    border-left: 4px solid #FFD700;
+    background: white;
+}
+
+.timeline-card.completed {
+    opacity: 0.7;
+    background: #f9f9f9;
+    border-left-color: #4CAF50;
+}
+
+.timeline-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.timeline-card-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.complete-btn {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    background: #fff;
+    border: 1px solid #4CAF50;
+    color: #4CAF50;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.complete-btn:hover {
+    background: #4CAF50;
+    color: white;
+}
+
+.status-badge.completed {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.timeline-card-body p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.comment-header {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.comment-header strong {
+    font-weight: 600;
+    color: #171717;
+}
+
+.comment-text {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.6;
+}
+
+.timeline-empty {
+    color: #888;
+    font-style: italic;
+    text-align: center;
+    padding: 40px 20px;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 1px dashed #ddd;
+}

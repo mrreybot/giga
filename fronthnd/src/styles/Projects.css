@@ -1,0 +1,441 @@
+/* === PROJECTS PAGE (Monochrome/Clean) === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.projects-container {
+    padding: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary, #171717);
+    background-color: var(--bg-secondary, #fafafa);
+}
+
+.projects-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-light, #e5e5e5);
+}
+
+.projects-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-primary, #171717);
+}
+
+.new-project-btn {
+    padding: 12px 24px;
+    background-color: var(--color-gray-900, #171717);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.new-project-btn:hover {
+    background-color: var(--color-gray-800, #262626);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* === MEMBERS CARD STYLES (MATCHING STATISTICS) === */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.project-card {
+    background: var(--bg-primary, #ffffff);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--border-light, #e5e5e5);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: var(--border-medium, #d4d4d4);
+}
+
+.project-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.project-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-primary, #171717);
+}
+
+.admin-badge {
+    background: var(--bg-tertiary, #f5f5f5);
+    color: var(--text-secondary, #525252);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--border-medium, #d4d4d4);
+    display: flex;
+    align-items: center;
+}
+
+.project-description {
+    color: var(--text-secondary, #525252);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.project-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-light, #e5e5e5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-tertiary, #737373);
+}
+
+.member-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+/* === MEMBERS CARD STYLES (MATCHING STATISTICS) === */
+
+
+
+
+
+
+
+
+
+
+/* === MODAL === */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+    background: var(--bg-primary, #ffffff);
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-light, #e5e5e5);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+    color: var(--text-primary, #171717);
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-secondary, #fafafa);
+    border: 1px solid var(--border-medium, #d4d4d4);
+    border-radius: 8px;
+    color: var(--text-primary, #171717);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--color-gray-900, #171717);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    background: var(--bg-primary, #ffffff);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.cancel-btn {
+    background: transparent;
+    color: var(--text-secondary, #525252);
+    border: 1px solid var(--border-medium, #d4d4d4);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.submit-btn {
+    background: var(--color-gray-900, #171717);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* === PROGRESS BAR === */
+.project-progress-section {
+    margin-top: auto;
+    margin-bottom: 12px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-secondary, #525252);
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: var(--bg-tertiary, #f5f5f5);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--color-gray-700, #404040);
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+}
+
+/* === DELETE BUTTON Selimhan buradaydı. Delete buton düzelttim. === */
+.delete-project-btn {
+    background: var(--bg-secondary, #fafafa);
+    border: 1px solid var(--border-medium, #d4d4d4);
+    color: #ef4444;
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.delete-project-btn:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    transform: translateY(-1px);
+}
+
+/* === MEMBERS TAB CONTENT === */
+.members-tab-content {
+    margin-top: 32px;
+}
+
+/* === MEMBERS CARD STYLES (UPDATED) === */
+.members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    padding: 4px;
+    /* Kartların hover efekti için hafif padding */
+}
+
+.member-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-light, #e5e5e5);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.member-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Gradient line top */
+.member-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+}
+
+.member-card:hover::before {
+    transform: scaleX(1);
+}
+
+.member-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.member-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.member-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.member-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary, #171717);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.member-email {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #525252);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Role Badges */
+.member-role {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: white;
+}
+
+.member-role.ADMIN {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.member-role.MEMBER {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.member-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-light, #f5f5f5);
+}
+
+.remove-member-btn {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.remove-member-btn:hover {
+    background: #fee2e2;
+}

@@ -1,0 +1,775 @@
+/* ===== REVİZE EDİLMİŞ ADD TASK STİLLERİ (GOOGLE/MICROSOFT MİNİMAL) ===== */
+
+/* Renk Paleti (Dashboard ile uyumlu):
+   - Arka Plan: #f9fafb
+   - Header: #1f2937 (Koyu Gri/Siyah)
+   - Aksan (Primary): #1e40af (Navy Blue)
+   - Kenarlıklar: #e5e7eb
+   - Metin: #111827 ve #6b7280
+*/
+:root {
+  /* Background Colors */
+  --bg-primary: #f9fafb;
+  --bg-secondary: #f3f4f6;
+  --bg-tertiary: #e5e7eb;
+  
+  /* Card Colors */
+  --card-bg: #ffffff;
+  --card-hover: #f9fafb;
+  
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  
+  /* Border Colors */
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+  
+  /* Accent Colors */
+  --accent-primary: #3b82f6;
+  --accent-secondary: #2563eb;
+  --accent-light: #dbeafe;
+  --accent-lighter: #eff6ff;
+  
+  /* Success Colors */
+  --success: #10b981;
+  --success-dark: #047857;
+  --success-light: #d1fae5;
+  
+  /* Warning Colors */
+  --warning: #f59e0b;
+  --warning-dark: #d97706;
+  --warning-light: #fef3c7;
+  
+  /* Danger Colors */
+  --danger: #ef4444;
+  --danger-dark: #dc2626;
+  
+  /* Info Colors */
+  --info-light: #dbeafe;
+  --info-dark: #1e40af;
+  
+  /* Modal Colors */
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --modal-bg: #ffffff;
+}
+.add-task-page {
+  min-height: 100vh;
+  background-color: #f9fafb; /* Düz, temiz gri */
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  color: #111827;
+}
+
+/* ===== PAGE HEADER (Koyu ve Minimal) ===== */
+.page-header {
+  background-color: #1f2937; /* Gradient yok, düz kurumsal koyu renk */
+  color: white;
+  padding: 1rem 25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px; /* Daha az yuvarlak */
+  background: transparent;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: none;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+  transform: translateX(-2px);
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.25rem; /* Daha sade başlık boyutu */
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.add-task-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 3rem;
+}
+
+.task-form-wrapper {
+  background: white;
+  border-radius: 8px; /* 16px'den 8px'e düşürüldü */
+  border: 1px solid #e5e7eb; /* İnce çerçeve */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Çok hafif gölge */
+  overflow: hidden;
+}
+
+/* ===== EDIT NOTICE (Sarı Uyarı Alanı) ===== */
+.edit-notice {
+  background-color: #fffbeb; /* Düz açık sarı */
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid #fcd34d;
+}
+
+.notice-icon {
+  font-size: 1.25rem;
+  color: #d97706;
+}
+
+.notice-text {
+  font-weight: 500;
+  color: #92400e;
+  font-size: 0.9rem;
+}
+
+/* ===== FORM ===== */
+.task-form {
+  padding: 2rem;
+}
+
+/* ===== FORM SECTION ===== */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section:last-of-type {
+  margin-bottom: 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  padding: 0;
+}
+
+.selection-count {
+  padding: 0.25rem 0.75rem;
+  background-color: #eff6ff; /* Çok açık mavi */
+  color: #1e40af; /* Aksan rengi */
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ===== FORM GROUPS ===== */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151; /* Koyu gri */
+}
+
+.required {
+  color: #dc2626; /* Kırmızı */
+  margin-left: 0.25rem;
+}
+
+.optional {
+  font-weight: 400;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+/* ===== FORM INPUTS (Google Material / Microsoft Fluent Tarzı) ===== */
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #d1d5db; /* Standart gri sınır */
+  border-radius: 4px; /* Keskin köşeler */
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.2s;
+  background: white !important;
+  color: #6b7280 !important;
+} 
+
+.form-input:hover,
+.form-textarea:hover,
+.form-select:hover {
+  border-color: #9ca3af;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #1e40af; /* Aksan rengi */
+  box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1); /* Hafif mavi hare */
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* ===== FILE INPUT ===== */
+.file-input-wrapper {
+  position: relative;
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 2px dashed #d1d5db; /* Kesik gri çizgi */
+  border-radius: 6px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.file-label:hover {
+  border-color: #1e40af;
+  background: #eff6ff; /* Hover'da hafif mavi zemin */
+}
+
+.file-icon {
+  font-size: 1.5rem;
+  color: #6b7280;
+}
+
+.file-label:hover .file-icon {
+  color: #1e40af;
+}
+
+.file-text {
+  font-size: 0.9rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+/* ===== SELECTED FILES ===== */
+.selected-files {
+  margin-top: 1rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.remove-file {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: #ef4444;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.remove-file:hover {
+  background: #fef2f2;
+  color: #dc2626;
+  transform: none;
+}
+
+/* ===== USERS GRID ===== */
+.loading-users,
+.no-users {
+  padding: 2.5rem;
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.loading-users .spinner {
+  font-size: 3rem;
+  color: #3b82f6;
+  margin-bottom: 1rem;
+  animation: spin 2s linear infinite;
+}
+
+.loading-users p {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.no-users p {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* ===== USER CARD (Statistics Tarzı Modern Tasarım) ===== */
+.user-card {
+  position: relative;
+  cursor: pointer;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.user-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.user-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Seçili Kart Stili */
+.user-card.selected {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+}
+
+.user-card.selected::before {
+  transform: scaleX(1);
+}
+
+.user-checkbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.user-card-content {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+}
+
+/* Avatar ve Info Header */
+.user-card-content > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.user-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  overflow: hidden; /* ✅ EKLE */
+  position: relative; /* ✅ EKLE */
+}
+.user-avatar .avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.user-card.selected .user-avatar {
+  background: linear-gradient(135deg, #1e40af, #6d28d9);
+  transform: scale(1.05);
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-email {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* Badge'ler - Sade ve Minimal */
+.role-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+
+.role-badge-ceo {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.role-badge-manager {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.role-badge-employee {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.role-badge-default {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+
+
+
+.check-indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.user-card.selected .check-indicator {
+  opacity: 1;
+  transform: scale(1);
+}
+/* ===== FORM ACTIONS (Sade Butonlar) ===== */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* İptal Butonu - Beyaz/Gri */
+.btn-cancel {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+/* Kaydet Butonu - Düz Navy Blue */
+.btn-submit {
+  background-color: #1e40af;
+  color: white;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #1c388e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(30, 64, 175, 0.15);
+}
+
+.btn-icon {
+  font-size: 1rem;
+}
+
+.btn-spinner {
+  font-size: 1rem;
+  animation: spin 2s linear infinite;
+}
+
+/* AddTask.css - Mevcut CSS'inizin SONUNA ekleyin */
+
+/* Filtre İpucu */
+.filter-hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #60a5fa;
+  font-style: italic;
+}
+
+/* Aktif Filtreler Göstergesi */
+.active-filters {
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.filter-indicator {
+  font-size: 0.9rem;
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  background: rgba(96, 165, 250, 0.2);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #93c5fd;
+  font-weight: 500;
+}
+
+/* Departman Badge */
+.dept-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+/* No Users İyileştirmesi */
+.no-users {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+.no-users p {
+  font-size: 1.125rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .active-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-tag {
+    font-size: 0.8rem;
+  }
+}
+
+/* Animasyon */
+@keyframes filterPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.active-filters {
+  animation: filterPulse 2s ease-in-out;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .add-task-container {
+    padding: 1rem;
+  }
+
+  .task-form {
+    padding: 1.25rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .user-card-content {
+    padding: 0.75rem;
+  }
+}

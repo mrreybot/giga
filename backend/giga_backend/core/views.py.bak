@@ -1,0 +1,434 @@
+from rest_framework import generics, viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
+from django.contrib.auth import get_user_model
+from django.db.models import Q
+from .models import Mission
+from .serializers import CustomUserSerializer, MissionSerializer, UserRegisterSerializer
+from django.utils import timezone
+from .models import MissionFeedback
+from .serializers import MissionFeedbackSerializer
+User = get_user_model()
+
+
+# ============ USER VIEWS ============
+
+class CreateUserView(generics.CreateAPIView):
+    """Kullanıcı kayıt endpoint'i - Herkes erişebilir"""
+    queryset = User.objects.all()
+    serializer_class = UserRegisterSerializer
+    permission_classes = [AllowAny]
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        
+        return Response({
+            "message": "Kullanıcı başarıyla oluşturuldu!",
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "department": user.department,
+                "phone": user.phone
+            }
+        }, status=status.HTTP_201_CREATED)
+
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    """Kullanıcının kendi profilini görüntüleme ve güncelleme"""
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser,JSONParser]
+    
+    def get_object(self):
+        return self.request.user
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)
+
+
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Kullanıcı detay, güncelleme ve silme - Sadece CEO erişebilir"""
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+    parser_classes = [MultiPartParser, FormParser,JSONParser]
+    
+    def get_object(self):
+        """URL'den gelen ID'ye göre kullanıcı getir"""
+        user_id = self.kwargs.get('pk')
+        try:
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return None
+    
+    def update(self, request, *args, **kwargs):
+        """Kullanıcı güncelleme - Sadece CEO yapabilir"""
+        if request.user.role != 'CEO':
+            return Response(
+                {"detail": "Sadece CEO kullanıcı bilgilerini güncelleyebilir."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        instance = self.get_object()
+        if not instance:
+            return Response(
+                {"detail": "Kullanıcı bulunamadı."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        partial = kwargs.pop('partial', True)  # PATCH için partial=True
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        """Kullanıcı silme - Sadece CEO yapabilir"""
+        if request.user.role != 'CEO':
+            return Response(
+                {"detail": "Sadece CEO kullanıcı silebilir."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        instance = self.get_object()
+        if not instance:
+            return Response(
+                {"detail": "Kullanıcı bulunamadı."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Kendi hesabını silmeye çalışıyorsa engelle
+        if instance.id == request.user.id:
+            return Response(
+                {"detail": "Kendi hesabınızı silemezsiniz."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        username = instance.username
+        self.perform_destroy(instance)
+        
+        return Response(
+            {"message": f"Kullanıcı '{username}' başarıyla silindi."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
+class ChangePasswordView(generics.GenericAPIView):
+    """Şifre değiştirme endpoint'i"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        
+        if not old_password or not new_password:
+            return Response(
+                {"detail": "Eski ve yeni şifre gereklidir."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not user.check_password(old_password):
+            return Response(
+                {"detail": "Mevcut şifre yanlış."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user.set_password(new_password)
+        user.save()
+        
+        return Response(
+            {"message": "Şifre başarıyla güncellendi."},
+            status=status.HTTP_200_OK
+        )
+
+
+# ============ MISSION VIEWSET (ROLE-BASED) ============
+
+class MissionViewSet(viewsets.ModelViewSet):
+    serializer_class = MissionSerializer
+    permission_classes = [IsAuthenticated]
+    @action(detail=True, methods=['patch'], url_path='toggle_complete')
+    def toggle_complete(self, request, pk=None):
+        """
+        Görevi completed <-> uncompleted yapar.
+        Hem oluşturucu hem assigned kullanıcı kullanabilir.
+        """
+        mission = self.get_object()
+        user = request.user
+
+        # Sadece görevi görüntüleyebilen kullanıcılar tamamlayabilir/geri alabilir
+        if not mission.can_complete(user):
+            return Response(
+                {"detail": "Bu görevi tamamlama/geri alma yetkiniz yok."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Toggle işlemi
+        mission.completed = not mission.completed
+        mission.save()
+
+        serializer = self.get_serializer(mission, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_queryset(self):
+        """Kullanıcının görebildiği görevleri getir"""
+        user = self.request.user
+        return Mission.objects.filter(
+            Q(created_by=user) | Q(due_to=user)
+        ).distinct()
+    
+    def get_serializer_context(self):
+        """Serializer'a request context'i gönder"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
+    def create(self, request, *args, **kwargs):
+        """Yeni görev oluştur - Herkes oluşturabilir (role bazlı atama kısıtlaması var)"""
+        user = request.user
+        due_to_ids = request.data.getlist('due_to') if hasattr(request.data, 'getlist') else request.data.get('due_to', [])
+        
+        if due_to_ids:
+            assigned_users = User.objects.filter(id__in=due_to_ids)
+            
+            
+            if user.role == 'EMPLOYEE':
+                invalid_users = assigned_users.exclude(role='EMPLOYEE')
+                if invalid_users.exists():
+                    invalid_names = [u.username for u in invalid_users]
+                    return Response(
+                        {
+                            "detail": f"Çalışanlar sadece diğer çalışanlara görev atayabilir. Geçersiz kullanıcılar: {', '.join(invalid_names)}",
+                            "invalid_users": invalid_names
+                        },
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            
+            
+            elif user.role == 'MANAGER':
+                invalid_users = assigned_users.exclude(role__in=['EMPLOYEE', 'MANAGER'])
+                if invalid_users.exists():
+                    invalid_names = [u.username for u in invalid_users]
+                    return Response(
+                        {
+                            "detail": f"Yöneticiler sadece çalışanlara görev atayabilir. Geçersiz kullanıcılar: {', '.join(invalid_names)}",
+                            "invalid_users": invalid_names
+                        },
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            
+            
+        
+        # Görev oluştur
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def perform_create(self, serializer):
+        """Görevi oluştururken created_by'ı set et"""
+        serializer.save(created_by=self.request.user)
+    
+    def update(self, request, *args, **kwargs):
+        """Görevi güncelle - Sadece created_by + role bazlı atama kontrolü"""
+        mission = self.get_object()
+        user = request.user
+        
+        # Düzenleme yetkisi kontrolü
+        if not mission.can_edit(user):
+            return Response(
+                {"detail": "Bu görevi düzenleme yetkiniz yok. Sadece oluşturduğunuz görevleri düzenleyebilirsiniz."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Role bazlı atama kontrolü
+        due_to_ids = request.data.getlist('due_to') if hasattr(request.data, 'getlist') else request.data.get('due_to', [])
+        if due_to_ids:
+            assigned_users = User.objects.filter(id__in=due_to_ids)
+            
+            # EMPLOYEE ise sadece EMPLOYEE'lere atayabilir
+            if user.role == 'EMPLOYEE':
+                invalid_users = assigned_users.exclude(role='EMPLOYEE')
+                if invalid_users.exists():
+                    invalid_names = [u.username for u in invalid_users]
+                    return Response(
+                        {
+                            "detail": f"Çalışanlar sadece diğer çalışanlara görev atayabilir. Geçersiz kullanıcılar: {', '.join(invalid_names)}",
+                            "invalid_users": invalid_names
+                        },
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            
+            # MANAGER ise sadece EMPLOYEE'lere atayabilir
+            elif user.role == 'MANAGER':
+                invalid_users = assigned_users.exclude(role='EMPLOYEE')
+                if invalid_users.exists():
+                    invalid_names = [u.username for u in invalid_users]
+                    return Response(
+                        {
+                            "detail": f"Yöneticiler sadece çalışanlara görev atayabilir. Geçersiz kullanıcılar: {', '.join(invalid_names)}",
+                            "invalid_users": invalid_names
+                        },
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+        
+        return super().update(request, *args, **kwargs)
+    
+    def partial_update(self, request, *args, **kwargs):
+        """Kısmi güncelleme - Sadece created_by + role bazlı atama kontrolü"""
+        mission = self.get_object()
+        user = request.user
+        
+        if not mission.can_edit(user):
+            return Response(
+                {"detail": "Bu görevi düzenleme yetkiniz yok."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Role bazlı atama kontrolü
+        due_to_ids = request.data.getlist('due_to') if hasattr(request.data, 'getlist') else request.data.get('due_to', [])
+        if due_to_ids:
+            assigned_users = User.objects.filter(id__in=due_to_ids)
+            
+            # EMPLOYEE ise sadece EMPLOYEE'lere atayabilir
+            if user.role == 'EMPLOYEE':
+                invalid_users = assigned_users.exclude(role='EMPLOYEE')
+                if invalid_users.exists():
+                    invalid_names = [u.username for u in invalid_users]
+                    return Response(
+                        {
+                            "detail": f"Çalışanlar sadece diğer çalışanlara görev atayabilir.",
+                            "invalid_users": invalid_names
+                        },
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            
+            # MANAGER ise sadece EMPLOYEE'lere atayabilir
+            elif user.role == 'MANAGER':
+                invalid_users = assigned_users.exclude(role='EMPLOYEE')
+                if invalid_users.exists():
+                    invalid_names = [u.username for u in invalid_users]
+                    return Response(
+                        {
+                            "detail": f"Yöneticiler sadece çalışanlara görev atayabilir.",
+                            "invalid_users": invalid_names
+                        },
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+        
+        return super().partial_update(request, *args, **kwargs)
+    
+    @action(detail=True, methods=['post'])
+    def complete_with_feedback(self, request, pk=None):
+        """
+        Görevi tamamla ve opsiyonel yorum ekle.
+        Body: { "comment": "İstersen yorum" }
+        """
+        mission = self.get_object()
+        user = request.user
+
+        # Sadece atanan kullanıcı tamamlayabilir
+        if not mission.can_complete(user):
+            return Response({"detail": "Bu görevi tamamlama yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+
+        comment = (request.data.get('comment') or '').strip()
+
+        if comment:
+            MissionFeedback.objects.create(mission=mission, user=user, comment=comment)
+
+        # completed toggle yerine **tamamla** (senin modelde toggle var; burada tamamla olarak ayarlıyorum)
+        mission.completed = True
+        mission.save()
+
+        serializer = self.get_serializer(mission, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['post'])
+    def add_feedback(self, request, pk=None):
+        """Sadece yorum ekle (tamamlamayı etkilemez)."""
+        mission = self.get_object()
+        user = request.user
+
+        # Yalnızca görevi görebilenler yorum yazsın (isAssigned veya creator)
+        if not mission.can_view(user):
+            return Response({"detail": "Bu görevi görüntüleme/yorum yazma yetkiniz yok."}, status=status.HTTP_403_FORBIDDEN)
+
+        comment = request.data.get('comment', '').strip()
+        if not comment:
+            return Response({"detail": "Yorum boş olamaz."}, status=status.HTTP_400_BAD_REQUEST)
+
+        fb = MissionFeedback.objects.create(mission=mission, user=user, comment=comment)
+        serializer = MissionFeedbackSerializer(fb, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# ============ ASSIGNABLE USERS (ROLE-BASED FILTERING) ============
+
+class AssignableUsersView(generics.ListAPIView):
+    """Görev atanabilecek kullanıcıları listele - Role bazlı filtreleme"""
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        
+        # ✅ CEO: Herkesi görebilir
+        if user.role == 'CEO':
+            return User.objects.all().order_by('role', 'username')
+        
+        elif user.role == 'MANAGER':
+         return User.objects.filter(role__in=['MANAGER', 'EMPLOYEE']).order_by('role', 'username')
+
+        elif user.role == 'EMPLOYEE':
+         return User.objects.filter(role='EMPLOYEE').order_by('username')
+
+        
+        
+        else:
+            return User.objects.none()
+    
+    def list(self, request, *args, **kwargs):
+        """Direkt array dön - Herkes erişebilir"""
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+# ============ ORGANIZATION CHART ============
+
+class OrganizationChartView(generics.ListAPIView):
+    """Organizasyon yapısını getir - Herkes görebilir"""
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def list(self, request, *args, **kwargs):
+        users = User.objects.all().order_by('role', 'username')
+        
+        # Role'lere göre grupla
+        org_chart = {
+            'CEO': [],
+            'MANAGER': [],
+            'EMPLOYEE': []
+        }
+        
+        for user in users:
+            serializer = self.get_serializer(user)
+            org_chart[user.role].append(serializer.data)
+        
+        return Response(org_chart)
