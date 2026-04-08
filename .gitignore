@@ -37,3 +37,7 @@ build/
 # SQLite database
 *.sqlite3
 backend/giga_backend/db.sqlite3
+backend/giga_backend/requirements.txt
+backend/giga_backend/media/mission_files/ekler.jpg
+backend/giga_backend/media/mission_files/gerizekalı_mıyız_KDuKjxc.jpg
+backend/giga_backend/media/profile_photos/images.jpg
