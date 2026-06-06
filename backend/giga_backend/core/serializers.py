@@ -1,44 +1,6 @@
+from django.db import transaction
 from rest_framework import serializers
-<<<<<<< HEAD
-from .models import CustomUser, Mission
 
-# ---------------------------
-# CustomUser Serializer
-# ---------------------------
-# serializers.py
-
-class CustomUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'unvan']
-        read_only_fields = ['id']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
-    
-    def create(self, validated_data):
-        user = CustomUser.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data.get('email', ''),
-            password=validated_data['password'],
-            unvan=validated_data.get('unvan', '')
-        )
-        return user
-
-# ---------------------------
-# Mission Serializer
-# ---------------------------
-class MissionSerializer(serializers.ModelSerializer):
-    # ManyToMany alanını nested serializer ile gösterebiliriz
-    due_to = CustomUserSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Mission
-        fields = ['id', 'task_id', 'description', 'assigned_date', 'end_date', 'from_to', 'due_to']
-        read_only_fields = ['id']
-=======
 from .models import CustomUser, Mission, MissionAttachment, MissionFeedback, Project, ProjectMember, ProjectInvite, ProjectComment, Notification
 
 
@@ -272,6 +234,7 @@ class MissionSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         return obj.can_complete(request.user) if request else False
 
+    @transaction.atomic
     def create(self, validated_data):
         due_to_users = validated_data.pop('due_to', [])
         new_files = validated_data.pop('new_attachments', [])
@@ -286,6 +249,7 @@ class MissionSerializer(serializers.ModelSerializer):
 
         return mission
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         due_to_users = validated_data.pop('due_to', None)
         new_files = validated_data.pop('new_attachments', [])
@@ -326,4 +290,3 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     def get_created_at_formatted(self, obj):
         return obj.created_at.strftime("%d.%m.%Y %H:%M")
->>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced

@@ -1,16 +1,4 @@
-<<<<<<< HEAD
-from django.shortcuts import render
-from .models import CustomUser
-from rest_framework.permissions import AllowAny
-from rest_framework import generics
-from .serializers import CustomUserSerializer
 
-# Create your views here.
-class CreateUserView(generics.CreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-    permission_classes = [AllowAny]
-=======
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -222,6 +210,10 @@ class MissionViewSet(viewsets.ModelViewSet):
             Q(created_by=user) | 
             Q(due_to=user) |
             Q(project__members__user=user)
+        ).select_related(
+            'created_by', 'project'
+        ).prefetch_related(
+            'due_to', 'attachments', 'feedbacks', 'feedbacks__user'
         ).distinct()
         
         # Proje filtresi
@@ -673,5 +665,3 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def clear_all(self, request):
         self.get_queryset().delete()
         return Response({'status': 'ok'})
-
->>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced

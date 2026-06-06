@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-64)jrtk+(istfkvz)gepxjc=mk%s3e0!g(7q1gy5d-hyba*8kv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-<<<<<<< HEAD
-ALLOWED_HOSTS = []
+
 
 AUTH_USER_MODEL = 'core.CustomUser'
 
@@ -63,16 +62,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
-=======
-ALLOWED_HOSTS = ["*"]
-
-AUTH_USER_MODEL = 'core.CustomUser'
-
-
 # ============================================================
 # INSTALLED APPS
 # ============================================================
->>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -80,16 +72,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
-    'core',
-    'rest_framework',
-    'corsheaders',
-]
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-=======
     
     # Third-party apps (SIRADA ÖNEMLİ!)
     'corsheaders',                          # CORS
@@ -109,7 +92,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',      # ← CORS EN ÜSTTE!
     'django.middleware.security.SecurityMiddleware',
->>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -138,19 +121,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'giga_backend.wsgi.application'
 
 
-<<<<<<< HEAD
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'giga_db',
-        'USER': 'giga_user',
-        'PASSWORD': 'gigaAYBU',
-        'HOST': 'localhost',
-        'PORT': '5432',
-=======
 # ============================================================
 # DATABASE
 # ============================================================
@@ -158,21 +128,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
->>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
+        'OPTIONS': {
+            'timeout': 20,
+            'init_command': 'PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;'
+        }
     }
 }
 
 
-<<<<<<< HEAD
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
-=======
 # ============================================================
 # PASSWORD VALIDATION
 # ============================================================
->>>>>>> 9d4a0584d37ebbb0bf0e81a90981124d08d63ced
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
